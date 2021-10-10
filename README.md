@@ -1,1 +1,1 @@
-# triip-icp
+# triipmiles-dfinity
