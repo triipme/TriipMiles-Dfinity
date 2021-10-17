@@ -104,6 +104,6 @@ dist
 .tern-port
 
 */node_modules
-*/.dfx
+*/dfx
 */dist
 */build
