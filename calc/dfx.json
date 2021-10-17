@@ -1,0 +1,35 @@
+{
+  "canisters": {
+    "calc": {
+      "main": "src/calc/main.mo",
+      "type": "motoko"
+    },
+    "calc_assets": {
+      "dependencies": [
+        "calc"
+      ],
+      "frontend": {
+        "entrypoint": "src/calc_assets/src/index.html"
+      },
+      "source": [
+        "src/calc_assets/assets",
+        "dist/calc_assets/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "dfx": "0.8.1",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}

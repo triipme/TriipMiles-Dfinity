@@ -1,0 +1,7 @@
+service : {
+  add: (int, int) -> (int);
+  clearall: () -> ();
+  div: (int, int) -> (opt int);
+  mul: (int, int) -> (int);
+  sub: (int, int) -> (int);
+}
