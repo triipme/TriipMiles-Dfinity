@@ -107,3 +107,13 @@ dist
 */dfx
 */dist
 */build
+calc/.dfx
+calc/dist
+calc/node_modules
+counter/.dfx
+counter/dist
+counter/node_modules
+hello/.dfx
+hello/dist
+hello/node_modules
+whoami/node_modules
