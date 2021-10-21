@@ -18,26 +18,18 @@ function initCanisterIds() {
     console.log("No production canister_ids.json found. Continuing with local");
   }
 
-  const network =
-    process.env.DFX_NETWORK ||
-    (process.env.NODE_ENV === "production" ? "ic" : "local");
+  const network = process.env.DFX_NETWORK || (process.env.NODE_ENV === "production" ? "ic" : "local");
 
   canisters = network === "local" ? localCanisters : prodCanisters;
 
   for (const canister in canisters) {
-    process.env[canister.toUpperCase() + "_CANISTER_ID"] =
-      canisters[canister][network];
+    process.env[canister.toUpperCase() + "_CANISTER_ID"] = canisters[canister][network];
   }
 }
 initCanisterIds();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
-const asset_entry = path.join(
-  "src",
-  "triip_assets",
-  "src",
-  "index.html"
-);
+const asset_entry = path.join("src", "triip_assets", "src", "index.html");
 
 module.exports = {
   target: "web",
@@ -45,12 +37,12 @@ module.exports = {
   entry: {
     // The frontend.entrypoint points to the HTML file for this build, so we need
     // to replace the extension to `.js`.
-    index: path.join(__dirname, asset_entry).replace(/\.html$/, ".js"),
+    index: path.join(__dirname, asset_entry).replace(/\.html$/, ".jsx")
   },
   devtool: isDevelopment ? "source-map" : false,
   optimization: {
     minimize: !isDevelopment,
-    minimizer: [new TerserPlugin()],
+    minimizer: [new TerserPlugin()]
   },
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
@@ -59,12 +51,12 @@ module.exports = {
       buffer: require.resolve("buffer/"),
       events: require.resolve("events/"),
       stream: require.resolve("stream-browserify/"),
-      util: require.resolve("util/"),
-    },
+      util: require.resolve("util/")
+    }
   },
   output: {
     filename: "index.js",
-    path: path.join(__dirname, "dist", "triip_assets"),
+    path: path.join(__dirname, "dist", "triip_assets")
   },
 
   // Depending in the language or framework you are using for
@@ -72,12 +64,12 @@ module.exports = {
   // webpack configuration. For example, if you are using React
   // modules and CSS as described in the "Adding a stylesheet"
   // tutorial, uncomment the following lines:
-  // module: {
-  //  rules: [
-  //    { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
-  //    { test: /\.css$/, use: ['style-loader','css-loader'] }
-  //  ]
-  // },
+  module: {
+    rules: [
+      { test: /\.(js|ts|tsx|jsx)$/, loader: "ts-loader" }
+      //  { test: /\.css$/, use: ['style-loader','css-loader'] }
+    ]
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, asset_entry),
@@ -87,18 +79,18 @@ module.exports = {
       patterns: [
         {
           from: path.join(__dirname, "src", "triip_assets", "assets"),
-          to: path.join(__dirname, "dist", "triip_assets"),
-        },
-      ],
+          to: path.join(__dirname, "dist", "triip_assets")
+        }
+      ]
     }),
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development',
+      NODE_ENV: "development",
       TRIIP_CANISTER_ID: canisters["triip"]
     }),
     new webpack.ProvidePlugin({
       Buffer: [require.resolve("buffer/"), "Buffer"],
-      process: require.resolve("process/browser"),
-    }),
+      process: require.resolve("process/browser")
+    })
   ],
   // proxy /api to port 8000 during development
   devServer: {
@@ -107,12 +99,12 @@ module.exports = {
         target: "http://localhost:8000",
         changeOrigin: true,
         pathRewrite: {
-          "^/api": "/api",
-        },
-      },
+          "^/api": "/api"
+        }
+      }
     },
     hot: true,
     contentBase: path.resolve(__dirname, "./src/triip_assets"),
     watchContentBase: true
-  },
+  }
 };
