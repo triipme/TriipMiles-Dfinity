@@ -9,6 +9,7 @@
     "Canister"
   ],
   "scripts": {
+    "lint": "eslint --fix --ext .js,.jsx .",
     "build": "webpack",
     "prebuild": "yarn run copy:types",
     "start": "webpack serve --mode development --env development",
@@ -16,6 +17,9 @@
     "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --delete src/declarations"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-react": "^7.14.5",
     "@dfinity/agent": "0.10.1",
     "@dfinity/auth-client": "^0.10.1",
     "@dfinity/authentication": "^0.10.1",
@@ -23,8 +27,19 @@
     "@dfinity/identity": "^0.10.1",
     "@dfinity/principal": "0.10.1",
     "assert": "2.0.0",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.3",
     "buffer": "6.0.3",
     "copy-webpack-plugin": "^9.0.1",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react": "^1.1.7",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.26.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "events": "3.3.0",
     "html-webpack-plugin": "5.3.1",
     "process": "0.11.10",
@@ -57,5 +72,5 @@
   "resolutions": {
     "styled-components": "^5"
   },
-  "license": "Apache-2.0"
+  "license": "ISC"
 }

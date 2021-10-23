@@ -66,7 +66,12 @@ module.exports = {
   // tutorial, uncomment the following lines:
   module: {
     rules: [
-      { test: /\.(js|ts|tsx|jsx)$/, loader: "ts-loader" }
+      { test: /\.(js|ts|tsx|jsx)$/, loader: "ts-loader" },
+      {
+        test: /\.(js)$/,
+        exclude: /node_modules/,
+        use: ["babel-loader", "eslint-loader"]
+      }
       //  { test: /\.css$/, use: ['style-loader','css-loader'] }
     ]
   },

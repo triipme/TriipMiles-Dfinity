@@ -1,6 +1,16 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "paths": {
+      "@*": [
+        "src/triip_assets/src/*",
+        "src/triip/src/*"
+      ],
+      "test/@*": [
+        "test/triip_assets/src/*",
+        "test/triip/src/*"
+      ],
+    },
     "target": "es2018", /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019' or 'ESNEXT'. */
     "lib": [
       "ES2018",
