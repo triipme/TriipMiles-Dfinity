@@ -1,18 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { NavBar } from "../containers";
-import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage } from "../pages";
+import { NavBar } from "../containers/index";
+import { navbar } from "./navbar";
 
 export const Main = () => {
   return (
     <Router>
       <NavBar />
       <Switch>
-        <Route component={() => <HomePage />} exact path="/" />
-        <Route component={() => <StayPage />} path="/stay" />
-        <Route component={() => <ExperiencePage />} path="/experience" />
-        <Route component={() => <SharePage />} path="/share" />
-        <Route component={() => <ShopPage />} path="/shop" />
+        {navbar.map((item, _) => (
+          <Route key={item.path} path={item.path} exact={item?.exact} component={item.component} />
+        ))}
       </Switch>
     </Router>
   );

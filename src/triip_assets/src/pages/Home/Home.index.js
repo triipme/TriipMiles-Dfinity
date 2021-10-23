@@ -54,8 +54,6 @@ const Home = () => {
   return (
     <div>
       <div>
-        <h1>Identity</h1>
-        <h2>Sign In</h2>
         <div>
           <label for="idpUrl" style={{ display: "inline-block", width: 120 }}>
             Identity Provider:

@@ -1,17 +1,52 @@
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@mui/material/index";
-import React from "react";
-import { Link } from "react-router-dom";
-import { ContainerStyled } from "./NavBar.style";
+import { useTheme } from "@mui/material/styles";
 
-const NavBar = props => {
+import { AuthClient } from "@dfinity/auth-client";
+
+import { NavLinkStyled } from "../../components/NavLink/NavLink";
+import { navbar } from "../../routers/navbar";
+import { ContainerStyled } from "./NavBar.style";
+const NavBar = ({}) => {
+  const theme = useTheme();
+  const authClient = useRef(null);
+  const [principal, setPrincipal] = useState();
+
+  useEffect(() => {
+    (async () => {
+      authClient.current = await AuthClient.create();
+      setPrincipal(await authClient.current.getIdentity().getPrincipal());
+    })();
+  }, []);
+  const handleLogin = () => {
+    authClient.current.login({
+      onSuccess: async () => {
+        setPrincipal(await authClient.current.getIdentity().getPrincipal());
+      }
+    });
+  };
+  console.log(principal);
   return (
-    <ContainerStyled>
-      <Button></Button>
-      <Link to="/">Home</Link>
-      <Link to="/stay">Stay</Link>
-      <Link to="/experience">Experience</Link>
-      <Link to="/share">Share</Link>
-      <Link to="/shop">Shop</Link>
+    <ContainerStyled maxWidth="xl">
+      <div>
+        {navbar.map((item, _) => (
+          <NavLinkStyled
+            key={item.path}
+            to={item.path}
+            activeStyle={
+              !item?.exact && {
+                color: theme.palette.secondary.main
+              }
+            }>
+            {item.name}
+          </NavLinkStyled>
+        ))}
+      </div>
+      <div>
+        <Button onClick={handleLogin} variant="contained">
+          Login
+        </Button>
+      </div>
     </ContainerStyled>
   );
 };
