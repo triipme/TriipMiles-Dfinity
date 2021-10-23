@@ -3,7 +3,6 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
-
 let localCanisters, prodCanisters, canisters;
 
 function initCanisterIds() {
@@ -52,7 +51,8 @@ module.exports = {
       events: require.resolve("events/"),
       stream: require.resolve("stream-browserify/"),
       util: require.resolve("util/")
-    }
+    },
+    modules: [path.join(__dirname, "js"), "node_modules"]
   },
   output: {
     filename: "index.js",
@@ -70,7 +70,7 @@ module.exports = {
       {
         test: /\.(js)$/,
         exclude: /node_modules/,
-        use: ["babel-loader", "eslint-loader"]
+        use: ["babel-loader"]
       }
       //  { test: /\.css$/, use: ['style-loader','css-loader'] }
     ]

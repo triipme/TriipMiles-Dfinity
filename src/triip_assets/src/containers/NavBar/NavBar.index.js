@@ -64,7 +64,7 @@ const NavBar = ({}) => {
         ))}
       </div>
       <div>
-        <Button onClick={handleLogin} variant="contained">
+        <Button variant="primary" onClick={handleLogin}>
           Login
         </Button>
       </div>

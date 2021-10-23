@@ -6,6 +6,9 @@ const theme = createTheme({
     },
     secondary: {
       main: "#FAB84B"
+    },
+    white: {
+      main: "#fff"
     }
   },
   typography: {
@@ -14,14 +17,33 @@ const theme = createTheme({
   },
   components: {
     MuiButton: {
-      styleOverrides: {
-        root: {
-          padding: "8px 20px",
-          color: "#fff",
-          borderRadius: 10,
-          boxShadow: "none"
+      variants: [
+        {
+          props: { variant: "primary" },
+          style: {
+            padding: "8px 20px",
+            color: "#fff",
+            borderRadius: 12,
+            boxShadow: "none",
+            fontWeight: "bold",
+            backgroundColor: "#48C2CA",
+            "&:hover": {
+              backgroundColor: "#FAB84B"
+            }
+          }
+        },
+        {
+          props: { variant: "secondary" },
+          style: {
+            padding: "8px 20px",
+            color: "#fff",
+            borderRadius: 12,
+            boxShadow: "none",
+            fontWeight: "bold",
+            backgroundColor: "#FAB84B"
+          }
         }
-      }
+      ]
     }
   }
 });
