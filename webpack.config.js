@@ -17,7 +17,8 @@ function initCanisterIds() {
     console.log("No production canister_ids.json found. Continuing with local");
   }
 
-  const network = process.env.DFX_NETWORK || (process.env.NODE_ENV === "production" ? "ic" : "local");
+  const network =
+    process.env.DFX_NETWORK || (process.env.NODE_ENV === "production" ? "ic" : "local");
 
   canisters = network === "local" ? localCanisters : prodCanisters;
 
@@ -51,8 +52,7 @@ module.exports = {
       events: require.resolve("events/"),
       stream: require.resolve("stream-browserify/"),
       util: require.resolve("util/")
-    },
-    modules: [path.join(__dirname, "js"), "node_modules"]
+    }
   },
   output: {
     filename: "index.js",

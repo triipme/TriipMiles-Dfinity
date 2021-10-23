@@ -93,9 +93,10 @@
 // };
 
 // export default Home;
-import { Typography, Modal, Container, Button } from "@mui/material/index";
 import React, { useState } from "react";
+import { Typography, Modal, Container, Button } from "@mui/material/index";
 import { ContentModalStyled } from "./Home.style";
+import HomeForm from "./Home.form";
 // import { ContentModalStyled } from "./Home.style";
 
 const Home = () => {
@@ -114,7 +115,9 @@ const Home = () => {
         Create travel plan to earn $ICP
       </Button>
       <Modal open={isOpen} onClose={handleCloseModal}>
-        <ContentModalStyled></ContentModalStyled>
+        <ContentModalStyled>
+          <HomeForm />
+        </ContentModalStyled>
       </Modal>
     </Container>
   );

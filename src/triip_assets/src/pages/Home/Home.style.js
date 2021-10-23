@@ -1,8 +1,9 @@
 import { styled } from "@mui/system";
 
 export const ContentModalStyled = styled("div")(({ theme }) => ({
-  width: "40%",
+  width: "35%",
   height: "80%",
+  padding: 25,
   position: "absolute",
   top: "50%",
   left: "50%",
