@@ -9,29 +9,37 @@ import { Principal } from "@dfinity/principal";
 import { NavLinkStyled } from "../../components/NavLink/NavLink";
 import { navbar } from "../../routers/navbar";
 import { ContainerStyled } from "./NavBar.style";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../slice/user/userSlice";
 
 const NavBar = ({}) => {
   const theme = useTheme();
   const authClient = useRef(null);
   const [principal, setPrincipal] = useState();
+  const [loginState, setLoginState] = useState(false);
+  const dispatch = useDispatch();
+  const { isLogin } = useSelector(state => state.user);
 
   useEffect(() => {
     (async () => {
       authClient.current = await AuthClient.create();
       setPrincipal(await authClient.current.getIdentity());
+      setLoginState(!(await authClient.current.getIdentity().getPrincipal()) + "" === "2vxsx-fae");
     })();
   }, []);
   const handleLogin = () => {
     authClient.current.login({
-      indentityProvider: "https://identity.messaging.ic0.app/#authorize",
+      // indentityProvider: "https://identity.messaging.ic0.app/#authorize",
       onSuccess: async () => {
         setPrincipal(await authClient.current.getIdentity());
+        setLoginState(true);
       }
     });
   };
   const handleLogout = async () => {
     authClient.current.logout();
     setPrincipal(await authClient.current.getIdentity());
+    setLoginState(false);
   };
   const whoami = useCallback(() => {
     const idFactory = ({ IDL }) => IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
@@ -46,7 +54,9 @@ const NavBar = ({}) => {
 
     console.log(actor);
   }, [principal]);
-
+  useEffect(() => {
+    dispatch(login(loginState));
+  }, [principal]);
   return (
     <ContainerStyled maxWidth="xl">
       <div>
@@ -64,9 +74,15 @@ const NavBar = ({}) => {
         ))}
       </div>
       <div>
-        <Button variant="primary" onClick={handleLogin}>
-          Login
-        </Button>
+        {isLogin ? (
+          <Button variant="primary" onClick={handleLogout}>
+            Logout
+          </Button>
+        ) : (
+          <Button variant="primary" onClick={handleLogin}>
+            Login
+          </Button>
+        )}
       </div>
     </ContainerStyled>
   );
