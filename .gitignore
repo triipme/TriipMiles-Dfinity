@@ -13,3 +13,4 @@
 # frontend code
 node_modules/
 dist/
+canister_ids.json

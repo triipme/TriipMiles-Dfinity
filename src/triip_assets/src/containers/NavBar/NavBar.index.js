@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@mui/material/index";
 import { useTheme } from "@mui/material/styles";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { AuthClient } from "@dfinity/auth-client";
@@ -8,23 +9,22 @@ import { Principal } from "@dfinity/principal";
 
 import { NavLinkStyled } from "../../components/NavLink/NavLink";
 import { navbar } from "../../routers/navbar";
-import { ContainerStyled } from "./NavBar.style";
-import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../slice/user/userSlice";
+import { ContainerStyled } from "./NavBar.style";
 
 const NavBar = ({}) => {
   const theme = useTheme();
-  const authClient = useRef(null);
-  const [principal, setPrincipal] = useState();
-  const [loginState, setLoginState] = useState(false);
   const dispatch = useDispatch();
+  const authClient = useRef(null);
+
+  const [principal, setPrincipal] = useState();
+
   const { isLogin } = useSelector(state => state.user);
 
   useEffect(() => {
     (async () => {
       authClient.current = await AuthClient.create();
       setPrincipal(await authClient.current.getIdentity());
-      setLoginState(!(await authClient.current.getIdentity().getPrincipal()) + "" === "2vxsx-fae");
     })();
   }, []);
   const handleLogin = () => {
@@ -32,30 +32,27 @@ const NavBar = ({}) => {
       // indentityProvider: "https://identity.messaging.ic0.app/#authorize",
       onSuccess: async () => {
         setPrincipal(await authClient.current.getIdentity());
-        setLoginState(true);
       }
     });
   };
   const handleLogout = async () => {
     authClient.current.logout();
     setPrincipal(await authClient.current.getIdentity());
-    setLoginState(false);
   };
-  const whoami = useCallback(() => {
-    const idFactory = ({ IDL }) => IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
-    const canisterId = Principal.fromText(principal?.getPrincipal());
-    const actor = Actor.createActor(idFactory, {
-      agent: new HttpAgent({
-        host: "https://gw.dfinity.network",
-        identity
-      }),
-      canisterId
-    });
-
-    console.log(actor);
-  }, [principal]);
-  useEffect(() => {
-    dispatch(login(loginState));
+  // const whoami = useMemo(() => {
+  //   const idFactory = ({ IDL }) => IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
+  //   const canisterId = Principal.fromText(principal?.getPrincipal() + "");
+  //   const actor = Actor.createActor(idFactory, {
+  //     agent: new HttpAgent({
+  //       host: "https://gw.dfinity.network",
+  //       identity
+  //     }),
+  //     canisterId
+  //   });
+  //   return actor;
+  // }, [principal]);
+  useLayoutEffect(() => {
+    dispatch(login(!(principal?.getPrincipal() + "" === "2vxsx-fae")));
   }, [principal]);
   return (
     <ContainerStyled maxWidth="xl">
@@ -64,11 +61,9 @@ const NavBar = ({}) => {
           <NavLinkStyled
             key={item.path}
             to={item.path}
-            activeStyle={
-              !item?.exact && {
-                color: theme.palette.secondary.main
-              }
-            }>
+            activeStyle={{
+              color: !item?.exact && theme.palette.secondary.main
+            }}>
             {item.name}
           </NavLinkStyled>
         ))}
