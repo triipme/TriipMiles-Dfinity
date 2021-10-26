@@ -21,7 +21,7 @@ const NavBar = ({}) => {
 
   const { isLogin } = useSelector(state => state.user);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     (async () => {
       authClient.current = await AuthClient.create();
       setPrincipal(await authClient.current.getIdentity());
@@ -39,18 +39,19 @@ const NavBar = ({}) => {
     authClient.current.logout();
     setPrincipal(await authClient.current.getIdentity());
   };
-  // const whoami = useMemo(() => {
-  //   const idFactory = ({ IDL }) => IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
-  //   const canisterId = Principal.fromText(principal?.getPrincipal() + "");
-  //   const actor = Actor.createActor(idFactory, {
-  //     agent: new HttpAgent({
-  //       host: "https://gw.dfinity.network",
-  //       identity
-  //     }),
-  //     canisterId
-  //   });
-  //   return actor;
-  // }, [principal]);
+  const whoami = useMemo(() => {
+    const idFactory = ({ IDL }) => IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
+    const canisterId = Principal.fromHex(principal?.getPrincipal() + "");
+    const actor = Actor.createActor(idFactory, {
+      agent: new HttpAgent({
+        // host: "https://gw.dfinity.network",
+        principal
+      }),
+      canisterId
+    });
+    return actor;
+  }, [principal]);
+  console.log("whoami", whoami);
   useLayoutEffect(() => {
     dispatch(login(!(principal?.getPrincipal() + "" === "2vxsx-fae")));
   }, [principal]);
