@@ -76,6 +76,7 @@ module.exports = {
       {
         test: /\.(js)$/,
         include: path.resolve(__dirname, "src"),
+        exclude: /node_modules/,
         use: ["babel-loader"]
       }
       //  { test: /\.css$/, use: ['style-loader','css-loader'] }
@@ -121,7 +122,6 @@ module.exports = {
   optimization: {
     removeAvailableModules: false,
     removeEmptyChunks: false,
-    splitChunks: false,
-    runtimeChunk: true
+    splitChunks: false
   }
 };
