@@ -66,10 +66,16 @@ module.exports = {
   // tutorial, uncomment the following lines:
   module: {
     rules: [
-      { test: /\.(js|ts|tsx|jsx)$/, loader: "ts-loader" },
+      {
+        test: /\.(js|ts|tsx|jsx)$/,
+        loader: "ts-loader",
+        options: {
+          transpileOnly: true
+        }
+      },
       {
         test: /\.(js)$/,
-        exclude: /node_modules/,
+        include: path.resolve(__dirname, "src"),
         use: ["babel-loader"]
       }
       //  { test: /\.css$/, use: ['style-loader','css-loader'] }
@@ -111,5 +117,11 @@ module.exports = {
     hot: true,
     contentBase: path.resolve(__dirname, "./src/triip_assets"),
     watchContentBase: true
+  },
+  optimization: {
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false,
+    runtimeChunk: true
   }
 };

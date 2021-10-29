@@ -40,20 +40,25 @@ const NavBar = ({}) => {
     setPrincipal(await authClient.current.getIdentity());
   };
   const whoami = useMemo(() => {
+    let rs;
     const idFactory = ({ IDL }) => IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
     const canisterId = Principal.fromHex(principal?.getPrincipal() + "");
     const actor = Actor.createActor(idFactory, {
       agent: new HttpAgent({
-        // host: "https://gw.dfinity.network",
+        host: "https://gw.dfinity.network",
         principal
       }),
       canisterId
     });
-    return actor;
+    actor.whoami().then(pcp => {
+      console.log(pcp);
+      rs = pcp.toText();
+    });
+    return rs;
   }, [principal]);
-  console.log("whoami", whoami);
   useLayoutEffect(() => {
     dispatch(login(!(principal?.getPrincipal() + "" === "2vxsx-fae")));
+    console.log(whoami);
   }, [principal]);
   return (
     <ContainerStyled maxWidth="xl">
