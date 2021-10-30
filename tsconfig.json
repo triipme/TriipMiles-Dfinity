@@ -1,16 +1,20 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "allowJs": true,
+    "esModuleInterop": true,
     "moduleResolution": "node",
-    "target": "es2018", /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019' or 'ESNEXT'. */
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
     "lib": [
-      "ES2018",
-      "DOM"
-    ], /* Specify library files to be included in the compilation. */
-    "allowJs": true, /* Allow javascript files to be compiled. */
-    "jsx": "react", /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
+      "ES2020",
+      "DOM",
+      "dom.iterable"
+    ],
+    // "module": "commonjs",
+    "strict": true,
+    "target": "es2020"
   },
-  "include": [
-    "src/**/*"
-  ],
+  // "include": [
+  //   "src/**/*"
+  // ],
 }

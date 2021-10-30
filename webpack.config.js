@@ -74,7 +74,7 @@ module.exports = {
         }
       },
       {
-        test: /\.(js)$/,
+        test: /\.(js|ts|tsx|jsx)$/,
         include: path.resolve(__dirname, "src"),
         exclude: /node_modules/,
         use: ["babel-loader"]
@@ -97,7 +97,10 @@ module.exports = {
     }),
     new webpack.EnvironmentPlugin({
       NODE_ENV: "development",
-      TRIIP_CANISTER_ID: canisters["triip"]
+      TRIIP_CANISTER_ID: canisters["triip"],
+      II_URL: isDevelopment
+        ? "http://localhost:8000?canisterId=r7inp-6aaaa-aaaaa-aaabq-cai#authorize"
+        : "https://identity.ic0.app/#authorize"
     }),
     new webpack.ProvidePlugin({
       Buffer: [require.resolve("buffer/"), "Buffer"],
@@ -117,7 +120,9 @@ module.exports = {
     },
     hot: true,
     contentBase: path.resolve(__dirname, "./src/triip_assets"),
-    watchContentBase: true
+    watchContentBase: true,
+    port: 3000,
+    historyApiFallback: true
   },
   optimization: {
     removeAvailableModules: false,

@@ -1,4 +1,5 @@
 import Trie "mo:base/Trie";
+import Debug "mo:base/Debug";
 import Hash "mo:base/Hash";
 import Nat "mo:base/Nat";
 import Result "mo:base/Result";
@@ -78,6 +79,8 @@ actor {
     public shared(msg) func read () : async Result.Result<Profile,Error> {
         let callerId = msg.caller;
         
+        Debug.print(Principal.toText(callerId));
+
         //Reject AnonymousIndetity
         if(Principal.toText(callerId)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized

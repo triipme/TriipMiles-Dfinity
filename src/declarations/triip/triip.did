@@ -1,3 +1,28 @@
+type User = record {username: opt text;};
+type Result_1 = 
+ variant {
+   err: Error;
+   ok: Profile;
+ };
+type Result = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Profile = 
+ record {
+   id: principal;
+   user: User;
+ };
+type Error = 
+ variant {
+   AlreadyExisting;
+   NotAuthorized;
+   NotFound;
+ };
 service : {
-  greet: (text) -> (text);
+  create: (Profile) -> (Result);
+  delete: () -> (Result);
+  read: () -> (Result_1);
+  update: (Profile) -> (Result);
 }
