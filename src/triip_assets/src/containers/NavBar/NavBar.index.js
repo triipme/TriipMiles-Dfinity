@@ -1,26 +1,25 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Button } from "@mui/material/index";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Button, Modal } from "@mui/material/index";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Actor, HttpAgent } from "@dfinity/agent";
 import { AuthClient } from "@dfinity/auth-client";
-import { Principal } from "@dfinity/principal";
 
 import { NavLinkStyled } from "../../components/NavLink/NavLink";
 import { navbar } from "../../routers/navbar";
 import { login } from "../../slice/user/userSlice";
-import { ContainerStyled } from "./NavBar.style";
+import { ContainerStyled, FormStyled } from "./NavBar.style";
 import { canisterId, createActor } from "../../../../declarations/triip";
+import FormProfile from "./NavBar.form";
 
 const NavBar = ({}) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
-  const [authClient, setAuthClient] = useState(undefined);
-  const [principal, setPrincipal] = useState();
   const [actor, setActor] = useState();
   const [profile, setProfile] = useState();
+  const [authClient, setAuthClient] = useState(undefined);
+  const [isOpen, setIsOpen] = useState(false);
 
+  const dispatch = useDispatch();
   const { isLogin } = useSelector(state => state.user);
 
   useLayoutEffect(() => {
@@ -43,6 +42,23 @@ const NavBar = ({}) => {
     setActor(actor);
   };
 
+  useEffect(() => {
+    //if the first is auththorized, it would initActor
+    if (isLogin) initActor();
+  }, [isLogin]);
+
+  useEffect(() => {
+    // Read Profile
+    actor?.read().then(rs => {
+      console.log(rs);
+      if ("ok" in rs) {
+        setProfile(rs.ok);
+      } else {
+        setIsOpen(true);
+      }
+    });
+  }, [actor]);
+
   const handleLogin = async () => {
     await authClient?.login({
       identityProvider: process.env.II_URL,
@@ -63,36 +79,6 @@ const NavBar = ({}) => {
     // setPrincipal(await authClient.getIdentity());
   };
 
-  useEffect(() => {
-    //if the first is auththorized, it would initActor
-    if (isLogin) initActor();
-  }, [isLogin]);
-  // const whoami = useMemo(() => {
-  //   let rs;
-  //   const idFactory = ({ IDL }) => IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
-  //   const canisterId = Principal.fromHex(principal?.getPrincipal() + "");
-  //   const actor = Actor.createActor(idFactory, {
-  //     agent: new HttpAgent({
-  //       host: "https://gw.dfinity.network",
-  //       principal
-  //     }),
-  //     canisterId
-  //   });
-  //   actor.whoami().then(pcp => {
-  //     console.log(pcp);
-  //     rs = pcp.toText();
-  //   });
-  //   return rs;
-  // }, [principal]);
-
-  useEffect(() => {
-    actor?.read().then(rs => {
-      console.log(rs);
-      if ("ok" in rs) {
-        setProfile(rs.ok);
-      }
-    });
-  }, [actor]);
   return (
     <ContainerStyled maxWidth="xl">
       <div>
@@ -108,6 +94,15 @@ const NavBar = ({}) => {
         ))}
       </div>
       <div>
+        {!!profile ? (
+          <h1>cl</h1>
+        ) : (
+          <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+            <FormStyled>
+              <FormProfile />
+            </FormStyled>
+          </Modal>
+        )}
         {isLogin ? (
           <Button variant="primary" onClick={handleLogout}>
             Logout

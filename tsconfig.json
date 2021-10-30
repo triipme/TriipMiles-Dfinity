@@ -10,11 +10,11 @@
       "DOM",
       "dom.iterable"
     ],
-    // "module": "commonjs",
+    // "module": "ES6",
     "strict": true,
     "target": "es2020"
   },
-  // "include": [
-  //   "src/**/*"
-  // ],
+  "include": [
+    "src/**/*"
+  ],
 }
