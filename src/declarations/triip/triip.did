@@ -9,6 +9,7 @@ type Result =
    err: Error;
    ok;
  };
+type ProfileUpdate = record {user: User;};
 type Profile = 
  record {
    id: principal;
@@ -21,7 +22,7 @@ type Error =
    NotFound;
  };
 service : {
-  create: (Profile) -> (Result);
+  create: (ProfileUpdate) -> (Result);
   delete: () -> (Result);
   read: () -> (Result_1);
   update: (Profile) -> (Result);

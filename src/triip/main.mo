@@ -33,8 +33,10 @@ actor {
     // App interface
 
     // Create
-    public shared(msg) func create (profile: Profile) : async Result.Result<(),Error> {
+    public shared(msg) func create (profile: ProfileUpdate) : async Result.Result<(),Error> {
         let callerId = msg.caller;
+        Debug.print("DCCCCCCCCCCCCCCCCCCCCCCCCCC");
+        Debug.print(debug_show(profile));
 
         //Reject AnonymousIndetity
         if(Principal.toText(callerId)=="2vxsx-fae"){
@@ -50,6 +52,7 @@ actor {
             id = callerId;
         };
 
+        Debug.print(debug_show(userProfile));
 
         let (newProfiles, existing) = Trie.put(
             profiles,           //Target trie
@@ -78,9 +81,7 @@ actor {
     // public func read  (profileId : Nat ) : async ?Profile {
     public shared(msg) func read () : async Result.Result<Profile,Error> {
         let callerId = msg.caller;
-        
-        Debug.print(Principal.toText(callerId));
-
+        Debug.print("DCCCCCCCCCCCCCCCCCCCCCCCCCC");
         //Reject AnonymousIndetity
         if(Principal.toText(callerId)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized

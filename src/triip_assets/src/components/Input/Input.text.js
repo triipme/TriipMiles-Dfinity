@@ -9,15 +9,14 @@ const InputText = ({ name, label, control, defaultValue, placeHolder }) => {
       name={name}
       control={control}
       defaultValue={defaultValue}
-      render={({ field: { name, value, onChange, onBlur } }) => (
+      render={({ field: { name, value, onChange } }) => (
         <TextFieldStyled
           placeholder={placeHolder}
           onChange={onChange}
-          onBlur={onBlur}
           value={value}
           defaultValue={defaultValue}
           label={label}
-          type="search"
+          type="text"
         />
       )}
     />

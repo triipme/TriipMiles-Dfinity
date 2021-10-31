@@ -96,7 +96,7 @@ module.exports = {
       ]
     }),
     new webpack.EnvironmentPlugin({
-      NODE_ENV: "development",
+      NODE_ENV: isDevelopment,
       TRIIP_CANISTER_ID: canisters["triip"],
       II_URL: isDevelopment
         ? "http://localhost:8000?canisterId=r7inp-6aaaa-aaaaa-aaabq-cai#authorize"

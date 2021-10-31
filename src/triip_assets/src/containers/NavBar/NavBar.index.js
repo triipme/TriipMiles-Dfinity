@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Button, Modal } from "@mui/material/index";
+import { Button, Modal, Typography, Box } from "@mui/material/index";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -7,12 +7,12 @@ import { AuthClient } from "@dfinity/auth-client";
 
 import { NavLinkStyled } from "../../components/NavLink/NavLink";
 import { navbar } from "../../routers/navbar";
-import { login } from "../../slice/user/userSlice";
+import { actorSlice, login } from "../../slice/user/userSlice";
 import { ContainerStyled, FormStyled } from "./NavBar.style";
 import { canisterId, createActor } from "../../../../declarations/triip";
 import FormProfile from "./NavBar.form";
 
-const NavBar = ({}) => {
+const NavBar = ({ handleActor }) => {
   const theme = useTheme();
   const [actor, setActor] = useState();
   const [profile, setProfile] = useState();
@@ -33,12 +33,12 @@ const NavBar = ({}) => {
   }, []);
 
   const initActor = () => {
-    console.log(canisterId);
     const actor = createActor(canisterId, {
       agentOptions: {
         identity: authClient?.getIdentity()
       }
     });
+    handleActor(actor);
     setActor(actor);
   };
 
@@ -57,7 +57,7 @@ const NavBar = ({}) => {
         setIsOpen(true);
       }
     });
-  }, [actor]);
+  }, [actor, isOpen]);
 
   const handleLogin = async () => {
     await authClient?.login({
@@ -76,6 +76,7 @@ const NavBar = ({}) => {
     await authClient.logout();
     dispatch(login(false));
     setActor(undefined);
+    setProfile(undefined);
     // setPrincipal(await authClient.getIdentity());
   };
 
@@ -93,13 +94,15 @@ const NavBar = ({}) => {
           </NavLinkStyled>
         ))}
       </div>
-      <div>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         {!!profile ? (
-          <h1>cl</h1>
+          <Typography variant="h6" sx={{ mr: 2 }}>
+            {profile.user.username}
+          </Typography>
         ) : (
           <Modal open={isOpen} onClose={() => setIsOpen(false)}>
             <FormStyled>
-              <FormProfile />
+              <FormProfile modalState={isOpen} handleModalEvent={setIsOpen} />
             </FormStyled>
           </Modal>
         )}
@@ -112,7 +115,7 @@ const NavBar = ({}) => {
             Login
           </Button>
         )}
-      </div>
+      </Box>
     </ContainerStyled>
   );
 };
