@@ -1,4 +1,18 @@
 type User = record {username: opt text;};
+type TravelPlanUpdate = 
+ record {
+   id: opt text;
+   travel_plan: TravelPlanInformation;
+ };
+type TravelPlanInformation = 
+ record {
+   activities: opt vec bool;
+   days: opt nat;
+   destination: opt text;
+   join_type: opt nat;
+   public_mode: opt bool;
+   time: opt int;
+ };
 type Result_1 = 
  variant {
    err: Error;
@@ -20,9 +34,11 @@ type Error =
    AlreadyExisting;
    NotAuthorized;
    NotFound;
+   SomethingWrong;
  };
 service : {
   create: (ProfileUpdate) -> (Result);
+  createTravelPlan: (text, TravelPlanUpdate) -> (Result);
   delete: () -> (Result);
   read: () -> (Result_1);
   update: (Profile) -> (Result);

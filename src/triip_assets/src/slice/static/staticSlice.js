@@ -1,16 +1,41 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {};
+const initialState = {
+  travelplan: {
+    activities: [
+      "Beach & Sun",
+      " Spa - Relax",
+      " Adventure",
+      " Art & Culture",
+      " Food & Beverage",
+      " Family & Friend",
+      " Backpacker",
+      " Budget",
+      " Business",
+      " Green",
+      " History",
+      " LGBT",
+      " Luxury",
+      " Nightlife",
+      " Romantic",
+      " Spiritual",
+      " Student",
+      " Trendsetter",
+      " Vegetarian",
+      " Photography",
+      " Startup",
+      " GTEC",
+      " MTEC"
+    ],
+    join_type: ["Solo", "Couple", "Family", "Group"]
+  }
+};
 
 const staticSlice = createSlice({
   name: "static",
   initialState,
-  reducers: {
-    testAction: state => {
-      state.test = "Hell World";
-    }
-  }
+  reducers: {}
 });
 
-export const { testAction } = staticSlice.actions;
+export const {} = staticSlice.actions;
 export default staticSlice.reducer;

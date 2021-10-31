@@ -12,7 +12,7 @@ const store = configureStore({
     static: staticReducer,
     user: userReducer
   },
-  devTools: process.env.NODE_ENV === "development"
+  devTools: process.env.NODE_ENV !== "production"
 });
 
 const Index = () => {

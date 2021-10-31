@@ -2,41 +2,55 @@ import Trie "mo:base/Trie";
 import Debug "mo:base/Debug";
 import Hash "mo:base/Hash";
 import Nat "mo:base/Nat";
+import Text "mo:base/Text";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 
+import User "model/User";
+import TravelPlan "model/TravelPlan";
 
 actor {
-    type User = {
-        username : ?Text;
-    };
-
+    /* ------------------------- User --------------------------- */
     type Profile = {
-        user : User;
+        user : User.User;
         id: Principal; //Principal as id
     };
-
     type ProfileUpdate = {
-        user : User;
+        user : User.User;
     };
 
+    /* ------------------------- TravelPlan --------------------------- */
+    type TravelPlan = {
+        travel_plan: TravelPlan.TravelPlanInformation;
+        id:?Text;
+        uid:Principal;
+    };
+
+    type TravelPlanUpdate = {
+        travel_plan: TravelPlan.TravelPlanInformation;
+        id:?Text;
+    };
+
+    /* ------------------------- Error --------------------------- */
     type Error = {
         #NotFound;
         #AlreadyExisting;
         #NotAuthorized;
+        #SomethingWrong;
     };
 
-    // App state
-    // Principal as key(id)
+    /*------------------------ App state--------------------------- */
     stable var profiles: Trie.Trie<Principal,Profile> = Trie.empty();
-
+    stable var travelplans :Trie.Trie<Text,TravelPlan> = Trie.empty();
+    
     // App interface
-
+    
+    
+    /* ------------------------------------------------------------------------------------------------------- */
+    // User
     // Create
     public shared(msg) func create (profile: ProfileUpdate) : async Result.Result<(),Error> {
         let callerId = msg.caller;
-        Debug.print("DCCCCCCCCCCCCCCCCCCCCCCCCCC");
-        Debug.print(debug_show(profile));
 
         //Reject AnonymousIndetity
         if(Principal.toText(callerId)=="2vxsx-fae"){
@@ -51,8 +65,6 @@ actor {
             user = profile.user;
             id = callerId;
         };
-
-        Debug.print(debug_show(userProfile));
 
         let (newProfiles, existing) = Trie.put(
             profiles,           //Target trie
@@ -81,7 +93,6 @@ actor {
     // public func read  (profileId : Nat ) : async ?Profile {
     public shared(msg) func read () : async Result.Result<Profile,Error> {
         let callerId = msg.caller;
-        Debug.print("DCCCCCCCCCCCCCCCCCCCCCCCCCC");
         //Reject AnonymousIndetity
         if(Principal.toText(callerId)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
@@ -164,8 +175,40 @@ actor {
             };
         };
     };
+    /* ------------------------------------------------------------------------------------------------------- */
+    // TravelPlan
+    //Create
+    public shared(msg) func createTravelPlan(idTP : Text, travelplan : TravelPlanUpdate) : async Result.Result<(),Error>{
+        let callerId = msg.caller;
+
+        if(Principal.toText(callerId)=="2vxsx-fae"){
+            return #err(#NotAuthorized);
+        };
+
+        let plan : TravelPlan = {
+            travel_plan = travelplan.travel_plan;
+            uid = callerId;
+            id = travelplan.id;
+        };
+        
+        let (newTravelPlan,status) = Trie.put(
+            travelplans,
+            id(idTP),
+            Text.equal,
+            plan
+        );
+
+        if(status == null) {
+            travelplans := newTravelPlan;
+            return #ok(());
+        };
+        return #err(#SomethingWrong);
+    };
 
     private func key(x : Principal) : Trie.Key<Principal> {
         return {key = x; hash = Principal.hash(x) };
     };
+    private func id(x : Text) : Trie.Key<Text>{
+        return {key = x; hash = Text.hash(x)};
+    }
 }

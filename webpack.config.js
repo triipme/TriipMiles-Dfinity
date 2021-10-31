@@ -78,6 +78,11 @@ module.exports = {
         include: path.resolve(__dirname, "src"),
         exclude: /node_modules/,
         use: ["babel-loader"]
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        include: path.resolve(__dirname, "assets"),
+        type: "asset/resource"
       }
       //  { test: /\.css$/, use: ['style-loader','css-loader'] }
     ]
@@ -96,7 +101,8 @@ module.exports = {
       ]
     }),
     new webpack.EnvironmentPlugin({
-      NODE_ENV: isDevelopment,
+      // NODE_ENV: "production",
+      NODE_ENV: "development",
       TRIIP_CANISTER_ID: canisters["triip"],
       II_URL: isDevelopment
         ? "http://localhost:8000?canisterId=r7inp-6aaaa-aaaaa-aaabq-cai#authorize"

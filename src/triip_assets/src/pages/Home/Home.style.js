@@ -9,5 +9,6 @@ export const ContentModalStyled = styled("div")(({ theme }) => ({
   left: "50%",
   transform: " translate(-50%, -50%)",
   backgroundColor: theme.palette.white.main,
-  borderRadius: 20
+  borderRadius: 20,
+  overflowY: "scroll"
 }));
