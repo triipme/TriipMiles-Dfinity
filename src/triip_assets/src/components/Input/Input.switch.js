@@ -3,7 +3,7 @@ import React from "react";
 import { styled } from "@mui/system";
 import Switch from "@mui/material/Switch";
 
-const InputSwitch = ({ name, control, defaultValue, data, label }) => {
+const InputSwitch = ({ name, control, defaultValue = false, data, label }) => {
   return (
     <Controller
       name={name}
@@ -19,7 +19,6 @@ const InputSwitch = ({ name, control, defaultValue, data, label }) => {
 };
 
 const ContainerSwitch = styled("div")`
-  display: inline;
   margin-bottom: 15px;
 `;
 

@@ -3,7 +3,7 @@ import { TextField } from "@mui/material/index";
 import { Controller } from "react-hook-form";
 import { styled } from "@mui/system";
 
-const InputText = ({ name, label, control, defaultValue, placeHolder }) => {
+const InputText = ({ name, label, control, defaultValue = "", placeHolder }) => {
   return (
     <Controller
       name={name}

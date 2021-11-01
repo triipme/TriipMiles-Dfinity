@@ -22,13 +22,13 @@ actor {
     /* ------------------------- TravelPlan --------------------------- */
     type TravelPlan = {
         travel_plan: TravelPlan.TravelPlanInformation;
-        id:?Text;
+        id:Text;
         uid:Principal;
     };
 
     type TravelPlanUpdate = {
         travel_plan: TravelPlan.TravelPlanInformation;
-        id:?Text;
+        idtp:Text;
     };
 
     /* ------------------------- Error --------------------------- */
@@ -178,8 +178,10 @@ actor {
     /* ------------------------------------------------------------------------------------------------------- */
     // TravelPlan
     //Create
-    public shared(msg) func createTravelPlan(idTP : Text, travelplan : TravelPlanUpdate) : async Result.Result<(),Error>{
+    public shared(msg) func createTravelPlan(travelplan : TravelPlanUpdate) : async Result.Result<(),Error>{
         let callerId = msg.caller;
+
+        Debug.print(debug_show(travelplan));
 
         if(Principal.toText(callerId)=="2vxsx-fae"){
             return #err(#NotAuthorized);
@@ -188,21 +190,27 @@ actor {
         let plan : TravelPlan = {
             travel_plan = travelplan.travel_plan;
             uid = callerId;
-            id = travelplan.id;
+            id = travelplan.idtp;
         };
         
         let (newTravelPlan,status) = Trie.put(
             travelplans,
-            id(idTP),
+            id(travelplan.idtp),
             Text.equal,
             plan
         );
 
-        if(status == null) {
-            travelplans := newTravelPlan;
-            return #ok(());
+        switch(status) {
+            // If there are no matches, update profiles
+            case null {
+                travelplans := newTravelPlan;
+                #ok(());
+            };
+            // Matches pattern of type - opt Profile
+            case (? v ){
+                #err(#SomethingWrong);
+            };
         };
-        return #err(#SomethingWrong);
     };
 
     private func key(x : Principal) : Trie.Key<Principal> {

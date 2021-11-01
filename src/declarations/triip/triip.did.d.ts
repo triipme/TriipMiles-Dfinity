@@ -19,15 +19,13 @@ export interface TravelPlanInformation {
   'timeEnd' : [] | [bigint],
 }
 export interface TravelPlanUpdate {
-  'id' : [] | [string],
+  'idtp' : string,
   'travel_plan' : TravelPlanInformation,
 }
 export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
   'create' : (arg_0: ProfileUpdate) => Promise<Result>,
-  'createTravelPlan' : (arg_0: string, arg_1: TravelPlanUpdate) => Promise<
-      Result
-    >,
+  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
   'delete' : () => Promise<Result>,
   'read' : () => Promise<Result_1>,
   'update' : (arg_0: Profile) => Promise<Result>,

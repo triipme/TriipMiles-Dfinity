@@ -12,7 +12,7 @@ const InputRadio = ({ name, control, defaultValue, data }) => {
         <ContainerRadio>
           {data.map((item, index) => (
             <div id={item} key={index}>
-              <Radio checked={value === item} value={item} onChange={onChange} />
+              <Radio checked={item === (value || defaultValue)} value={item} onChange={onChange} />
               <label htmlFor={item}>{item}</label>
             </div>
           ))}

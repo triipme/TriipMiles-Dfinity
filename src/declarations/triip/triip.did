@@ -1,7 +1,7 @@
 type User = record {username: opt text;};
 type TravelPlanUpdate = 
  record {
-   id: opt text;
+   idtp: text;
    travel_plan: TravelPlanInformation;
  };
 type TravelPlanInformation = 
@@ -39,7 +39,7 @@ type Error =
  };
 service : {
   create: (ProfileUpdate) -> (Result);
-  createTravelPlan: (text, TravelPlanUpdate) -> (Result);
+  createTravelPlan: (TravelPlanUpdate) -> (Result);
   delete: () -> (Result);
   read: () -> (Result_1);
   update: (Profile) -> (Result);

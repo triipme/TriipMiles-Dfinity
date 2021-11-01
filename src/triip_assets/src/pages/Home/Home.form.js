@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 
@@ -12,9 +12,14 @@ import {
   InputSwitch,
   InputText
 } from "../../components/index";
+import { ActorContext } from "../../routers";
+
+import moment from "moment";
+import { customAlphabet } from "nanoid";
 
 const HomeForm = () => {
   const { activities, join_type } = useSelector(state => state.static.travelplan);
+  const actor = useContext(ActorContext);
   const {
     control,
     handleSubmit,
@@ -28,7 +33,7 @@ const HomeForm = () => {
     days: 1,
     public_mode: false
   });
-  const onSubmit = data => {
+  const onSubmit = async data => {
     const {
       destination,
       join_type: joinStatus,
@@ -37,13 +42,30 @@ const HomeForm = () => {
       public_mode,
       ...activities
     } = data;
-    console.log({
-      destination,
-      join_type: join_type.findIndex(item => item === joinStatus) + 1,
-      activities: Object.values(activities),
-      timeStart,
-      timeEnd,
-      public_mode
+    const body = {
+      idtp: customAlphabet("tpif_44_djattp", 24)(),
+      travel_plan: {
+        destination: [destination],
+        join_type: [join_type.findIndex(item => item === joinStatus) + 1],
+        activities: [Object.values(activities)],
+        timeStart: [moment(timeStart).unix()],
+        timeEnd: [moment(timeEnd).unix()],
+        days: [
+          moment
+            .duration(moment(timeEnd).unix(), "s")
+            .subtract(moment.duration(moment(timeStart).unix(), "s"))
+            .days()
+        ],
+        public_mode: [public_mode]
+      }
+    };
+    actor?.createTravelPlan(body).then(async result => {
+      console.log(result);
+      if ("ok" in result) {
+        console.log(result.ok);
+      } else {
+        console.error(result.err);
+      }
     });
   };
   return (
@@ -59,7 +81,7 @@ const HomeForm = () => {
         name="destination"
       />
       <Typography variant="subtitle2">How many people will join?</Typography>
-      <InputRadio data={join_type} control={control} name="join_type" />
+      <InputRadio data={join_type} control={control} name="join_type" defaultValue={join_type[0]} />
       <Typography variant="subtitle2">Activities you like?</Typography>
       <div>
         {activities.map(item => (
@@ -77,7 +99,7 @@ const HomeForm = () => {
       <InputDate control={control} name="timeEnd" label="End" />
       <Typography variant="subtitle2">Public plan?</Typography>
       <InputSwitch control={control} name="public_mode" />
-      <ButtonPrimary title="Submut" onClick={handleSubmit(onSubmit)} />
+      <ButtonPrimary title="Create Travel Plan" onClick={handleSubmit(onSubmit)} />
     </>
   );
 };

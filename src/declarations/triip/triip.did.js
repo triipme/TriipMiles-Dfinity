@@ -18,14 +18,14 @@ export const idlFactory = ({ IDL }) => {
     'timeEnd' : IDL.Opt(IDL.Int),
   });
   const TravelPlanUpdate = IDL.Record({
-    'id' : IDL.Opt(IDL.Text),
+    'idtp' : IDL.Text,
     'travel_plan' : TravelPlanInformation,
   });
   const Profile = IDL.Record({ 'id' : IDL.Principal, 'user' : User });
   const Result_1 = IDL.Variant({ 'ok' : Profile, 'err' : Error });
   return IDL.Service({
     'create' : IDL.Func([ProfileUpdate], [Result], []),
-    'createTravelPlan' : IDL.Func([IDL.Text, TravelPlanUpdate], [Result], []),
+    'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
     'delete' : IDL.Func([], [Result], []),
     'read' : IDL.Func([], [Result_1], []),
     'update' : IDL.Func([Profile], [Result], []),
