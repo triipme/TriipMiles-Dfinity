@@ -116,7 +116,7 @@ const Home = () => {
       </Button>
       <Modal open={isOpen} onClose={handleCloseModal} keepMounted>
         <ContentModalStyled>
-          <HomeForm />
+          <HomeForm handleIsOpen={setIsOpen} />
         </ContentModalStyled>
       </Modal>
     </Container>
