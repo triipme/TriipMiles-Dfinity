@@ -78,18 +78,26 @@ module.exports = {
         include: path.resolve(__dirname, "src"),
         exclude: /node_modules/,
         use: ["babel-loader"]
-      },
-      {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        include: path.resolve(__dirname, "assets"),
-        type: "asset/resource"
       }
+      // {
+      //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
+      //   include: path.resolve(__dirname, "assets"),
+      //   type: "asset/resource"
+      // }
       // { test: /\.?s[ac]ss$/, use: ["style-loader", "css-loader"], exclude: /node_modules/ }
     ]
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, asset_entry),
+      favicon: path.join(
+        __dirname,
+        "src",
+        "triip_assets",
+        "assets",
+        "images",
+        "triip_tiim_logo.png"
+      ),
       cache: false
     }),
     new CopyPlugin({

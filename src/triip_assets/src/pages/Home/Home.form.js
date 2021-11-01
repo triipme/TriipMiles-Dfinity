@@ -17,7 +17,7 @@ import { ActorContext } from "../../routers";
 import moment from "moment";
 import { customAlphabet } from "nanoid";
 
-const HomeForm = ({handleIsOpen}) => {
+const HomeForm = ({ handleIsOpen }) => {
   const { activities, join_type } = useSelector(state => state.static.travelplan);
   const actor = useContext(ActorContext);
   const {
@@ -63,7 +63,7 @@ const HomeForm = ({handleIsOpen}) => {
     actor?.createTravelPlan(body).then(async result => {
       if ("ok" in result) {
         console.log(result.ok);
-        handleIsOpen(false)
+        handleIsOpen(false);
         reset();
       } else {
         console.error(result.err);

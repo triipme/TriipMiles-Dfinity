@@ -1,125 +1,122 @@
-// import React, { useState, useEffect, useRef } from "react";
-
-// import { Actor, HttpAgent } from "@dfinity/agent";
-// import { Principal } from "@dfinity/principal";
-// import { AuthClient } from "@dfinity/auth-client";
-
-// const Home = () => {
-//   const authClient = useRef(null);
-//   const [principalEl, setPrincipalEl] = useState("");
-//   const [idpUrlEl, setIdpUrlEl] = useState("https://identity.messaging.ic0.app/#authorize");
-//   const [canisterIdEl, setCanisterIdEl] = useState("4k2wq-cqaaa-aaaab-qac7q-cai");
-//   const [hostUrlEl, setHostUrlEl] = useState("https://gw.dfinity.network");
-//   const [whoamiEl, setWhoamiEl] = useState("");
-
-//   useEffect(() => {
-//     // init
-//     (async () => {
-//       authClient.current = await AuthClient.create();
-//       setPrincipalEl(await authClient.current.getIdentity().getPrincipal());
-//     })();
-//   }, []);
-
-//   // Redirect to the identity provider
-//   const handleSignIn = async () => {
-//     authClient.current.login({
-//       indentityProvider: idpUrlEl,
-//       onSuccess: async () => {
-//         setPrincipalEl(await authClient.current.getIdentity().getPrincipal());
-//       }
-//     });
-//   };
-//   const handleSignOut = async () => {
-//     authClient.current.logout();
-//     setPrincipalEl(await authClient.current.getIdentity().getPrincipal());
-//   };
-//   const handleWhoami = async () => {
-//     const indentity = await authClient.current.getIdentity();
-
-//     const idFactory = ({ IDL }) => IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
-//     const canisterId = Principal.fromText(canisterIdEl);
-//     const actor = Actor.createActor(idFactory, {
-//       agent: new HttpAgent({
-//         host: hostUrlEl,
-//         indentity
-//       }),
-//       canisterId
-//     });
-//     setWhoamiEl("Loading...");
-//     actor.whoami().then(principal => {
-//       console.log(principal);
-//       setWhoamiEl(principal.toText());
-//     });
-//   };
-//   return (
-//     <div>
-//       <div>
-//         <div>
-//           <label for="idpUrl" style={{ display: "inline-block", width: 120 }}>
-//             Identity Provider:
-//           </label>
-//           <input type="text" id="idpUrl" value={idpUrlEl} onChange={event => setIdpUrlEl(event.target.value)} />
-//         </div>
-//         <button onClick={handleSignIn} id="signinBtn">
-//           Sign In
-//         </button>
-//         <button onClick={handleSignOut} id="signoutBtn">
-//           Sign Out
-//         </button>
-//         <h2>Principal:</h2>
-//         <div id="principal">{(principalEl + "").length < 60 ? "No sign in" : principalEl + ""}</div>
-//       </div>
-
-//       <div>
-//         <h1>Contact the IC</h1>
-//         <label for="hostUrl" style={{ display: "inline-block", width: 120 }}>
-//           Replica URL:
-//         </label>
-//         <input type="text" id="hostUrl" value={hostUrlEl} onChange={event => setHostUrlEl(event.target.value)} />
-//         <br />
-//         <label for="canisterId" style={{ display: "inline-block", width: 120 }}>
-//           Canister ID:
-//         </label>
-//         <input type="text" id="canisterId" value={canisterIdEl} onChange={event => setCanisterIdEl(event.target.value)} />
-//       </div>
-//       <div>
-//         <button onClick={handleWhoami} id="whoamiBtn">
-//           Who Am I?
-//         </button>
-//         <div id="whoamiResponse">{whoamiEl}</div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Home;
 import React, { useState } from "react";
-import { Typography, Modal, Container, Button } from "@mui/material/index";
-import { ContentModalStyled } from "./Home.style";
+import { Typography, Modal, Container, Button, Box, Grid } from "@mui/material/index";
+import { Banner, ContentModalStyled } from "./Home.style";
 import HomeForm from "./Home.form";
-// import { ContentModalStyled } from "./Home.style";
 
 const Home = () => {
+  const partners = [
+    { url: "../../../assets/images/partners-01.png", alt: "Agoda" },
+    { url: "../../../assets/images/partners-02.png", alt: "Booking.com" },
+    { url: "../../../assets/images/partners-03.png", alt: "PATA" },
+    { url: "../../../assets/images/partners-04.png", alt: "amadeus" },
+    { url: "../../../assets/images/partners-05.png", alt: "Visa" },
+    { url: "../../../assets/images/partners-06.png", alt: "NTTCommunication" },
+    { url: "../../../assets/images/partners-07.png", alt: "UNWTO" },
+    { url: "../../../assets/images/partners-08.png", alt: "GLOBALTX" }
+  ];
   const [isOpen, setIsOpen] = useState(false);
   const handleOpenModal = () => setIsOpen(true);
   const handleCloseModal = () => setIsOpen(false);
   return (
-    <Container sx={{ marginTop: 10, textAlign: "center" }}>
-      <Typography sx={{ my: 2, fontWeight: "bold" }} variant="h4">
-        WELCOME BACK
-      </Typography>
-      <Typography sx={{ my: 2 }} variant="h4">
-        {"Let's start our journey! Choose your path below"}
-      </Typography>
-      <Button variant="primary" onClick={handleOpenModal}>
-        Create travel plan to earn $ICP
-      </Button>
-      <Modal open={isOpen} onClose={handleCloseModal} keepMounted>
-        <ContentModalStyled>
-          <HomeForm handleIsOpen={setIsOpen} />
-        </ContentModalStyled>
-      </Modal>
+    <Container maxWidth="xl" style={{ padding: 0 }}>
+      <Banner sx={{ p: 0, backgroundImage: "url(../../../assets/images/home_guess.png)" }} />
+      <Container maxWidth="md" sx={{ my: 10, textAlign: "center" }}>
+        <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
+          Own the world’s first sustainable travel co-op
+        </Typography>
+        <Typography sx={{ my: 2 }} variant="h5">
+          Become a co-owner today to earn money for future trips while saving our home planet
+        </Typography>
+        <Button variant="primary" onClick={handleOpenModal}>
+          Create travel plan to earn $ICP
+        </Button>
+        <Modal open={isOpen} onClose={handleCloseModal} keepMounted>
+          <ContentModalStyled>
+            <HomeForm handleIsOpen={setIsOpen} />
+          </ContentModalStyled>
+        </Modal>
+      </Container>
+      <Banner sx={{ p: 0, backgroundImage: "url(../../../assets/images/home_login.png)" }} />
+      <Container maxWidth="lg" sx={{ textAlign: "center", my: 10 }}>
+        <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
+          Our strategic partners
+        </Typography>
+        <Grid sx={{ my: 3 }} container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          {partners.map(item => (
+            <Grid key={item.alt} item xs={3} sx={{ display: "grid", placeItems: "center" }}>
+              <img
+                style={{ width: "100%", height: "80px", objectFit: "contain" }}
+                src={item.url}
+                alt={item.alt}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+      <Box sx={{ px: 10, py: 10, textAlign: "center", backgroundColor: "#f3f3f3" }}>
+        <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
+          The fastest-growing blockchain travel co-op
+        </Typography>
+
+        <Box sx={{ display: "flex" }}>
+          <Box sx={{ flex: 1 }}>
+            <FeatureItem
+              icon="../../../assets/images/ai-icon.png"
+              title="+430,000"
+              subtitle="trust users"
+            />
+            <FeatureItem
+              icon="../../../assets/images/ai-icon.png"
+              title="+430,000"
+              subtitle="trust users"
+            />
+            <FeatureItem
+              icon="../../../assets/images/ai-icon.png"
+              title="+430,000"
+              subtitle="trust users"
+            />
+          </Box>
+          <Box
+            sx={{
+              flex: 1,
+              backgroundImage: "url(../../../assets/images/app-img.png)",
+              backgroundSize: "100%",
+              backgroundRepeat: "no-repeat"
+              // height: 750
+            }}></Box>
+          <Box sx={{ flex: 1 }}>
+            <FeatureItem
+              icon="../../../assets/images/ai-icon.png"
+              title="+430,000"
+              subtitle="trust users"
+              type="end"
+            />
+            <FeatureItem
+              icon="../../../assets/images/ai-icon.png"
+              title="+430,000"
+              subtitle="trust users"
+              type="end"
+            />
+            <FeatureItem
+              icon="../../../assets/images/ai-icon.png"
+              title="+430,000"
+              subtitle="trust users"
+              type="end"
+            />
+          </Box>
+        </Box>
+      </Box>
     </Container>
+  );
+};
+
+const FeatureItem = ({ icon, title, subtitle, type = "start" }) => {
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: type, my: 10 }}>
+      <img src={icon} alt="" style={{ height: 70, margin: 0 }} />
+      <Typography variant="h4">{title}</Typography>
+      <Typography variant="h6">{subtitle}</Typography>
+    </Box>
   );
 };
 
