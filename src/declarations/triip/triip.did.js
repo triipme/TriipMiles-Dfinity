@@ -11,10 +11,11 @@ export const idlFactory = ({ IDL }) => {
   const TravelPlanInformation = IDL.Record({
     'destination' : IDL.Opt(IDL.Text),
     'join_type' : IDL.Opt(IDL.Nat),
+    'timeStart' : IDL.Opt(IDL.Int),
     'days' : IDL.Opt(IDL.Nat),
-    'time' : IDL.Opt(IDL.Int),
     'activities' : IDL.Opt(IDL.Vec(IDL.Bool)),
     'public_mode' : IDL.Opt(IDL.Bool),
+    'timeEnd' : IDL.Opt(IDL.Int),
   });
   const TravelPlanUpdate = IDL.Record({
     'id' : IDL.Opt(IDL.Text),

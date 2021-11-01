@@ -9,12 +9,12 @@ const InputText = ({ name, label, control, defaultValue, placeHolder }) => {
       name={name}
       control={control}
       defaultValue={defaultValue}
-      render={({ field: { name, value, onChange } }) => (
+      render={({ field: { name, value = "", onChange } }) => (
         <TextFieldStyled
           placeholder={placeHolder}
           onChange={onChange}
           value={value}
-          defaultValue={defaultValue}
+          name={name}
           label={label}
           type="text"
         />

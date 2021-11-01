@@ -84,7 +84,7 @@ module.exports = {
         include: path.resolve(__dirname, "assets"),
         type: "asset/resource"
       }
-      //  { test: /\.css$/, use: ['style-loader','css-loader'] }
+      // { test: /\.?s[ac]ss$/, use: ["style-loader", "css-loader"], exclude: /node_modules/ }
     ]
   },
   plugins: [

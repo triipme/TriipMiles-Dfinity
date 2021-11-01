@@ -11,7 +11,8 @@ type TravelPlanInformation =
    destination: opt text;
    join_type: opt nat;
    public_mode: opt bool;
-   time: opt int;
+   timeEnd: opt int;
+   timeStart: opt int;
  };
 type Result_1 = 
  variant {

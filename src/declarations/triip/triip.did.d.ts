@@ -12,10 +12,11 @@ export type Result_1 = { 'ok' : Profile } |
 export interface TravelPlanInformation {
   'destination' : [] | [string],
   'join_type' : [] | [bigint],
+  'timeStart' : [] | [bigint],
   'days' : [] | [bigint],
-  'time' : [] | [bigint],
   'activities' : [] | [Array<boolean>],
   'public_mode' : [] | [boolean],
+  'timeEnd' : [] | [bigint],
 }
 export interface TravelPlanUpdate {
   'id' : [] | [string],

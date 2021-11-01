@@ -19,6 +19,7 @@ const InputCheckbox = ({ name, control, defaultValue, data }) => {
 };
 
 const ContainerCheckbox = styled("div")`
+  display: inline;
   margin-bottom: 15px;
 `;
 

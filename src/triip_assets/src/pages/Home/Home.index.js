@@ -114,7 +114,7 @@ const Home = () => {
       <Button variant="primary" onClick={handleOpenModal}>
         Create travel plan to earn $ICP
       </Button>
-      <Modal open={isOpen} onClose={handleCloseModal}>
+      <Modal open={isOpen} onClose={handleCloseModal} keepMounted>
         <ContentModalStyled>
           <HomeForm />
         </ContentModalStyled>
