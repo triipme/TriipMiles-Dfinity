@@ -78,6 +78,13 @@ module.exports = {
         include: path.resolve(__dirname, "src"),
         exclude: /node_modules/,
         use: ["babel-loader"]
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        loader: "file-loader",
+        options: {
+          name: "/images/[name].[ext]?[hash]"
+        }
       }
       // {
       //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
