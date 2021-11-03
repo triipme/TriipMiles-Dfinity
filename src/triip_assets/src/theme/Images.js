@@ -13,7 +13,7 @@ export const Images = {
   googleplay: "./images/googleplay.png",
   qr: "./images/qr-code.png",
   home: {
-    guess: "./images/home_guess.png",
+    guess: "./images/home_guess.url.png",
     partners: [
       { url: "./images/partners-01.png", alt: "Agoda" },
       { url: "./images/partners-02.png", alt: "Booking.com" },
@@ -24,7 +24,7 @@ export const Images = {
       { url: "./images/partners-07.png", alt: "UNWTO" },
       { url: "./images/partners-08.png", alt: "GLOBALTX" }
     ],
-    login: "./images/home_login.png",
+    login: "./images/home_login.url.png",
     app: "./images/app-img.png",
     step: ["./images/step-1.png", "./images/step-2.png", "./images/step-3.png"],
     tab: ["./images/tab-1.png", "./images/tab-2.png", "./images/tab-3.png"]

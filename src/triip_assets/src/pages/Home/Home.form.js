@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 
-import { Typography } from "@mui/material/index";
+import { Typography, Box } from "@mui/material/index";
 
 import {
   ButtonPrimary,
@@ -16,8 +16,10 @@ import { ActorContext } from "../../routers";
 
 import moment from "moment";
 import { customAlphabet } from "nanoid";
+import toast, { Toaster } from "react-hot-toast";
 
 const HomeForm = ({ handleIsOpen }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { activities, join_type } = useSelector(state => state.static.travelplan);
   const actor = useContext(ActorContext);
   const {
@@ -60,32 +62,51 @@ const HomeForm = ({ handleIsOpen }) => {
         public_mode: [public_mode]
       }
     };
-    actor?.createTravelPlan(body).then(async result => {
-      if ("ok" in result) {
-        console.log(result.ok);
-        handleIsOpen(false);
-        reset();
-      } else {
-        console.error(result.err);
-      }
-    });
+    if (!!actor) {
+      setIsLoading(true);
+      actor
+        ?.createTravelPlan(body)
+        .then(async result => {
+          if ("ok" in result) {
+            console.log(result.ok);
+            toast.success("Success !.");
+            handleIsOpen(false);
+            reset();
+          } else {
+            console.error(result.err);
+            setIsLoading(false);
+          }
+        })
+        .catch(err => {})
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      toast.error("Please sign in!.");
+    }
   };
   return (
     <>
       <Typography sx={{ mb: 2 }} variant="h6">
         Create Your Travel Plan
       </Typography>
-      <Typography variant="subtitle2">Where will you go?</Typography>
+      <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
+        Where will you go?
+      </Typography>
       <InputText
         control={control}
         placeHolder="Enter your destination"
         label="Destination"
         name="destination"
       />
-      <Typography variant="subtitle2">How many people will join?</Typography>
+      <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
+        How many people will join?
+      </Typography>
       <InputRadio data={join_type} control={control} name="join_type" defaultValue={join_type[0]} />
-      <Typography variant="subtitle2">Activities you like?</Typography>
-      <div>
+      <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
+        Activities you like?
+      </Typography>
+      <Box display="flex" flexWrap="wrap">
         {activities.map(item => (
           <InputCheckbox
             key={item}
@@ -95,13 +116,28 @@ const HomeForm = ({ handleIsOpen }) => {
             defaultValue={false}
           />
         ))}
-      </div>
-      <Typography variant="subtitle2">When will you be there?</Typography>
+      </Box>
+      <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
+        When will you be there?
+      </Typography>
       <InputDate control={control} name="timeStart" label="Start" />
-      <InputDate control={control} name="timeEnd" label="End" />
-      <Typography variant="subtitle2">Public plan?</Typography>
-      <InputSwitch control={control} name="public_mode" />
-      <ButtonPrimary title="Create Travel Plan" onClick={handleSubmit(onSubmit)} />
+      <Box marginTop={2}>
+        <InputDate control={control} name="timeEnd" label="End" />
+      </Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 1, mt: 2 }}>
+        <Typography variant="body1">Public plan?</Typography>
+        <InputSwitch control={control} name="public_mode" />
+      </Box>
+      <Typography variant="body2">
+        Public plans can be seen by Triip Protocol partners/travelers so that they can give you
+        recommendations or just for you to share where you will be going next
+      </Typography>
+      <ButtonPrimary
+        loading={isLoading}
+        sx={{ mt: 2 }}
+        title="Create Travel Plan"
+        onClick={handleSubmit(onSubmit)}
+      />
     </>
   );
 };

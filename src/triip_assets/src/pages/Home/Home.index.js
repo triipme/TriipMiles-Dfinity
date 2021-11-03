@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { Typography, Modal, Container, Button, Box, Grid, Tabs, Tab } from "@mui/material/index";
 import { Banner, ContentModalStyled, StepItemImage, TabPanelButton, TabStyled } from "./Home.style";
 import HomeForm from "./Home.form";
-import homeGuess from "../../../assets/images/home_guess.png";
-import homeLogin from "../../../assets/images/home_login.png";
+import homeGuess from "../../../assets/images/home_guess.url.png";
+import homeLogin from "../../../assets/images/home_login.url.png";
 import { Images } from "../../theme";
 import { ButtonPrimary } from "../../components";
 import { Footer } from "../../containers";
+import { useToaster } from "react-hot-toast";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +18,13 @@ const Home = () => {
   console.log(tab);
   return (
     <Container maxWidth="xl" style={{ padding: 0 }}>
-      <Banner sx={{ p: 0, backgroundImage: `url(${homeGuess})` }} />
+      <Notifications />
+      <Banner
+        sx={{
+          p: 0,
+          backgroundImage: `url(https://ik.imagekit.io/1cfogorcfir/home-guess_woTiAsOzG.png?updatedAt=1635851168116)`
+        }}
+      />
       <Container maxWidth="md" sx={{ my: 10, textAlign: "center" }}>
         <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
           Own the world’s first sustainable travel co-op
@@ -28,13 +35,18 @@ const Home = () => {
         <Button variant="primary" onClick={handleOpenModal}>
           Create travel plan to earn $ICP
         </Button>
-        <Modal open={isOpen} onClose={handleCloseModal} keepMounted>
+        <Modal open={isOpen} onClose={handleCloseModal} >
           <ContentModalStyled>
             <HomeForm handleIsOpen={setIsOpen} />
           </ContentModalStyled>
         </Modal>
       </Container>
-      <Banner sx={{ p: 0, backgroundImage: `url(${homeLogin})` }} />
+      <Banner
+        sx={{
+          p: 0,
+          backgroundImage: `url(https://ik.imagekit.io/1cfogorcfir/home_login_gcY1vzK7V_.png?updatedAt=1635851167552)`
+        }}
+      />
       <Container maxWidth="lg" sx={{ textAlign: "center", my: 10 }}>
         <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
           Our strategic partners
@@ -225,4 +237,30 @@ const TabPanel = ({ value, index, children, data, title }) => {
   );
 };
 
+const Notifications = () => {
+  const { toasts, handlers } = useToaster();
+  const { startPause, endPause } = handlers;
+  return (
+    <div
+      onMouseEnter={startPause}
+      onMouseLeave={endPause}
+      style={{
+        position: "fixed",
+        zIndex: 999,
+        top: 10,
+        right: 20
+      }}>
+      {toasts
+        .filter(toast => toast.visible)
+        .map(toast => (
+          <div
+            key={toast.id}
+            {...toast.ariaProps}
+            style={{ backgroundColor: "white", padding: "10px 20px", borderRadius: 100 }}>
+            {toast.message}
+          </div>
+        ))}
+    </div>
+  );
+};
 export default Home;

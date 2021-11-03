@@ -18,8 +18,6 @@ const InputSwitch = ({ name, control, defaultValue = false, data, label }) => {
   );
 };
 
-const ContainerSwitch = styled("div")`
-  margin-bottom: 15px;
-`;
+const ContainerSwitch = styled("div")``;
 
 export default InputSwitch;

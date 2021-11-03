@@ -83,8 +83,16 @@ module.exports = {
         test: /\.(png|jpe?g|gif)$/i,
         loader: "file-loader",
         options: {
-          name: "/images/[name].[ext]?[hash]"
+          name: "images/[name].[ext]"
         }
+      },
+      {
+        test: /\.url.(png|jpg|gif)$/i,
+        use: [
+          {
+            loader: "url-loader"
+          }
+        ]
       }
       // {
       //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
