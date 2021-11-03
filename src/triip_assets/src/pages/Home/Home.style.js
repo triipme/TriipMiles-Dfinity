@@ -3,16 +3,16 @@ import { styled } from "@mui/system";
 import { ImageUrls } from "../../theme";
 
 export const ContentModalStyled = styled("div")(({ theme }) => ({
-  width: "35%",
-  height: "80%",
-  padding: 25,
+  width: 400,
+  height: 500,
+  padding: "25px 0 25px",
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: " translate(-50%, -50%)",
   backgroundColor: theme.palette.white.main,
-  // borderRadius: 20,
-  overflowY: "scroll"
+  borderRadius: 20,
+  overflow: "hidden"
 }));
 
 export const Banner = styled("div")`

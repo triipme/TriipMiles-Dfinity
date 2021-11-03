@@ -93,13 +93,13 @@ module.exports = {
             loader: "url-loader"
           }
         ]
-      }
+      },
       // {
       //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
       //   include: path.resolve(__dirname, "assets"),
       //   type: "asset/resource"
       // }
-      // { test: /\.?s[ac]ss$/, use: ["style-loader", "css-loader"], exclude: /node_modules/ }
+      { test: /\.(css|scss|sass)$/, use: ["style-loader", "css-loader"], exclude: /node_modules/ }
     ]
   },
   plugins: [

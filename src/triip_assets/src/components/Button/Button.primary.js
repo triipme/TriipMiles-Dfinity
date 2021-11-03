@@ -9,11 +9,9 @@ const ButtonStyled = styled(LoadingButton)(({ theme }) => ({
 
 const ButtonPrimary = ({ title, onClick, variant = "primary", sx, loading = false }) => {
   return (
-    <>
-      <ButtonStyled loading={loading} variant={variant} sx={sx} onClick={onClick}>
-        {title}
-      </ButtonStyled>
-    </>
+    <ButtonStyled component="span" loading={loading} variant={variant} sx={sx} onClick={onClick}>
+      {title}
+    </ButtonStyled>
   );
 };
 

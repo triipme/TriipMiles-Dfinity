@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { Typography, Modal, Container, Button, Box, Grid, Tabs, Tab } from "@mui/material/index";
-import { Banner, ContentModalStyled, StepItemImage, TabPanelButton, TabStyled } from "./Home.style";
+import { Typography, Modal, Container, Button, Box, Grid, Tabs } from "@mui/material/index";
+import { Banner, StepItemImage, TabPanelButton, TabStyled } from "./Home.style";
 import HomeForm from "./Home.form";
-import homeGuess from "../../../assets/images/home_guess.url.png";
-import homeLogin from "../../../assets/images/home_login.url.png";
 import { Images } from "../../theme";
-import { ButtonPrimary } from "../../components";
 import { Footer } from "../../containers";
 import { useToaster } from "react-hot-toast";
 
@@ -35,10 +32,10 @@ const Home = () => {
         <Button variant="primary" onClick={handleOpenModal}>
           Create travel plan to earn $ICP
         </Button>
-        <Modal open={isOpen} onClose={handleCloseModal} >
-          <ContentModalStyled>
-            <HomeForm handleIsOpen={setIsOpen} />
-          </ContentModalStyled>
+        <Modal open={isOpen} onClose={handleCloseModal}>
+          <div>
+            <HomeForm />
+          </div>
         </Modal>
       </Container>
       <Banner
