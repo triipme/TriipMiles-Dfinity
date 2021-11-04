@@ -34,7 +34,7 @@ const Home = () => {
         </Button>
         <Modal open={isOpen} onClose={handleCloseModal}>
           <div>
-            <HomeForm />
+            <HomeForm handleIsOpenParent={setIsOpen} />
           </div>
         </Modal>
       </Container>

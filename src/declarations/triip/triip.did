@@ -7,8 +7,10 @@ type TravelPlanUpdate =
 type TravelPlanInformation = 
  record {
    activities: opt vec bool;
+   created_at: opt int;
    days: opt nat;
    destination: opt text;
+   img: opt text;
    join_type: opt nat;
    public_mode: opt bool;
    timeEnd: opt int;
@@ -42,5 +44,6 @@ service : {
   createTravelPlan: (TravelPlanUpdate) -> (Result);
   delete: () -> (Result);
   read: () -> (Result_1);
-  update: (Profile) -> (Result);
+  update: (ProfileUpdate) -> (Result);
+  updateTravelPlan: (TravelPlanUpdate) -> (Result);
 }

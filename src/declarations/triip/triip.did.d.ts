@@ -10,11 +10,13 @@ export type Result = { 'ok' : null } |
 export type Result_1 = { 'ok' : Profile } |
   { 'err' : Error };
 export interface TravelPlanInformation {
+  'img' : [] | [string],
   'destination' : [] | [string],
   'join_type' : [] | [bigint],
   'timeStart' : [] | [bigint],
   'days' : [] | [bigint],
   'activities' : [] | [Array<boolean>],
+  'created_at' : [] | [bigint],
   'public_mode' : [] | [boolean],
   'timeEnd' : [] | [bigint],
 }
@@ -28,5 +30,6 @@ export interface _SERVICE {
   'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
   'delete' : () => Promise<Result>,
   'read' : () => Promise<Result_1>,
-  'update' : (arg_0: Profile) => Promise<Result>,
+  'update' : (arg_0: ProfileUpdate) => Promise<Result>,
+  'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }

@@ -22,74 +22,84 @@ import toast, { Toaster } from "react-hot-toast";
 import { ContentModalStyled } from "./Home.style";
 import { theme } from "../../theme";
 
-const HomeForm = () => {
+const HomeForm = ({ handleIsOpenParent }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [createdStatus, setCreatedStatus] = useState("TP");
   const { activities, join_type } = useSelector(state => state.static.travelplan);
   const [imgHP, setImgHP] = useState("");
+  const [nntp] = useState(customAlphabet("tpif_44_djattp", 24)());
   const actor = useContext(ActorContext);
+  const [isUpdate, setIsUpdate] = useState(false);
   const {
     control,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
+    getValues,
+    setValue
   } = useForm({
     defaultValues: {
       destination: "",
       join_type: join_type[0],
-      public_mode: false
+      public_mode: false,
+      img: ""
     }
   });
 
-  const handleUpFileHP = async e => {
-    const img = await resizeImg({ blob: e.target.files[0], asprX: 16, asprY: 16 });
-    setImgHP(img);
-    setCreatedStatus("HPSuccess");
-  };
-
-  const onSubmit = async data => {
+  const body = () => {
     const {
       destination,
       join_type: joinStatus,
       timeStart,
       timeEnd,
       public_mode,
+      img,
       ...activities
-    } = data;
-    const body = {
-      idtp: customAlphabet("tpif_44_djattp", 24)(),
+    } = getValues();
+    return {
+      idtp: nntp,
       travel_plan: {
         destination: [destination],
         join_type: [join_type.findIndex(item => item === joinStatus) + 1],
         activities: [Object.values(activities)],
         timeStart: [moment(timeStart).unix()],
         timeEnd: [moment(timeEnd).unix()],
+        created_at: [moment(new Date()).unix()],
         days: [
           moment
             .duration(moment(timeEnd).unix(), "s")
             .subtract(moment.duration(moment(timeStart).unix(), "s"))
             .days()
         ],
-        public_mode: [public_mode]
+        public_mode: [public_mode],
+        img: [img]
       }
     };
+  };
+
+  const handleUpFileHP = async e => {
+    const img = await resizeImg({ blob: e.target.files[0], asprX: 16, asprY: 16 });
+    setImgHP(img);
+    setValue("img", img);
+    console.log(actor);
     if (!!actor) {
       setIsLoading(true);
       actor
-        ?.createTravelPlan(body)
+        ?.updateTravelPlan(body())
         .then(async result => {
           if ("ok" in result) {
             console.log(result.ok);
             toast.success("Success !.");
-            setCreatedStatus("HP");
+            setCreatedStatus("HPSuccess");
             // handleIsOpenParent(false);
-            reset();
           } else {
             console.error(result.err);
             setIsLoading(false);
           }
         })
-        .catch(err => {})
+        .catch(err => {
+          console.log(err);
+        })
         .finally(() => {
           setIsLoading(false);
         });
@@ -97,6 +107,60 @@ const HomeForm = () => {
       toast.error("Please sign in!.");
     }
   };
+
+  const onSubmit = async () => {
+    if (!!actor) {
+      setIsLoading(true);
+      actor
+        ?.createTravelPlan(body())
+        .then(async result => {
+          if ("ok" in result) {
+            console.log(result.ok);
+            toast.success("Success !.");
+            setCreatedStatus("HP");
+            // handleIsOpenParent(false);
+          } else {
+            console.error(result.err);
+            setIsLoading(false);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      toast.error("Please sign in!.");
+    }
+  };
+
+  const onUpdate = async () => {
+    if (!!actor) {
+      setIsLoading(true);
+      actor
+        ?.updateTravelPlan(body())
+        .then(async result => {
+          if ("ok" in result) {
+            console.log(result.ok);
+            toast.success("Success !.");
+            handleIsOpenParent(false);
+          } else {
+            console.error(result.err);
+            setIsLoading(false);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      toast.error("Please sign in!.");
+    }
+  };
+
   return (
     <div>
       <ContentModalStyled>
@@ -196,13 +260,9 @@ const HomeForm = () => {
                       style={{ display: "none" }}
                       onChange={handleUpFileHP}
                     />
-                    <ButtonPrimary title="Submit Proof" />
+                    <ButtonPrimary loading={isLoading} title="Submit Proof" />
                   </label>
-                  <ButtonPrimary
-                    sx={{ mt: 2 }}
-                    title="Go to travel plans"
-                    onClick={() => setCreatedStatus("TP")}
-                  />
+                  <ButtonPrimary sx={{ mt: 2 }} title="Go to travel plans" onClick={() => {}} />
                 </Box>
               </ScrollHidden>
             ),
@@ -233,11 +293,7 @@ const HomeForm = () => {
                   </Typography>
                 </Box>
                 <Box>
-                  <ButtonPrimary
-                    sx={{ mt: 2 }}
-                    title="Go to travel plans"
-                    onClick={() => setCreatedStatus("TP")}
-                  />
+                  <ButtonPrimary sx={{ mt: 2 }} title="Go to travel plans" onClick={() => {}} />
                 </Box>
               </ScrollHidden>
             )

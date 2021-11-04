@@ -7,5 +7,7 @@ module TravelPlan {
       timeEnd:?Int;//timestamp to start travel, but time>current time
       days:?Nat;
       public_mode: ?Bool;
+      img: ?Text;
+      created_at:?Int;
   };
 }

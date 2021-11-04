@@ -108,7 +108,7 @@ actor {
     };
 
     //Update
-    public shared(msg) func update (profile: Profile) : async Result.Result<(),Error> {
+    public shared(msg) func update (profile: ProfileUpdate) : async Result.Result<(),Error> {
         let callerId = msg.caller;
         
         //Reject AnonymousIndetity
@@ -130,7 +130,7 @@ actor {
         switch (result) {
             //Do not allow update to profiles that haven't been create yet
             case null{
-                #err(#NotFound)
+                #err(#NotFound);
             };
             case(? v){
                 profiles := Trie.replace(
@@ -181,8 +181,6 @@ actor {
     public shared(msg) func createTravelPlan(travelplan : TravelPlanUpdate) : async Result.Result<(),Error>{
         let callerId = msg.caller;
 
-        Debug.print(debug_show(travelplan));
-
         if(Principal.toText(callerId)=="2vxsx-fae"){
             return #err(#NotAuthorized);
         };
@@ -204,11 +202,51 @@ actor {
             // If there are no matches, update profiles
             case null {
                 travelplans := newTravelPlan;
-                #ok(());
+                let rs = Trie.find(
+                    travelplans,
+                    id(travelplan.idtp),
+                    Text.equal);
+                #ok();
             };
             // Matches pattern of type - opt Profile
             case (? v ){
                 #err(#SomethingWrong);
+            };
+        };
+    };
+    public shared(msg) func updateTravelPlan(travelplan : TravelPlanUpdate) : async Result.Result<(),Error>{
+        let callerId = msg.caller;
+        
+        if(Principal.toText(callerId)=="2vxsx-fae"){
+            return #err(#NotAuthorized);
+        };
+
+        let plan : TravelPlan = {
+            id = travelplan.idtp;
+            uid = callerId;
+            travel_plan = travelplan.travel_plan;
+        };
+        
+        let rs = Trie.find(
+            travelplans,
+            id(travelplan.idtp),
+            Text.equal,
+        );
+
+        switch(rs) {
+            // If there are no matches, update profiles
+            case null {
+                #err(#NotFound);
+            };
+            // Matches pattern of type - opt Profile
+            case (? v ){
+                travelplans := Trie.replace(
+                    travelplans,
+                    id(travelplan.idtp),
+                    Text.equal,
+                    ?plan
+                ).0;
+                #ok(());
             };
         };
     };

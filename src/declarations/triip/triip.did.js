@@ -9,11 +9,13 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
   const TravelPlanInformation = IDL.Record({
+    'img' : IDL.Opt(IDL.Text),
     'destination' : IDL.Opt(IDL.Text),
     'join_type' : IDL.Opt(IDL.Nat),
     'timeStart' : IDL.Opt(IDL.Int),
     'days' : IDL.Opt(IDL.Nat),
     'activities' : IDL.Opt(IDL.Vec(IDL.Bool)),
+    'created_at' : IDL.Opt(IDL.Int),
     'public_mode' : IDL.Opt(IDL.Bool),
     'timeEnd' : IDL.Opt(IDL.Int),
   });
@@ -28,7 +30,8 @@ export const idlFactory = ({ IDL }) => {
     'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
     'delete' : IDL.Func([], [Result], []),
     'read' : IDL.Func([], [Result_1], []),
-    'update' : IDL.Func([Profile], [Result], []),
+    'update' : IDL.Func([ProfileUpdate], [Result], []),
+    'updateTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
   });
 };
 export const init = ({ IDL }) => { return []; };
