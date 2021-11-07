@@ -78,33 +78,37 @@ const HomeForm = ({ handleIsOpenParent }) => {
   };
 
   const handleUpFileHP = async e => {
-    const img = await resizeImg({ blob: e.target.files[0], asprX: 16, asprY: 16 });
-    setImgHP(img);
-    setValue("img", img);
-    console.log(actor);
-    if (!!actor) {
-      setIsLoading(true);
-      actor
-        ?.updateTravelPlan(body())
-        .then(async result => {
-          if ("ok" in result) {
-            console.log(result.ok);
-            toast.success("Success !.");
-            setCreatedStatus("HPSuccess");
-            // handleIsOpenParent(false);
-          } else {
-            console.error(result.err);
+    const img = await resizeImg({ blob: e.target.files[0], asprX: 20, asprY: 20 });
+    if (!!img) {
+      setImgHP(img);
+      setValue("img", img);
+      console.log(actor);
+      if (!!actor) {
+        setIsLoading(true);
+        actor
+          ?.updateTravelPlan(body())
+          .then(async result => {
+            if ("ok" in result) {
+              console.log(result.ok);
+              toast.success("Success !.");
+              setCreatedStatus("HPSuccess");
+              // handleIsOpenParent(false);
+            } else {
+              console.error(result.err);
+              setIsLoading(false);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+          .finally(() => {
             setIsLoading(false);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+          });
+      } else {
+        toast.error("Please sign in!.");
+      }
     } else {
-      toast.error("Please sign in!.");
+      toast.error("Please check image size!");
     }
   };
 
@@ -286,7 +290,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                   </Typography>
                   <Typography sx={{ mb: 1 }} variant="body2" align="center">
                     You will receive 33.0 TIIM <br />
-                    when you travel proof if approved.
+                    when your travel proof is approved
                   </Typography>
                   <Typography sx={{ mb: 1 }} variant="body2" align="center">
                     Go to your Travel Plans to review, edit your submitted plans.

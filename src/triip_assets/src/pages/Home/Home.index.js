@@ -5,6 +5,7 @@ import HomeForm from "./Home.form";
 import { Images } from "../../theme";
 import { Footer } from "../../containers";
 import { useToaster } from "react-hot-toast";
+import ReactPlayer from "react-player/lazy";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,10 +41,13 @@ const Home = () => {
       </Container>
       <Banner
         sx={{
+          display: "grid",
+          placeItems: "center",
           p: 0,
           backgroundImage: `url(https://ik.imagekit.io/1cfogorcfir/home_login_gcY1vzK7V_.png?updatedAt=1635851167552)`
-        }}
-      />
+        }}>
+        <ReactPlayer width="70%" height="85%" url="https://youtu.be/78hvrYFh26w" />
+      </Banner>
       <Container maxWidth="lg" sx={{ textAlign: "center", my: 10 }}>
         <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
           Our strategic partners

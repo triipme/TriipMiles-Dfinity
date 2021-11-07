@@ -10,8 +10,8 @@ export const resizeImg = ({ blob, asprX, asprY }) => {
       0,
       uri => resolve(uri),
       "base64",
-      asprX * 100 * 0.75,
-      asprY * 100 * 0.75
+      asprX * 100 * 0.05,
+      asprY * 100 * 0.05
     );
   });
 };
