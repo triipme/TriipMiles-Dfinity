@@ -1,6 +1,6 @@
 export const idlFactory = ({ IDL }) => {
   const User = IDL.Record({ 'username' : IDL.Opt(IDL.Text) });
-  const ProfileUpdate = IDL.Record({ 'user' : User });
+  const Profile = IDL.Record({ 'user' : User });
   const Error = IDL.Variant({
     'AlreadyExisting' : IDL.Null,
     'NotFound' : IDL.Null,
@@ -23,14 +23,11 @@ export const idlFactory = ({ IDL }) => {
     'idtp' : IDL.Text,
     'travel_plan' : TravelPlanInformation,
   });
-  const Profile = IDL.Record({ 'id' : IDL.Principal, 'user' : User });
-  const Result_1 = IDL.Variant({ 'ok' : Profile, 'err' : Error });
+  const Result_1 = IDL.Variant({ 'ok' : IDL.Opt(Profile), 'err' : Error });
   return IDL.Service({
-    'create' : IDL.Func([ProfileUpdate], [Result], []),
+    'create' : IDL.Func([Profile], [Result], []),
     'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
-    'delete' : IDL.Func([], [Result], []),
     'read' : IDL.Func([], [Result_1], []),
-    'update' : IDL.Func([ProfileUpdate], [Result], []),
     'updateTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
   });
 };

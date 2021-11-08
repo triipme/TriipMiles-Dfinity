@@ -1,4 +1,4 @@
-module TravelPlan {
+module{
   public type TravelPlanInformation = {
       destination: ?Text;
       join_type: ?Nat;

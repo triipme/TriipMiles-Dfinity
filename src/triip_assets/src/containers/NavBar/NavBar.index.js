@@ -49,10 +49,11 @@ const NavBar = ({ handleActor }) => {
 
   useEffect(() => {
     // Read Profile
+    console.log(actor);
     actor?.read().then(rs => {
       console.log(rs);
       if ("ok" in rs) {
-        setProfile(rs.ok);
+        setProfile(rs.ok[0]);
       } else {
         setIsOpen(true);
       }
@@ -79,6 +80,8 @@ const NavBar = ({ handleActor }) => {
     setProfile(undefined);
     // setPrincipal(await authClient.getIdentity());
   };
+
+  console.log(profile);
 
   return (
     <ContainerStyled maxWidth="xl">

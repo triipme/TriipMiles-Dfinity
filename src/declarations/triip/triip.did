@@ -19,19 +19,14 @@ type TravelPlanInformation =
 type Result_1 = 
  variant {
    err: Error;
-   ok: Profile;
+   ok: opt Profile;
  };
 type Result = 
  variant {
    err: Error;
    ok;
  };
-type ProfileUpdate = record {user: User;};
-type Profile = 
- record {
-   id: principal;
-   user: User;
- };
+type Profile = record {user: User;};
 type Error = 
  variant {
    AlreadyExisting;
@@ -40,10 +35,8 @@ type Error =
    SomethingWrong;
  };
 service : {
-  create: (ProfileUpdate) -> (Result);
+  create: (Profile) -> (Result);
   createTravelPlan: (TravelPlanUpdate) -> (Result);
-  delete: () -> (Result);
   read: () -> (Result_1);
-  update: (ProfileUpdate) -> (Result);
   updateTravelPlan: (TravelPlanUpdate) -> (Result);
 }

@@ -9,252 +9,100 @@ import Principal "mo:base/Principal";
 import User "model/User";
 import TravelPlan "model/TravelPlan";
 
+import Types "Types";
+import State "State";
+
 actor {
-    /* ------------------------- User --------------------------- */
-    type Profile = {
-        user : User.User;
-        id: Principal; //Principal as id
-    };
-    type ProfileUpdate = {
-        user : User.User;
-    };
-
-    /* ------------------------- TravelPlan --------------------------- */
-    type TravelPlan = {
-        travel_plan: TravelPlan.TravelPlanInformation;
-        id:Text;
-        uid:Principal;
-    };
-
-    type TravelPlanUpdate = {
-        travel_plan: TravelPlan.TravelPlanInformation;
-        idtp:Text;
-    };
-
-    /* ------------------------- Error --------------------------- */
-    type Error = {
-        #NotFound;
-        #AlreadyExisting;
-        #NotAuthorized;
-        #SomethingWrong;
-    };
-
     /*------------------------ App state--------------------------- */
-    stable var profiles: Trie.Trie<Principal,Profile> = Trie.empty();
-    stable var travelplans :Trie.Trie<Text,TravelPlan> = Trie.empty();
-    
-    // App interface
-    
-    
+    var state : State.State = State.empty();
+
     /* ------------------------------------------------------------------------------------------------------- */
     // User
     // Create
-    public shared(msg) func create (profile: ProfileUpdate) : async Result.Result<(),Error> {
-        let callerId = msg.caller;
+    public shared(msg) func create(profile: Types.Profile) : async Result.Result<(),Types.Error> {
+        let uid = msg.caller;
 
-        //Reject AnonymousIndetity
-        if(Principal.toText(callerId)=="2vxsx-fae"){
+        if(Principal.toText(uid)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
 
-        // let profileId = next; // id current of profile
-        // next += 1; //id for next profile
-        
-        // Associate user profile with thier principal
-        let userProfile : Profile = {
-            user = profile.user;
-            id = callerId;
-        };
+        let rsCreateUser = state.profiles.put(uid,profile);
 
-        let (newProfiles, existing) = Trie.put(
-            profiles,           //Target trie
-            // key(profileId),     // Key
-            key(callerId),
-            Principal.equal,          //Equality Checker
-            // profile             // insert profile
-            userProfile
-        );
+        let rsReadUser = state.profiles.get(uid);
 
-        // If there is an orginal value, do not update
-        switch(existing) {
-            // If there are no matches, update profiles
-            case null {
-                profiles := newProfiles;
-                #ok(());
-            };
-            // Matches pattern of type - opt Profile
-            case (? v ){
-                #err(#AlreadyExisting);
-            };
-        };
-    };
-
-    // Read
-    // public func read  (profileId : Nat ) : async ?Profile {
-    public shared(msg) func read () : async Result.Result<Profile,Error> {
-        let callerId = msg.caller;
-        //Reject AnonymousIndetity
-        if(Principal.toText(callerId)=="2vxsx-fae"){
-            return #err(#NotAuthorized);//isNotAuthorized
-        };
-        
-        let result = Trie.find(
-            profiles,
-            // key(profileId),
-            key(callerId),
-            Principal.equal
-        );
-        return Result.fromOption(result,#NotFound);
-    };
-
-    //Update
-    public shared(msg) func update (profile: ProfileUpdate) : async Result.Result<(),Error> {
-        let callerId = msg.caller;
-        
-        //Reject AnonymousIndetity
-        if(Principal.toText(callerId)=="2vxsx-fae"){
-            return #err(#NotAuthorized);//isNotAuthorized
-        };
-
-        // Associate user profile with thier principal
-        let userProfile : Profile = {
-            user = profile.user;
-            id = callerId;
-        };
-
-        let result = Trie.find(
-            profiles,
-            key(callerId),
-            Principal.equal
-        );
-        switch (result) {
-            //Do not allow update to profiles that haven't been create yet
+        switch(rsReadUser){
             case null{
                 #err(#NotFound);
             };
-            case(? v){
-                profiles := Trie.replace(
-                    profiles,           //Target trie
-                    key(callerId),     // Key
-                    Principal.equal,          //Equality Checker
-                    ?userProfile    
-                ).0;
+            case (? v){
                 #ok(());
             };
-        };
+        }
     };
+    public shared(msg) func read() : async Result.Result<?Types.Profile,Types.Error>{
+        let uid = msg.caller;
 
-    //Delete
-    public shared(msg) func delete () : async Result.Result<(),Error> {
-    // public func delete (profileId: Nat) : async Bool {
-        let callerId = msg.caller;
-        
-        //Reject AnonymousIndetity
-        if(Principal.toText(callerId)=="2vxsx-fae"){
+        if(Principal.toText(uid)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
+        let rsReadUser = state.profiles.get(uid);
 
-        let result = Trie.find(
-            profiles,
-            key(callerId),
-            Principal.equal
-        );
-        switch (result) {
-            //Do not allow update to profiles that haven't been create yet
+        switch(rsReadUser){
             case null{
                 #err(#NotFound);
             };
-            case(? v){
-                profiles := Trie.replace(
-                    profiles,           //Target trie
-                    key(callerId),     // Key
-                    Principal.equal,          //Equality Checker
-                    null    
-                ).0;
-                #ok(());
+            case (? v){
+                #ok(rsReadUser);
             };
-        };
+        }
     };
-    /* ------------------------------------------------------------------------------------------------------- */
-    // TravelPlan
-    //Create
-    public shared(msg) func createTravelPlan(travelplan : TravelPlanUpdate) : async Result.Result<(),Error>{
-        let callerId = msg.caller;
 
-        if(Principal.toText(callerId)=="2vxsx-fae"){
-            return #err(#NotAuthorized);
+    public shared(msg) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(),Types.Error>{
+        let uid = msg.caller;
+
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            return #err(#NotAuthorized);//isNotAuthorized
         };
 
-        let plan : TravelPlan = {
-            travel_plan = travelplan.travel_plan;
-            uid = callerId;
-            id = travelplan.idtp;
-        };
-        
-        let (newTravelPlan,status) = Trie.put(
-            travelplans,
-            id(travelplan.idtp),
-            Text.equal,
-            plan
-        );
-
-        switch(status) {
-            // If there are no matches, update profiles
-            case null {
-                travelplans := newTravelPlan;
-                let rs = Trie.find(
-                    travelplans,
-                    id(travelplan.idtp),
-                    Text.equal);
-                #ok();
-            };
-            // Matches pattern of type - opt Profile
-            case (? v ){
-                #err(#SomethingWrong);
-            };
-        };
-    };
-    public shared(msg) func updateTravelPlan(travelplan : TravelPlanUpdate) : async Result.Result<(),Error>{
-        let callerId = msg.caller;
-        
-        if(Principal.toText(callerId)=="2vxsx-fae"){
-            return #err(#NotAuthorized);
+        let plan : Types.TravelPlan = {
+            uid = uid;
+            travel_plan = travel_plan.travel_plan;
         };
 
-        let plan : TravelPlan = {
-            id = travelplan.idtp;
-            uid = callerId;
-            travel_plan = travelplan.travel_plan;
-        };
-        
-        let rs = Trie.find(
-            travelplans,
-            id(travelplan.idtp),
-            Text.equal,
-        );
+        state.travelplans.put(travel_plan.idtp,plan);
 
-        switch(rs) {
-            // If there are no matches, update profiles
-            case null {
+        let rsReadTP = state.travelplans.get(travel_plan.idtp);
+
+        switch(rsReadTP){
+            case null{
                 #err(#NotFound);
             };
-            // Matches pattern of type - opt Profile
-            case (? v ){
-                travelplans := Trie.replace(
-                    travelplans,
-                    id(travelplan.idtp),
-                    Text.equal,
-                    ?plan
-                ).0;
+            case (? v){
                 #ok(());
             };
-        };
+        }
     };
+    public shared(msg) func updateTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(),Types.Error>{
+        let uid = msg.caller;
 
-    private func key(x : Principal) : Trie.Key<Principal> {
-        return {key = x; hash = Principal.hash(x) };
-    };
-    private func id(x : Text) : Trie.Key<Text>{
-        return {key = x; hash = Text.hash(x)};
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            return #err(#NotAuthorized);//isNotAuthorized
+        };
+
+        let plan : Types.TravelPlan = {
+            uid = uid;
+            travel_plan = travel_plan.travel_plan;
+        };
+
+        let rsReadTP = state.travelplans.replace(travel_plan.idtp,plan);
+
+        switch(rsReadTP){
+            case null{
+                #err(#NotFound);
+            };
+            case (? v){
+                #ok(());
+            };
+        }
     }
 }

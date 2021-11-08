@@ -1,4 +1,4 @@
-module User {
+module {
   public type User = {
       username : ?Text;
   };

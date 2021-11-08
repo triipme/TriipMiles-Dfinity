@@ -3,11 +3,10 @@ export type Error = { 'AlreadyExisting' : null } |
   { 'NotFound' : null } |
   { 'NotAuthorized' : null } |
   { 'SomethingWrong' : null };
-export interface Profile { 'id' : Principal, 'user' : User }
-export interface ProfileUpdate { 'user' : User }
+export interface Profile { 'user' : User }
 export type Result = { 'ok' : null } |
   { 'err' : Error };
-export type Result_1 = { 'ok' : Profile } |
+export type Result_1 = { 'ok' : [] | [Profile] } |
   { 'err' : Error };
 export interface TravelPlanInformation {
   'img' : [] | [string],
@@ -26,10 +25,8 @@ export interface TravelPlanUpdate {
 }
 export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
-  'create' : (arg_0: ProfileUpdate) => Promise<Result>,
+  'create' : (arg_0: Profile) => Promise<Result>,
   'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
-  'delete' : () => Promise<Result>,
   'read' : () => Promise<Result_1>,
-  'update' : (arg_0: ProfileUpdate) => Promise<Result>,
   'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }

@@ -34,6 +34,7 @@ const asset_entry = path.join("src", "triip_assets", "src", "index.html");
 module.exports = {
   target: "web",
   mode: isDevelopment ? "development" : "production",
+  watch: isDevelopment,
   entry: {
     // The frontend.entrypoint points to the HTML file for this build, so we need
     // to replace the extension to `.js`.
