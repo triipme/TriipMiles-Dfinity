@@ -38,5 +38,6 @@ service : {
   create: (Profile) -> (Result);
   createTravelPlan: (TravelPlanUpdate) -> (Result);
   read: () -> (Result_1);
+  readAllTPUser: () -> (Result);
   updateTravelPlan: (TravelPlanUpdate) -> (Result);
 }

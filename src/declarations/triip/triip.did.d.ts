@@ -28,5 +28,6 @@ export interface _SERVICE {
   'create' : (arg_0: Profile) => Promise<Result>,
   'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
   'read' : () => Promise<Result_1>,
+  'readAllTPUser' : () => Promise<Result>,
   'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }

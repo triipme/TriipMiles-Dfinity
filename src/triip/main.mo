@@ -4,10 +4,8 @@ import Hash "mo:base/Hash";
 import Nat "mo:base/Nat";
 import Text "mo:base/Text";
 import Result "mo:base/Result";
+import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
-
-import User "model/User";
-import TravelPlan "model/TravelPlan";
 
 import Types "Types";
 import State "State";
@@ -15,6 +13,43 @@ import State "State";
 actor {
     /*------------------------ App state--------------------------- */
     var state : State.State = State.empty();
+
+    // /*public query*/ func getState() : async State.StateShared {
+    //     State.share(state)
+    // };
+
+    // /*public*/ func setState(st : State.StateShared) : async () {
+    //     state := State.fromShared(st);
+    // };
+
+    stable var profiles : [(Principal,Types.Profile)] = [];
+    stable var travelplans : [(Text,Types.TravelPlan)] = [];
+
+    system func preupgrade() {
+        Debug.print("Begin preupgrade");
+        profiles := Iter.toArray(state.profiles.entries());
+        travelplans := Iter.toArray(state.travelplans.entries());
+        for((k,v) in Iter.fromArray(profiles)) {
+            Debug.print("uid : " # Principal.toText(k));
+        };
+        for((k,v) in Iter.fromArray(travelplans)) {
+            Debug.print("tpid : " # (k));
+        };
+        Debug.print("End preupgrade");
+    };
+
+    system func postupgrade() {
+        Debug.print("Begin postupgrade");
+        for((k,v) in Iter.fromArray(profiles)) {
+            state.profiles.put(k,v);
+            Debug.print("uid : " # Principal.toText(k));
+        };
+        for((k,v) in Iter.fromArray(travelplans)) {
+            state.travelplans.put(k,v);
+            Debug.print("tpid : " # (k));
+        };
+        Debug.print("End postupgrade");
+    };
 
     /* ------------------------------------------------------------------------------------------------------- */
     // User
@@ -46,6 +81,12 @@ actor {
             return #err(#NotAuthorized);//isNotAuthorized
         };
         let rsReadUser = state.profiles.get(uid);
+
+
+        for(i in state.travelplans.vals()){
+            Debug.print("test");
+            Debug.print(debug_show(i));
+        };
 
         switch(rsReadUser){
             case null{
@@ -104,5 +145,9 @@ actor {
                 #ok(());
             };
         }
-    }
+    };
+
+    public shared(msg) func readAllTPUser() : async Result.Result<(),Types.Error>{
+        #ok(());
+    };
 }

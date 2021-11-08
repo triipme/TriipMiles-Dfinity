@@ -28,6 +28,7 @@ export const idlFactory = ({ IDL }) => {
     'create' : IDL.Func([Profile], [Result], []),
     'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
     'read' : IDL.Func([], [Result_1], []),
+    'readAllTPUser' : IDL.Func([], [Result], []),
     'updateTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
   });
 };
