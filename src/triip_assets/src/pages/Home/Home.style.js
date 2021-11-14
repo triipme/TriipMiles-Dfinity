@@ -20,6 +20,7 @@ export const Banner = styled("div")`
   height: 500px;
   background-size: auto 100%;
   background-repeat: no-repeat;
+  background-position: center;
 `;
 
 export const StepItemImage = styled("img")`

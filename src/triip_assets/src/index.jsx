@@ -12,7 +12,11 @@ const store = configureStore({
     static: staticReducer,
     user: userReducer
   },
-  devTools: process.env.NODE_ENV !== "production"
+  devTools: process.env.NODE_ENV !== "production",
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false
+    })
 });
 
 const Index = () => {

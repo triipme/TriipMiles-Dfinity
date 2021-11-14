@@ -16,10 +16,20 @@ type TravelPlanInformation =
    timeEnd: opt int;
    timeStart: opt int;
  };
-type Result_1 = 
+type TravelPlan = 
+ record {
+   travel_plan: TravelPlanInformation;
+   uid: principal;
+ };
+type Result_2 = 
  variant {
    err: Error;
    ok: opt Profile;
+ };
+type Result_1 = 
+ variant {
+   err: Error;
+   ok: vec TravelPlan;
  };
 type Result = 
  variant {
@@ -37,7 +47,7 @@ type Error =
 service : {
   create: (Profile) -> (Result);
   createTravelPlan: (TravelPlanUpdate) -> (Result);
-  read: () -> (Result_1);
-  readAllTPUser: () -> (Result);
+  read: () -> (Result_2);
+  readAllTPUser: () -> (Result_1);
   updateTravelPlan: (TravelPlanUpdate) -> (Result);
 }

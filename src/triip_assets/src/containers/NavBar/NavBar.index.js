@@ -1,16 +1,18 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Modal, Typography, Box } from "@mui/material/index";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AuthClient } from "@dfinity/auth-client";
+import { Link } from "react-router-dom";
 
-import { NavLinkStyled } from "../../components/NavLink/NavLink";
-import { navbar } from "../../routers/navbar";
 import { actorSlice, login } from "../../slice/user/userSlice";
 import { ContainerStyled, FormStyled } from "./NavBar.style";
 import { canisterId, createActor } from "../../../../declarations/triip";
 import FormProfile from "./NavBar.form";
+import { Images } from "../../theme";
+import { LinkStyled, NavLinkStyled } from "../../components";
+import { account, navbar } from "../../utils/paths";
 
 const NavBar = ({ handleActor }) => {
   const theme = useTheme();
@@ -22,7 +24,7 @@ const NavBar = ({ handleActor }) => {
   const dispatch = useDispatch();
   const { isLogin } = useSelector(state => state.user);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     (async () => {
       AuthClient.create().then(async client => {
         setAuthClient(client);
@@ -40,6 +42,7 @@ const NavBar = ({ handleActor }) => {
     });
     handleActor(actor);
     setActor(actor);
+    dispatch(actorSlice(actor));
   };
 
   useEffect(() => {
@@ -49,7 +52,6 @@ const NavBar = ({ handleActor }) => {
 
   useEffect(() => {
     // Read Profile
-    console.log(actor);
     actor?.read().then(rs => {
       console.log(rs);
       if ("ok" in rs) {
@@ -81,11 +83,9 @@ const NavBar = ({ handleActor }) => {
     // setPrincipal(await authClient.getIdentity());
   };
 
-  console.log(profile);
-
   return (
     <ContainerStyled maxWidth="xl">
-      <div>
+      <div style={{ display: "flex", alignItems: "center" }}>
         {navbar.map((item, _) => (
           <NavLinkStyled
             key={item.path}
@@ -93,15 +93,21 @@ const NavBar = ({ handleActor }) => {
             activeStyle={{
               color: !item?.exact && theme.palette.secondary.main
             }}>
-            {item.name}
+            {item.path === "/" ? (
+              <img style={{ display: "inline", width: 30 }} src={Images.logo} alt="" />
+            ) : (
+              item.name
+            )}
           </NavLinkStyled>
         ))}
       </div>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         {!!profile ? (
-          <Typography variant="h6" sx={{ mr: 2 }}>
-            {profile.user.username}
-          </Typography>
+          <LinkStyled to={account[1].nested[0].path}>
+            <Typography variant="h6" sx={{ mr: 2 }}>
+              {profile.user.username}
+            </Typography>
+          </LinkStyled>
         ) : (
           <Modal open={isOpen} onClose={() => setIsOpen(false)}>
             <FormStyled>

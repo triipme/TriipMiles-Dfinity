@@ -3,6 +3,7 @@ import Debug "mo:base/Debug";
 import Hash "mo:base/Hash";
 import Nat "mo:base/Nat";
 import Text "mo:base/Text";
+import Array "mo:base/Array";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
@@ -147,7 +148,19 @@ actor {
         }
     };
 
-    public shared(msg) func readAllTPUser() : async Result.Result<(),Types.Error>{
-        #ok(());
+    public shared(msg) func readAllTPUser() : async Result.Result<[Types.TravelPlan],Types.Error>{
+        let uid = msg.caller;
+        var tps : [Types.TravelPlan] = [];
+
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            return #err(#NotAuthorized);//isNotAuthorized
+        };
+        
+        for(val in state.travelplans.vals()){
+            if(Principal.toText(val.uid) == Principal.toText(uid)){
+                tps := Array.append<Types.TravelPlan>([val],tps);
+            }
+        };
+        #ok((tps));
     };
 }

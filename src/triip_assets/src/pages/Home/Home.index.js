@@ -88,7 +88,8 @@ const Home = () => {
               flex: 1,
               backgroundImage: `url(${Images.home.app})`,
               backgroundSize: "auto 100%",
-              backgroundRepeat: "no-repeat"
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center"
               // height: 750
             }}></Box>
           <Box sx={{ flex: 1 }}>

@@ -1,16 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 
 import { useForm } from "react-hook-form";
 import { ButtonPrimary, InputText } from "../../components";
 import { styled } from "@mui/system";
 import { Typography } from "@mui/material";
-import { ActorContext } from "../../routers";
+import { useSelector } from "react-redux";
 
 const FormProfileStyled = styled("div")({});
 
 const FormProfile = ({ handleModalEvent }) => {
-  const actor = useContext(ActorContext);
+  const { actor } = useSelector(state => state.user);
   const {
     control,
     handleSubmit,

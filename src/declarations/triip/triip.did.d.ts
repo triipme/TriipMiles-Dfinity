@@ -6,8 +6,14 @@ export type Error = { 'AlreadyExisting' : null } |
 export interface Profile { 'user' : User }
 export type Result = { 'ok' : null } |
   { 'err' : Error };
-export type Result_1 = { 'ok' : [] | [Profile] } |
+export type Result_1 = { 'ok' : Array<TravelPlan> } |
   { 'err' : Error };
+export type Result_2 = { 'ok' : [] | [Profile] } |
+  { 'err' : Error };
+export interface TravelPlan {
+  'uid' : Principal,
+  'travel_plan' : TravelPlanInformation,
+}
 export interface TravelPlanInformation {
   'img' : [] | [string],
   'destination' : [] | [string],
@@ -27,7 +33,7 @@ export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
   'create' : (arg_0: Profile) => Promise<Result>,
   'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
-  'read' : () => Promise<Result_1>,
-  'readAllTPUser' : () => Promise<Result>,
+  'read' : () => Promise<Result_2>,
+  'readAllTPUser' : () => Promise<Result_1>,
   'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }

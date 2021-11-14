@@ -1,5 +1,5 @@
-import React, { useContext, useRef, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { Typography, Box } from "@mui/material/index";
 
@@ -12,8 +12,9 @@ import {
   InputText,
   ScrollHidden
 } from "../../components/index";
-import { ActorContext } from "../../routers";
 import { resizeImg } from "../../functions";
+
+import { storage, firebaseStorage } from "../../firebase/firebase";
 
 import moment from "moment";
 import { customAlphabet } from "nanoid";
@@ -28,7 +29,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
   const { activities, join_type } = useSelector(state => state.static.travelplan);
   const [imgHP, setImgHP] = useState("");
   const [nntp] = useState(customAlphabet("tpif_44_djattp", 24)());
-  const actor = useContext(ActorContext);
+  const { actor } = useSelector(state => state.user);
   const [isUpdate, setIsUpdate] = useState(false);
   const {
     control,
@@ -78,37 +79,43 @@ const HomeForm = ({ handleIsOpenParent }) => {
   };
 
   const handleUpFileHP = async e => {
-    const img = await resizeImg({ blob: e.target.files[0], asprX: 20, asprY: 20 });
-    if (!!img) {
-      setImgHP(img);
-      setValue("img", img);
-      console.log(actor);
-      if (!!actor) {
+    try {
+      const img = await resizeImg({ blob: e.target.files[0], asprX: 20, asprY: 20 });
+      const fileRef = firebaseStorage.ref(storage, `images/${img.name}`);
+      const snapshot = await firebaseStorage.uploadBytes(fileRef, img);
+      const url = await firebaseStorage.getDownloadURL(snapshot.ref);
+      if (!!img) {
         setIsLoading(true);
-        actor
-          ?.updateTravelPlan(body())
-          .then(async result => {
-            if ("ok" in result) {
-              console.log(result.ok);
-              toast.success("Success !.");
-              setCreatedStatus("HPSuccess");
-              // handleIsOpenParent(false);
-            } else {
-              console.error(result.err);
+        setImgHP(url);
+        setValue("img", url);
+        if (!!actor) {
+          actor
+            ?.updateTravelPlan(body())
+            .then(async result => {
+              if ("ok" in result) {
+                console.log(result.ok);
+                toast.success("Success !.");
+                setCreatedStatus("HPSuccess");
+                // handleIsOpenParent(false);
+              } else {
+                console.error(result.err);
+                setIsLoading(false);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            })
+            .finally(() => {
               setIsLoading(false);
-            }
-          })
-          .catch(err => {
-            console.log(err);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
+            });
+        } else {
+          toast.error("Please sign in!.");
+        }
       } else {
-        toast.error("Please sign in!.");
+        toast.error("Please check image size!");
       }
-    } else {
-      toast.error("Please check image size!");
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -138,33 +145,6 @@ const HomeForm = ({ handleIsOpenParent }) => {
       toast.error("Please sign in!.");
     }
   };
-
-  const onUpdate = async () => {
-    if (!!actor) {
-      setIsLoading(true);
-      actor
-        ?.updateTravelPlan(body())
-        .then(async result => {
-          if ("ok" in result) {
-            console.log(result.ok);
-            toast.success("Success !.");
-            handleIsOpenParent(false);
-          } else {
-            console.error(result.err);
-            setIsLoading(false);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
-      toast.error("Please sign in!.");
-    }
-  };
-
   return (
     <div>
       <ContentModalStyled>

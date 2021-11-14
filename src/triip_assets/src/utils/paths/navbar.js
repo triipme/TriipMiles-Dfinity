@@ -1,4 +1,4 @@
-import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage } from "../pages/index";
+import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage } from "../../pages";
 
 export const navbar = [
   {

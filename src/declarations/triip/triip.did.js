@@ -23,12 +23,17 @@ export const idlFactory = ({ IDL }) => {
     'idtp' : IDL.Text,
     'travel_plan' : TravelPlanInformation,
   });
-  const Result_1 = IDL.Variant({ 'ok' : IDL.Opt(Profile), 'err' : Error });
+  const Result_2 = IDL.Variant({ 'ok' : IDL.Opt(Profile), 'err' : Error });
+  const TravelPlan = IDL.Record({
+    'uid' : IDL.Principal,
+    'travel_plan' : TravelPlanInformation,
+  });
+  const Result_1 = IDL.Variant({ 'ok' : IDL.Vec(TravelPlan), 'err' : Error });
   return IDL.Service({
     'create' : IDL.Func([Profile], [Result], []),
     'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
-    'read' : IDL.Func([], [Result_1], []),
-    'readAllTPUser' : IDL.Func([], [Result], []),
+    'read' : IDL.Func([], [Result_2], []),
+    'readAllTPUser' : IDL.Func([], [Result_1], []),
     'updateTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
   });
 };
