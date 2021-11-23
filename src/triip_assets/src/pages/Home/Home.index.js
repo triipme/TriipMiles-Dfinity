@@ -13,7 +13,6 @@ const Home = () => {
   const handleOpenModal = () => setIsOpen(true);
   const handleCloseModal = () => setIsOpen(false);
   const handleTab = (_, v) => setTab(v);
-  console.log(tab);
   return (
     <Container maxWidth="xl" style={{ padding: 0 }}>
       <Notifications />

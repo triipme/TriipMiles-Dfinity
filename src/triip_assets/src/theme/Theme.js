@@ -1,50 +1,43 @@
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#48C2CA"
-    },
-    secondary: {
-      main: "#FAB84B"
-    },
-    white: {
-      main: "#fff"
-    }
-  },
-  typography: {
-    fontFamily: "Roboto",
-    fontSize: 16
-  },
-  components: {
-    MuiButton: {
-      variants: [
-        {
-          props: { variant: "primary" },
-          style: {
-            padding: "8px 20px",
-            color: "#fff",
-            borderRadius: 12,
-            boxShadow: "none",
-            fontWeight: "bold",
-            backgroundColor: "#48C2CA",
-            "&:hover": {
-              backgroundColor: "#FAB84B"
-            }
-          }
-        },
-        {
-          props: { variant: "secondary" },
-          style: {
-            padding: "8px 20px",
-            color: "#fff",
-            borderRadius: 12,
-            boxShadow: "none",
-            fontWeight: "bold",
-            backgroundColor: "#FAB84B"
-          }
-        }
-      ]
-    }
-  }
-});
-export default responsiveFontSizes(theme);
+import React from "react";
+import PropTypes from "prop-types";
+import { useMemo } from "react";
+// material
+import { CssBaseline } from "@mui/material";
+import { ThemeProvider, createTheme, StyledEngineProvider } from "@mui/material/styles";
+//
+import shape from "./shape";
+import palette from "./palette";
+import typography from "./typography";
+import componentsOverride from "./overrides";
+import shadows, { customShadows } from "./shadows";
+
+// ----------------------------------------------------------------------
+
+ThemeConfig.propTypes = {
+  children: PropTypes.node
+};
+
+export default function ThemeConfig({ children }) {
+  const themeOptions = useMemo(
+    () => ({
+      palette,
+      shape,
+      typography,
+      shadows,
+      customShadows
+    }),
+    []
+  );
+
+  const theme = createTheme(themeOptions);
+  theme.components = componentsOverride(theme);
+
+  return (
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
+    </StyledEngineProvider>
+  );
+}

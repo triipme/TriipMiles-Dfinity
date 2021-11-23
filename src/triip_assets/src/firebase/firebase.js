@@ -10,14 +10,16 @@ import * as firebaseStorage from "firebase/storage";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBjACgViANUQNJAnKdSQ-025NWHIiJ5Sl4",
-  authDomain: "triipicp.firebaseapp.com",
-  projectId: "triipicp",
-  storageBucket: "triipicp.appspot.com",
-  messagingSenderId: "868785571176",
-  appId: "1:868785571176:web:625877b19646bb4cfc02dd",
-  measurementId: "G-G4QK88X4YN"
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
+  measurementId: process.env.MEASUREMENT_ID
 };
+
+console.log(process.env);
 
 // Initialize Firebase
 //analytics is optional for this tutoral

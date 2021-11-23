@@ -1,3 +1,4 @@
+import React from "react";
 import { AccountPage } from "../../pages";
 import {
   AccountFeature,
@@ -10,35 +11,35 @@ export const account = [
   {
     path: "/account",
     name: "Account",
-    component: AccountPage
+    component: <AccountPage />
   },
   {
     nested: [
       {
         path: "/account/me",
         name: "Account",
-        component: AccountFeature,
-        exact: true
+        component: <AccountFeature />,
+        exact: false
       },
       {
         path: "/account/travelplans",
         name: "Travel Plans",
-        component: TravelPlansFeature
+        component: <TravelPlansFeature />
       },
       {
         path: "/account/notifications",
         name: "Notifications",
-        component: NotificationFeature
+        component: <NotificationFeature />
       },
       {
         path: "/account/bookings",
         name: "Bookings",
-        component: BookingFeature
+        component: <BookingFeature />
       },
       {
         path: "/account/sales",
         name: "Sales",
-        component: SalesFeature
+        component: <SalesFeature />
       }
     ]
   }

@@ -1,30 +1,31 @@
+import React from "react";
 import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage } from "../../pages";
 
 export const navbar = [
   {
     path: "/",
-    component: HomePage,
+    component: <HomePage />,
     name: "Home",
     exact: true
   },
   {
     path: "/stay",
-    component: StayPage,
+    component: <StayPage />,
     name: "Stay"
   },
   {
     path: "/experience",
-    component: ExperiencePage,
+    component: <ExperiencePage />,
     name: "Experience"
   },
   {
     path: "/share",
-    component: SharePage,
+    component: <SharePage />,
     name: "Share"
   },
   {
     path: "/shop",
-    component: ShopPage,
+    component: <ShopPage />,
     name: "Shop"
   }
 ];

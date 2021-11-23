@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { Typography, Box } from "@mui/material/index";
@@ -15,6 +15,7 @@ import {
 import { resizeImg } from "../../functions";
 
 import { storage, firebaseStorage } from "../../firebase/firebase";
+import { useUploadFile } from "../../hooks";
 
 import moment from "moment";
 import { customAlphabet } from "nanoid";
@@ -27,10 +28,11 @@ const HomeForm = ({ handleIsOpenParent }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [createdStatus, setCreatedStatus] = useState("TP");
   const { activities, join_type } = useSelector(state => state.static.travelplan);
-  const [imgHP, setImgHP] = useState("");
-  const [nntp] = useState(customAlphabet("tpif_44_djattp", 24)());
+  const [nntp] = useState(customAlphabet(process.env.NANOID_ALPHABET_TP, 24)());
   const { actor } = useSelector(state => state.user);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [image, progress, setFile] = useUploadFile();
+  const { profile } = useSelector(state => state.user);
   const {
     control,
     handleSubmit,
@@ -81,44 +83,45 @@ const HomeForm = ({ handleIsOpenParent }) => {
   const handleUpFileHP = async e => {
     try {
       const img = await resizeImg({ blob: e.target.files[0], asprX: 20, asprY: 20 });
-      const fileRef = firebaseStorage.ref(storage, `images/${img.name}`);
-      const snapshot = await firebaseStorage.uploadBytes(fileRef, img);
-      const url = await firebaseStorage.getDownloadURL(snapshot.ref);
-      if (!!img) {
-        setIsLoading(true);
-        setImgHP(url);
-        setValue("img", url);
-        if (!!actor) {
-          actor
-            ?.updateTravelPlan(body())
-            .then(async result => {
-              if ("ok" in result) {
-                console.log(result.ok);
-                toast.success("Success !.");
-                setCreatedStatus("HPSuccess");
-                // handleIsOpenParent(false);
-              } else {
-                console.error(result.err);
-                setIsLoading(false);
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            })
-            .finally(() => {
-              setIsLoading(false);
-            });
-        } else {
-          toast.error("Please sign in!.");
-        }
-      } else {
-        toast.error("Please check image size!");
-      }
+      await setFile({
+        file: img,
+        name: `${
+          process.env.NODE_ENV === "development" ? "development" : "production" || "production"
+        }/${profile?._id}/travel_plan/${nntp}/${customAlphabet(
+          img?.name ?? process.env.NANOID_ALPHABET_S3,
+          16
+        )()}`
+      });
     } catch (error) {
       console.log(error);
     }
   };
-
+  useEffect(() => {
+    (async () => {
+      if (!!image) {
+        setIsLoading(true);
+        console.log(image?._id);
+        setValue("img", image?._id);
+        if (!!actor?.updateTravelPlan) {
+          const result = await actor?.updateTravelPlan(body());
+          if ("ok" in result) {
+            console.log(result.ok);
+            toast.success("Success !.");
+            setCreatedStatus("HPSuccess");
+            // handleIsOpenParent(false);
+          } else {
+            console.error(result.err);
+          }
+          setIsLoading(false);
+        } else {
+          toast.error("Please sign in!.");
+        }
+        setIsLoading(false);
+      } else {
+        // toast.error("Please check image size!");
+      }
+    })();
+  }, [image]);
   const onSubmit = async () => {
     if (!!actor) {
       setIsLoading(true);
@@ -258,7 +261,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                     Uploading travel document
                   </Typography>
                   <img
-                    src={imgHP}
+                    src={image?.image}
                     style={{ width: "80%", height: 160, objectFit: "cover", borderRadius: 12 }}
                     alt="Uploading travel document"
                   />

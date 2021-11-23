@@ -4,19 +4,25 @@ import { Box } from "@mui/system";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useGetFile } from "../../../hooks";
 
 const TravelPlans = () => {
   const { actor } = useSelector(state => state.user);
   const [tps, setTps] = useState([]);
+  // const [fileUrl, setNameFile] = useGetFile();
+  // console.log(fileUrl);
   useEffect(() => {
     (async () => {
-      if (!!actor) {
+      if (!!actor.readAllTPUser) {
         const rs = await actor?.readAllTPUser();
         setTps(rs.ok);
       }
     })();
   }, [actor]);
-  console.log(tps);
+  useEffect(() => {
+    console.log(tps?.map(itps => ({ ...itps, url: itps?.travel_plan?.img })));
+    // setNameFile("");
+  }, [tps]);
   return (
     <Grid container spacing={3}>
       {tps?.map((tp, intp) => (
@@ -30,12 +36,12 @@ const TravelPlanItem = ({ tp }) => {
   return (
     <Grid item xs={3}>
       <Box sx={{ position: "relative", borderRadius: "16px", boxShadow: "0 0 50px 5px #f2f2f2" }}>
-        <TPImg src={tp.img} alt="" />
+        <TPImg src={""} alt="" />
         <TPBody>
           <Typography variant="caption">
-            {moment.unix(tp.timeStart).format("DD-MM-YYYY").toString()}
+            {moment.unix(tp?.timeStart).format("DD-MM-YYYY").toString()}
             {" - "}
-            {moment.unix(tp.timeEnd).format("DD-MM-YYYY").toString()}
+            {moment.unix(tp?.timeEnd).format("DD-MM-YYYY").toString()}
           </Typography>
           <br />
           <Typography fontWeight="bold" variant="caption">
@@ -44,7 +50,7 @@ const TravelPlanItem = ({ tp }) => {
         </TPBody>
         <TPName>
           <Typography fontWeight="bold" variant="body2">
-            CC
+            {tp?.destination}
           </Typography>
         </TPName>
       </Box>

@@ -16,6 +16,12 @@ export const userSlice = createSlice({
         isLogin: action.payload
       };
     },
+    profile: (state, action) => {
+      return {
+        ...state,
+        profile: action.payload
+      };
+    },
     actorSlice: (state, action) => {
       return {
         ...state,
@@ -25,5 +31,5 @@ export const userSlice = createSlice({
   }
 });
 
-export const { login, actorSlice } = userSlice.actions;
+export const { login, actorSlice, profile } = userSlice.actions;
 export default userSlice.reducer;

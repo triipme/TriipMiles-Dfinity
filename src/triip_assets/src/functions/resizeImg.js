@@ -9,7 +9,7 @@ export const resizeImg = ({ blob, asprX, asprY }) => {
       100,
       0,
       uri => resolve(uri),
-      "file",
+      "blob",
       asprX * 100 * 0.05,
       asprY * 100 * 0.05
     );

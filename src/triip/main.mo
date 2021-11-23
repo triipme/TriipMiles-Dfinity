@@ -51,7 +51,6 @@ actor {
         };
         Debug.print("End postupgrade");
     };
-
     /* ------------------------------------------------------------------------------------------------------- */
     // User
     // Create
@@ -82,12 +81,6 @@ actor {
             return #err(#NotAuthorized);//isNotAuthorized
         };
         let rsReadUser = state.profiles.get(uid);
-
-
-        for(i in state.travelplans.vals()){
-            Debug.print("test");
-            Debug.print(debug_show(i));
-        };
 
         switch(rsReadUser){
             case null{

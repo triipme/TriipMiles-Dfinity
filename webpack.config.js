@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 let localCanisters, prodCanisters, canisters;
 
 function initCanisterIds() {
@@ -135,6 +136,9 @@ module.exports = {
     new webpack.ProvidePlugin({
       Buffer: [require.resolve("buffer/"), "Buffer"],
       process: require.resolve("process/browser")
+    }),
+    new Dotenv({
+      path: "./.env" // Path to .env file (this is the default)
     })
   ],
   // proxy /api to port 8000 during development

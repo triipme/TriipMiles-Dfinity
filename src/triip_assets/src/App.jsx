@@ -1,15 +1,14 @@
 import React from "react";
 import { CssBaseline } from "@mui/material";
-import { ThemeProvider } from "@mui/material/styles";
 import { Main } from "./routers/index";
-import { theme } from "./theme";
+import ThemeConfig from "./theme/Theme";
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeConfig>
       <CssBaseline />
       <Main />
-    </ThemeProvider>
+    </ThemeConfig>
   );
 };
 

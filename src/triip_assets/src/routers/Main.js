@@ -1,28 +1,42 @@
 import React, { createContext, useState } from "react";
-import { useDispatch } from "react-redux";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import loadable from "@loadable/component";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { NavBar } from "../containers/index";
-import { actorSlice } from "../slice/user/userSlice";
 
 import { navbar, account } from "../utils/paths";
 
 const ActorContext = createContext();
 
+const Admin = loadable(() => import("../pages/Admin/index"));
+const DashboardLayout = loadable(() => import("../pages/Admin/layouts/dashboard"));
+const DashboardApp = loadable(() => import("../pages/Admin/pages/DashboardApp"));
+const User = loadable(() => import("../pages/Admin/pages/User"));
+const Products = loadable(() => import("../pages/Admin/pages/Products"));
+const Blog = loadable(() => import("../pages/Admin/pages/Blog"));
+
 const Main = () => {
-  const dispatch = useDispatch();
-  const handleActor = data => {
-    dispatch(actorSlice(data));
-  };
   return (
-    <Router>
-      <NavBar handleActor={handleActor} />
-      <Switch>
+    <BrowserRouter>
+      <NavBar />
+      <Routes>
         {navbar.map((item, _) => (
-          <Route key={item.path} path={item.path} exact={item?.exact} component={item.component} />
+          <Route key={item.path} path={item.path} exact={item?.exact} element={item.component} />
         ))}
-        <Route key={account[0].path} path={account[0].path} component={account[0].component} />
-      </Switch>
-    </Router>
+        <Route key={account[0].path} path={account[0].path} element={account[0].component}>
+          {account[1].nested.map(item => (
+            <Route key={item.path} path={item.path} element={item.component} exact={item.exact} />
+          ))}
+        </Route>
+        <Route path="/triip-admin" element={<Admin />}>
+          <Route path="/triip-admin/dashboard" element={<DashboardLayout />}>
+            <Route path="/triip-admin/dashboard/app" element={<DashboardApp />} />
+            <Route path="/triip-admin/dashboard/user" element={<User />} />
+            <Route path="/triip-admin/dashboard/products" element={<Products />} />
+            <Route path="/triip-admin/dashboard/blog" element={<Blog />} />
+          </Route>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 };
 
