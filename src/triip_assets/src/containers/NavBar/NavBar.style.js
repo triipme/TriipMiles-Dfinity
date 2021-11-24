@@ -1,13 +1,13 @@
 import { Container, Modal } from "@mui/material/index";
 import { styled } from "@mui/system";
-export const ContainerStyled = styled(Container)`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  background-color: white;
-  box-shadow: 0 0 50px 5px #f0f0f0;
-`;
+export const ContainerStyled = styled(Container)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: "10px 0",
+  backgroundColor: theme.palette.white.main,
+  boxShadow: "0 0 50px 5px #f0f0f0"
+}));
 export const FormStyled = styled("div")(({ theme }) => ({
   width: "35%",
   height: "80%",

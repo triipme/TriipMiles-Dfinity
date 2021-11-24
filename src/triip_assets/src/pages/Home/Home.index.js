@@ -6,6 +6,8 @@ import { Images } from "../../theme";
 import { Footer } from "../../containers";
 import { useToaster } from "react-hot-toast";
 import ReactPlayer from "react-player/lazy";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +15,9 @@ const Home = () => {
   const handleOpenModal = () => setIsOpen(true);
   const handleCloseModal = () => setIsOpen(false);
   const handleTab = (_, v) => setTab(v);
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("sm"));
+
   return (
     <Container maxWidth="xl" style={{ padding: 0 }}>
       <Notifications />
@@ -45,17 +50,18 @@ const Home = () => {
           p: 0,
           backgroundImage: `url(https://ik.imagekit.io/1cfogorcfir/home_login_gcY1vzK7V_.png?updatedAt=1635851167552)`
         }}>
-        <ReactPlayer width="70%" height="85%" url="https://youtu.be/78hvrYFh26w" />
+        <ReactPlayer width="75%" height="85%" url="https://youtu.be/78hvrYFh26w" />
       </Banner>
       <Container maxWidth="lg" sx={{ textAlign: "center", my: 10 }}>
         <Typography sx={{ my: 2 }} variant="h4">
           Our strategic partners
         </Typography>
-        <Grid sx={{ my: 3 }} container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+        <Grid sx={{ my: 3 }} container rowSpacing={5} columnSpacing={{ xs: 0, sm: 2, md: 3 }}>
           {Images.home.partners.map(item => (
-            <Grid key={item.alt} item xs={3} sx={{ display: "grid", placeItems: "center" }}>
-              <img
-                style={{ width: "100%", height: "80px", objectFit: "contain" }}
+            <Grid key={item.alt} item xs={6} lg={3} sx={{ display: "grid", placeItems: "center" }}>
+              <Box
+                sx={{ width: "80%", height: "80px", objectFit: "contain" }}
+                component="img"
                 src={item.url}
                 alt={item.alt}
               />
@@ -63,13 +69,12 @@ const Home = () => {
           ))}
         </Grid>
       </Container>
-      <Box sx={{ p: 10, textAlign: "center", backgroundColor: "#f3f3f3" }}>
+      <Box padding={{ xs: 2, sm: 10 }} sx={{ textAlign: "center", backgroundColor: "#f3f3f3" }}>
         <Typography sx={{ my: 2 }} variant="h4">
           The fastest-growing blockchain travel co-op
         </Typography>
-
-        <Box sx={{ display: "flex", mt: 5 }}>
-          <Box sx={{ flex: 1 }}>
+        <Grid container>
+          <Grid item xs={6} md={3} order={{ xs: 2, lg: 1 }}>
             <FeatureItem icon={Images.icon.user} title="430,000+" subtitle="trust users" />
             <FeatureItem
               icon={Images.icon.travelplan}
@@ -81,17 +86,17 @@ const Home = () => {
               title="40,000,000+"
               subtitle="80,000+ Tours & Activites"
             />
-          </Box>
-          <Box
-            sx={{
-              flex: 1,
-              backgroundImage: `url(${Images.home.app})`,
-              backgroundSize: "auto 100%",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center"
-              // height: 750
-            }}></Box>
-          <Box sx={{ flex: 1 }}>
+          </Grid>
+          <Grid item xs={12} md={6} order={{ xs: 1, lg: 2 }}>
+            <Box
+              component="img"
+              src={Images.home.app}
+              maxWidth={{ xs: "70%", md: "50%" }}
+              maxHeight="100%"
+              sx={{ objectFit: "contain" }}
+            />
+          </Grid>
+          <Grid item xs={6} md={3} order={{ xs: 3, lg: 3 }}>
             <FeatureItem
               icon={Images.icon.reward}
               subtitle="The only travel app based-on blockchain network rewards users whatever they completed."
@@ -107,32 +112,42 @@ const Home = () => {
               subtitle="Safe security payment by international standards."
               type="end"
             />
-          </Box>
-        </Box>
+          </Grid>
+        </Grid>
       </Box>
       <Container maxWidth="lg" sx={{ textAlign: "center", my: 10 }}>
         <Typography sx={{ my: 2 }} variant="h4">
-          The fastest-growing blockchain travel co-op
+          It’s easy to get started
         </Typography>
-        <Box sx={{ display: "flex" }}>
-          <StepItem
-            title="1. Create your account"
-            subtitle="Signing up for your own Triip account is easy and free"
-            image={Images.home.step[0]}
-          />
-          <StepItem title="2. Confirm your email address" image={Images.home.step[1]} />
-          <StepItem
-            title="3. Earn TIIM everyday"
-            subtitle="Many activities with excited prizes are waiting you everyday"
-            image={Images.home.step[2]}
-          />
-        </Box>
+        <Grid container>
+          <Grid item xs={12} sm={4}>
+            <StepItem
+              title="1. Create your account"
+              subtitle="Signing up for your own Triip account is easy and free"
+              image={Images.home.step[0]}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <StepItem title="2. Confirm your email address" image={Images.home.step[1]} />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <StepItem
+              title="3. Earn TIIM everyday"
+              subtitle="Many activities with excited prizes are waiting you everyday"
+              image={Images.home.step[2]}
+            />
+          </Grid>
+        </Grid>
       </Container>
-      <Box sx={{ p: 10, backgroundColor: "#f3f3f3" }}>
+      <Box padding={{ xs: 4, sm: 2, md: 10 }} sx={{ backgroundColor: "#f3f3f3" }}>
         <Typography sx={{ my: 2, textAlign: "center" }} variant="h4">
           Utilities and services
         </Typography>
-        <Tabs value={tab} onChange={handleTab} variant="fullWidth">
+        <Tabs
+          value={tab}
+          onChange={handleTab}
+          variant="fullWidth"
+          orientation={matches ? "horizontal" : "vertical"}>
           <TabStyled label="Hotel Booking" />
           <TabStyled label="Travel" />
           <TabStyled label="Online Shopping" />
@@ -202,12 +217,13 @@ const StepItem = ({ image, title, subtitle }) => {
 const TabPanel = ({ value, index, children, data, title }) => {
   return (
     <Box hidden={value !== index}>
-      <Grid container>
-        <Grid item xs={6} sx={{ justifyContent: "start" }}>
+      <Grid container sx={{ my: 3 }}>
+        <Grid item xs={12} md={6} sx={{ justifyContent: "start" }}>
           {data.map(item => (
             <Box
               key={item}
-              sx={{ display: "flex", alignItems: "center", justifyContent: "start", my: 5 }}>
+              sx={{ display: "flex", alignItems: "center", justifyContent: "start" }}
+              marginTop={{ xs: 2, md: 5 }}>
               <img src={Images.icon.check} alt={item} style={{ height: 50, marginRight: 20 }} />
               <Typography variant="h6" sx={{ flex: 1 }}>
                 {item}
@@ -217,19 +233,21 @@ const TabPanel = ({ value, index, children, data, title }) => {
         </Grid>
         <Grid
           item
-          xs={6}
-          sx={{ pl: 5, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          xs={12}
+          md={6}
+          pl={{ xs: 0, md: 5 }}
+          sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
           <img
             src={Images.home.tab[index]}
             alt=""
             style={{
               marginTop: 50,
-              width: index === 0 ? "100%" : "auto",
-              height: index === 0 ? 400 : "100%",
+              maxWidth: index === 0 ? "100%" : "auto",
+              maxHeight: index === 0 ? 400 : "100%",
               objectFit: index === 0 ? "contain" : "cover"
             }}
           />
-          <TabPanelButton sx={{ width: "60%", mt: 5 }}>{title}</TabPanelButton>
+          <TabPanelButton sx={{ mt: 5 }}>{title}</TabPanelButton>
         </Grid>
       </Grid>
     </Box>

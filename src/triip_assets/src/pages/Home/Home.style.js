@@ -15,20 +15,35 @@ export const ContentModalStyled = styled("div")(({ theme }) => ({
   overflow: "hidden"
 }));
 
-export const Banner = styled("div")`
-  width: 100%;
-  height: 500px;
-  background-size: auto 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-`;
+export const Banner = styled("div")(({ theme }) => ({
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    height: 300
+  },
+  // [theme.breakpoints.up("md")]: {
+  //   height: 300
+  // },
+  [theme.breakpoints.up("lg")]: {
+    height: 500
+  },
+  height: 200,
+  backgroundSize: "auto 100%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center"
+}));
 
-export const StepItemImage = styled("img")`
-  width: auto;
-  height: 230px;
-  margin: 50px auto;
-  object-fit: contain;
-`;
+export const StepItemImage = styled("img")(({ theme }) => ({
+  maxWidth: "100%",
+  [theme.breakpoints.up("md")]: {
+    maxHeight: 230
+  },
+  [theme.breakpoints.up("sm")]: {
+    maxHeight: 200
+  },
+  maxHeight: 300,
+  margin: "50px auto",
+  objectFit: "contain"
+}));
 
 export const TabStyled = styled(Tab)(({ theme }) => ({
   height: 70,
@@ -44,6 +59,9 @@ export const TabStyled = styled(Tab)(({ theme }) => ({
 }));
 
 export const TabPanelButton = styled(Button)(({ theme }) => ({
+  [theme.breakpoints.up("sm")]: {
+    width: "60%"
+  },
   width: "100%",
   height: 70,
   fontSize: 28,
