@@ -1,8 +1,5 @@
 // ----------------------------------------------------------------------
 
-export const mockImgCover = index =>
-  `../../../assets/images/static/mock-images/covers/cover_${index}.jpg`;
-export const mockImgProduct = index =>
-  `../../../assets/images/static/mock-images/products/product_${index}.jpg`;
-export const mockImgAvatar = index =>
-  `../../../assets/images/static/mock-images/avatars/avatar_${index}.jpg`;
+export const mockImgCover = index => `https://source.unsplash.com/random/${index}?cover`;
+export const mockImgProduct = index => `https://source.unsplash.com/random/${index}?product`;
+export const mockImgAvatar = index => `https://source.unsplash.com/random/${index}?avatar`;

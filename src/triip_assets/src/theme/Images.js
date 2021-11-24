@@ -28,5 +28,32 @@ export const Images = {
     app: "./images/app-img.png",
     step: ["./images/step-1.png", "./images/step-2.png", "./images/step-3.png"],
     tab: ["./images/tab-1.png", "./images/tab-2.png", "./images/tab-3.png"]
+  },
+  admin: {
+    icons: {
+      flags: {
+        de: "./images/static/icons/ic_flag_de.svg",
+        en: "./images/static/icons/ic_flag_en.svg",
+        fr: "./images/static/icons/ic_flag_fr.svg"
+      },
+      notifications: {
+        chat: "./images/static/icons/ic_notification_chat.svg",
+        mail: "./images/static/icons/ic_notification_mail.svg",
+        package: "./images/static/icons/ic_notification_package.svg",
+        shipping: "./images/static/icons/ic_notification_shipping.svg"
+      },
+      shape: "./images/static/icons/shape_avatar.svg"
+    },
+    illustrations: {
+      notfound: "./images/static/illustrations/illustration_404.svg",
+      avatar: "./images/static/illustrations/illustration_avatar.png",
+      login: "./images/static/illustrations/illustration_login.png",
+      register: "./images/static/illustrations/illustration_register.png"
+    },
+    mock: {
+      avatar: {
+        default: "./images/static/mock-images/avatars/avatar_default.jpg"
+      }
+    }
   }
 };

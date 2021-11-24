@@ -1,9 +1,11 @@
-import PropTypes from 'prop-types';
-import { motion } from 'framer-motion';
+import React from "react";
+
+import PropTypes from "prop-types";
+import { motion } from "framer-motion";
 // material
-import { Box } from '@mui/material';
+import { Box } from "@mui/material";
 //
-import { varWrapEnter } from './variants';
+import { varWrapEnter } from "./variants";
 
 // ----------------------------------------------------------------------
 
@@ -17,10 +19,9 @@ export default function MotionContainer({ open, children, ...other }) {
     <Box
       component={motion.div}
       initial={false}
-      animate={open ? 'animate' : 'exit'}
+      animate={open ? "animate" : "exit"}
       variants={varWrapEnter}
-      {...other}
-    >
+      {...other}>
       {children}
     </Box>
   );

@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import React from "react";
-import { Radio } from "@mui/material/index";
+import { Radio, Typography } from "@mui/material/index";
 import { styled } from "@mui/system";
 const InputRadio = ({ name, control, defaultValue, data }) => {
   return (
@@ -13,7 +13,9 @@ const InputRadio = ({ name, control, defaultValue, data }) => {
           {data.map((item, index) => (
             <div id={item} key={index}>
               <Radio checked={item === (value || defaultValue)} value={item} onChange={onChange} />
-              <label htmlFor={item}>{item}</label>
+              <Typography component="label" variant="body1" htmlFor={item}>
+                {item}
+              </Typography>
             </div>
           ))}
         </ContainerRadio>

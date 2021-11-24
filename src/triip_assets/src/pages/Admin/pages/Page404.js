@@ -1,3 +1,4 @@
+import React from "react";
 import { motion } from "framer-motion";
 import { Link as RouterLink } from "react-router-dom";
 // material
@@ -6,6 +7,7 @@ import { Box, Button, Typography, Container } from "@mui/material";
 // components
 import { MotionContainer, varBounceIn } from "../components/animate";
 import Page from "../components/Page";
+import { Images } from "../../../theme";
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +40,7 @@ export default function Page404() {
             <motion.div variants={varBounceIn}>
               <Box
                 component="img"
-                src="../../../../assets/images/static/illustrations/illustration_404.svg"
+                src={Images.admin.illustrations.notfound}
                 sx={{ height: 260, mx: "auto", my: { xs: 5, sm: 10 } }}
               />
             </motion.div>

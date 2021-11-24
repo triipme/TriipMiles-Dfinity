@@ -4,6 +4,7 @@ import { alpha } from "@mui/material/styles";
 import { Box, MenuItem, ListItemIcon, ListItemText, IconButton } from "@mui/material";
 // components
 import MenuPopover from "../../components/MenuPopover";
+import { Images } from "../../../../theme";
 
 // ----------------------------------------------------------------------
 
@@ -11,17 +12,17 @@ const LANGS = [
   {
     value: "en",
     label: "English",
-    icon: "../../../../../assets/images/static/icons/ic_flag_en.svg"
+    icon: Images.admin.icons.flags.en
   },
   {
     value: "de",
     label: "German",
-    icon: "../../../../../assets/images/static/icons/ic_flag_de.svg"
+    icon: Images.admin.icons.flags.de
   },
   {
     value: "fr",
     label: "French",
-    icon: "../../../../../assets/images/static/icons/ic_flag_fr.svg"
+    icon: Images.admin.icons.flags.fr
   }
 ];
 

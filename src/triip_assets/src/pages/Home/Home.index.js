@@ -23,10 +23,10 @@ const Home = () => {
         }}
       />
       <Container maxWidth="md" sx={{ my: 10, textAlign: "center" }}>
-        <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
+        <Typography sx={{ my: 2 }} variant="h4">
           Own the world’s first sustainable travel co-op
         </Typography>
-        <Typography sx={{ my: 2 }} variant="h5">
+        <Typography sx={{ my: 2 }} variant="body1">
           Become a co-owner today to earn money for future trips while saving our home planet
         </Typography>
         <Button variant="primary" onClick={handleOpenModal}>
@@ -48,7 +48,7 @@ const Home = () => {
         <ReactPlayer width="70%" height="85%" url="https://youtu.be/78hvrYFh26w" />
       </Banner>
       <Container maxWidth="lg" sx={{ textAlign: "center", my: 10 }}>
-        <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
+        <Typography sx={{ my: 2 }} variant="h4">
           Our strategic partners
         </Typography>
         <Grid sx={{ my: 3 }} container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -64,7 +64,7 @@ const Home = () => {
         </Grid>
       </Container>
       <Box sx={{ p: 10, textAlign: "center", backgroundColor: "#f3f3f3" }}>
-        <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
+        <Typography sx={{ my: 2 }} variant="h4">
           The fastest-growing blockchain travel co-op
         </Typography>
 
@@ -111,7 +111,7 @@ const Home = () => {
         </Box>
       </Box>
       <Container maxWidth="lg" sx={{ textAlign: "center", my: 10 }}>
-        <Typography sx={{ my: 2, fontWeight: "500" }} variant="h4">
+        <Typography sx={{ my: 2 }} variant="h4">
           The fastest-growing blockchain travel co-op
         </Typography>
         <Box sx={{ display: "flex" }}>
@@ -129,7 +129,7 @@ const Home = () => {
         </Box>
       </Container>
       <Box sx={{ p: 10, backgroundColor: "#f3f3f3" }}>
-        <Typography sx={{ my: 2, fontWeight: "500", textAlign: "center" }} variant="h4">
+        <Typography sx={{ my: 2, textAlign: "center" }} variant="h4">
           Utilities and services
         </Typography>
         <Tabs value={tab} onChange={handleTab} variant="fullWidth">
@@ -184,7 +184,7 @@ const FeatureItem = ({ icon, title, subtitle, type = "start" }) => {
     <Box
       sx={{ display: "flex", flexDirection: "column", alignItems: type, textAlign: type, my: 8 }}>
       <img src={icon} alt="" style={{ height: 60, margin: 0 }} />
-      <Typography variant="h5">{title}</Typography>
+      <Typography variant="h6">{title}</Typography>
       <Typography variant="h6">{subtitle}</Typography>
     </Box>
   );
@@ -193,10 +193,8 @@ const StepItem = ({ image, title, subtitle }) => {
   return (
     <Box sx={{ flex: 1 }}>
       <StepItemImage src={image} alt="" />
-      <Typography sx={{ fontWeight: "500" }} variant="h5">
-        {title}
-      </Typography>
-      <Typography variant="h5">{subtitle} </Typography>
+      <Typography variant="h6">{title}</Typography>
+      <Typography variant="body1">{subtitle} </Typography>
     </Box>
   );
 };
@@ -211,7 +209,7 @@ const TabPanel = ({ value, index, children, data, title }) => {
               key={item}
               sx={{ display: "flex", alignItems: "center", justifyContent: "start", my: 5 }}>
               <img src={Images.icon.check} alt={item} style={{ height: 50, marginRight: 20 }} />
-              <Typography variant="h5" sx={{ flex: 1 }}>
+              <Typography variant="h6" sx={{ flex: 1 }}>
                 {item}
               </Typography>
             </Box>

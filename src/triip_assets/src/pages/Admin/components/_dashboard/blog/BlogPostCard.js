@@ -15,6 +15,7 @@ import { fShortenNumber } from "../../../utils/formatNumber";
 //
 import SvgIconStyle from "../../SvgIconStyle";
 
+import { Images } from "../../../../../theme/Images";
 // ----------------------------------------------------------------------
 
 const CardMediaStyle = styled("div")({
@@ -98,7 +99,7 @@ export default function BlogPostCard({ post, index }) {
           }}>
           <SvgIconStyle
             color="paper"
-            src="../../../../../../assets/images/static/icons/shape-avatar.svg"
+            src={Images.admin.icons.shape}
             sx={{
               width: 80,
               height: 36,

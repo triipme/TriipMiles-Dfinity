@@ -3,6 +3,7 @@ import React from "react";
 import PropTypes from "prop-types";
 // material
 import { Box } from "@mui/material";
+import { Images } from "../../../theme";
 
 // ----------------------------------------------------------------------
 
@@ -11,11 +12,5 @@ Logo.propTypes = {
 };
 
 export default function Logo({ sx }) {
-  return (
-    <Box
-      component="img"
-      src="../../../../assets/images/static/logo.svg"
-      sx={{ width: 40, height: 40, ...sx }}
-    />
-  );
+  return <Box component="img" src={Images.logo} sx={{ width: 40, height: 40, ...sx }} />;
 }

@@ -22,9 +22,10 @@ import { customAlphabet } from "nanoid";
 import toast, { Toaster } from "react-hot-toast";
 
 import { ContentModalStyled } from "./Home.style";
-import { theme } from "../../theme";
+import { useTheme } from "@mui/material/styles";
 
 const HomeForm = ({ handleIsOpenParent }) => {
+  const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [createdStatus, setCreatedStatus] = useState("TP");
   const { activities, join_type } = useSelector(state => state.static.travelplan);

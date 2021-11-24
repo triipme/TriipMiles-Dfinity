@@ -1,9 +1,10 @@
 import { Controller } from "react-hook-form";
 import React from "react";
-import { Checkbox } from "@mui/material/index";
+import { Checkbox, Typography } from "@mui/material/index";
+import { useTheme } from "@mui/material/styles";
 import { styled } from "@mui/system";
-import { theme } from "../../theme";
 const InputCheckbox = ({ name, control, defaultValue, data }) => {
+  const theme = useTheme();
   return (
     <Controller
       name={name}
@@ -13,6 +14,7 @@ const InputCheckbox = ({ name, control, defaultValue, data }) => {
         <ContainerCheckbox>
           <input hidden type="checkbox" value={value} name={name} id={name} onChange={onChange} />
           <Label
+            component="label"
             htmlFor={name}
             style={
               value
@@ -33,7 +35,7 @@ const InputCheckbox = ({ name, control, defaultValue, data }) => {
 const ContainerCheckbox = styled("div")`
   margin: 10px 10px 10px 0;
 `;
-const Label = styled("label")(({ theme }) => ({
+const Label = styled(Typography)(({ theme }) => ({
   padding: "10px 20px",
   // color: theme.palette.white.main,
   // backgroundColor: theme.palette.primary.main,

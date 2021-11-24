@@ -30,6 +30,7 @@ import { mockImgAvatar } from "../../utils/mockImages";
 // components
 import Scrollbar from "../../components/Scrollbar";
 import MenuPopover from "../../components/MenuPopover";
+import { Images } from "../../../../theme";
 
 // ----------------------------------------------------------------------
 
@@ -93,45 +94,25 @@ function renderContent(notification) {
 
   if (notification.type === "order_placed") {
     return {
-      avatar: (
-        <img
-          alt={notification.title}
-          src="../../../../../assets/images/static/icons/ic_notification_package.svg"
-        />
-      ),
+      avatar: <img alt={notification.title} src={Images.admin.icons.notifications.package} />,
       title
     };
   }
   if (notification.type === "order_shipped") {
     return {
-      avatar: (
-        <img
-          alt={notification.title}
-          src="../../../../../assets/images/static/icons/ic_notification_shipping.svg"
-        />
-      ),
+      avatar: <img alt={notification.title} src={Images.admin.icons.notifications.shipping} />,
       title
     };
   }
   if (notification.type === "mail") {
     return {
-      avatar: (
-        <img
-          alt={notification.title}
-          src="../../../../../assets/images/static/icons/ic_notification_mail.svg"
-        />
-      ),
+      avatar: <img alt={notification.title} src={Images.admin.icons.notifications.mail} />,
       title
     };
   }
   if (notification.type === "chat_message") {
     return {
-      avatar: (
-        <img
-          alt={notification.title}
-          src="../../../../../assets/images/static/icons/ic_notification_chat.svg"
-        />
-      ),
+      avatar: <img alt={notification.title} src={Images.admin.icons.notifications.chat} />,
       title
     };
   }
