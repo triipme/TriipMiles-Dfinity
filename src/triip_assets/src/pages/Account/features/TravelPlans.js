@@ -24,7 +24,7 @@ const TravelPlans = () => {
     // setNameFile("");
   }, [tps]);
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} justifyContent="center">
       {tps?.map((tp, intp) => (
         <TravelPlanItem key={intp} tp={tp?.travel_plan} />
       ))}
@@ -34,25 +34,26 @@ const TravelPlans = () => {
 
 const TravelPlanItem = ({ tp }) => {
   return (
-    <Grid item xs={3}>
-      <Box sx={{ position: "relative", borderRadius: "16px", boxShadow: "0 0 50px 5px #f2f2f2" }}>
-        <TPImg src={""} alt="" />
+    <Grid item xs={9} sm={6} md={4} lg={3}>
+      <Box sx={{ borderRadius: "16px", boxShadow: "0 0 50px 5px #f2f2f2" }}>
+        <Box height={150} position="relative">
+          <TPImg src={""} alt="" />
+          <TPName>
+            <Typography fontWeight="bold" variant="body2">
+              {tp?.destination}
+            </Typography>
+          </TPName>
+        </Box>
         <TPBody>
-          <Typography variant="caption">
+          <Typography variant="body1">
             {moment.unix(tp?.timeStart).format("DD-MM-YYYY").toString()}
             {" - "}
             {moment.unix(tp?.timeEnd).format("DD-MM-YYYY").toString()}
           </Typography>
-          <br />
-          <Typography fontWeight="bold" variant="caption">
+          <Typography fontWeight="bold" variant="body2">
             Proof of travel - New
           </Typography>
         </TPBody>
-        <TPName>
-          <Typography fontWeight="bold" variant="body2">
-            {tp?.destination}
-          </Typography>
-        </TPName>
       </Box>
     </Grid>
   );
@@ -60,15 +61,15 @@ const TravelPlanItem = ({ tp }) => {
 
 const TPImg = styled("img")`
   width: 100%;
-  height: 250px;
+  max-height: 100%;
   object-fit: cover;
   border-radius: 16px;
 `;
 const TPBody = styled("div")`
-  position: absolute;
+  /* position: absolute; */
   width: 100%;
   bottom: 0;
-  height: 80px;
+  /* height: 80px; */
   padding: 10px 15px;
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
@@ -77,12 +78,13 @@ const TPBody = styled("div")`
 const TPName = styled("div")`
   position: absolute;
   width: 100%;
-  height: 170px;
-  bottom: 80px;
-  padding: 10px 15px;
+  height: 100%;
+  /* height: 170px; */
+  /* bottom: 80px; */
+  padding: 0 15px;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.5) inset, 0px -10px 50px rgba(0, 0, 0, 0.5) inset;
+  box-shadow: 0px 10px 50px rgba(41, 22, 22, 0.5) inset, 0px -10px 50px rgba(0, 0, 0, 0.5) inset;
   color: #fff;
   display: flex;
   align-items: flex-end;

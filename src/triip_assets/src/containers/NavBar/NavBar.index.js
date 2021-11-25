@@ -182,17 +182,29 @@ const NavBar = () => {
                       }}
                       style={({ isActive }) => ({
                         color: isActive && theme.palette.secondary.main
-                      })}>
+                      })}
+                      onClick={() => setIsOpenMenu(false)}>
                       {item.path !== "/" && item.name}
                     </NavLinkStyled>
                   ))}
                   <Divider />
                   {!!profileData ? (
-                    <LinkStyled to={account[1].nested[0].path}>
-                      <Typography variant="h6" sx={{ my: 4, mr: 2 }}>
-                        {profileData?.user?.username}
-                      </Typography>
-                    </LinkStyled>
+                    <>
+                      <LinkStyled to={account[1].nested[0].path}>
+                        <Typography variant="body1" sx={{ my: 4, mr: 2 }}>
+                          {profileData?.user?.username}
+                        </Typography>
+                      </LinkStyled>
+                      {account[1].nested.map(item => (
+                        <NavLinkStyled
+                          onClick={() => setIsOpenMenu(false)}
+                          sx={{ my: 1 }}
+                          key={item.path}
+                          to={item.path}>
+                          {item.name}
+                        </NavLinkStyled>
+                      ))}
+                    </>
                   ) : (
                     <Modal open={isOpen} onClose={() => setIsOpen(false)}>
                       <FormStyled>

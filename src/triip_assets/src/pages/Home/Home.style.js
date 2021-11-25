@@ -3,9 +3,13 @@ import { styled } from "@mui/system";
 import { ImageUrls } from "../../theme";
 
 export const ContentModalStyled = styled("div")(({ theme }) => ({
-  width: 400,
+  [theme.breakpoints.up("sm")]: {
+    width: 400,
+    padding: "25px 0 25px 15px"
+  },
+  width: "100%",
   height: 500,
-  padding: "25px 0 25px",
+  padding: "25px 15px",
   position: "absolute",
   top: "50%",
   left: "50%",

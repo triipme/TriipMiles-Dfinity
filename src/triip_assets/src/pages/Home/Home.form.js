@@ -280,9 +280,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                     Go to your Travel Plans to review, edit your submitted plans.
                   </Typography>
                 </Box>
-                <Box>
-                  <ButtonPrimary sx={{ mt: 2 }} title="Go to travel plans" onClick={() => {}} />
-                </Box>
+                <ButtonPrimary sx={{ mt: 2 }} title="Go to travel plans" onClick={() => {}} />
               </ScrollHidden>
             )
           }[createdStatus]
