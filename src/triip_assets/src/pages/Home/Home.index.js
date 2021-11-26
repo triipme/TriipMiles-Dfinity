@@ -74,7 +74,7 @@ const Home = () => {
           The fastest-growing blockchain travel co-op
         </Typography>
         <Grid container>
-          <Grid item xs={6} md={3} order={{ xs: 2, lg: 1 }}>
+          <Grid item xs={6} md={3} order={{ xs: 2, md: 1 }}>
             <FeatureItem icon={Images.icon.user} title="430,000+" subtitle="trust users" />
             <FeatureItem
               icon={Images.icon.travelplan}
@@ -87,7 +87,7 @@ const Home = () => {
               subtitle="80,000+ Tours & Activites"
             />
           </Grid>
-          <Grid item xs={12} md={6} order={{ xs: 1, lg: 2 }}>
+          <Grid item xs={12} md={6} order={{ xs: 1, md: 2 }}>
             <Box
               component="img"
               src={Images.home.app}
@@ -96,7 +96,7 @@ const Home = () => {
               sx={{ objectFit: "contain" }}
             />
           </Grid>
-          <Grid item xs={6} md={3} order={{ xs: 3, lg: 3 }}>
+          <Grid item xs={6} md={3} order={{ xs: 3, md: 3 }}>
             <FeatureItem
               icon={Images.icon.reward}
               subtitle="The only travel app based-on blockchain network rewards users whatever they completed."

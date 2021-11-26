@@ -1,11 +1,11 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Button, Modal, Typography, Box } from "@mui/material/index";
+import { Button, Modal, Typography, Box, Link } from "@mui/material/index";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AuthClient } from "@dfinity/auth-client";
 import { Principal } from "@dfinity/principal";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import { actorSlice, login, profile } from "../../slice/user/userSlice";
 import { ContainerStyled, FormStyled } from "./NavBar.style";
@@ -117,7 +117,7 @@ const NavBar = () => {
           {isSM ? (
             <>
               <div style={{ display: "flex", alignItems: "center" }}>
-                {navbar.map((item, _) => (
+                {/* {navbar.map((item, _) => (
                   <NavLinkStyled
                     key={item.path}
                     to={item.path}
@@ -130,15 +130,22 @@ const NavBar = () => {
                       item.name
                     )}
                   </NavLinkStyled>
-                ))}
+                ))} */}
+                <NavLinkStyled key={navbar[0].path} to={navbar[0].path}>
+                  <img style={{ display: "inline", width: 30 }} src={Images.logo} alt="" />
+                </NavLinkStyled>
+                <LinkStyled href="https://stay.triip.me/">Stay</LinkStyled>
+                <LinkStyled href="https://experience.triip.me/">Experience</LinkStyled>
+                <LinkStyled href="https://share.triip.me/">Share</LinkStyled>
+                <LinkStyled href="https://shopping.triip.me/">Shop</LinkStyled>
               </div>
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                {!!profileData ? (
-                  <LinkStyled to={account[1].nested[0].path}>
+                {!!profileData?.user ? (
+                  <NavLinkStyled to={account[1].nested[0].path}>
                     <Typography variant="h6" sx={{ mr: 2 }}>
                       {profileData?.user?.username}
                     </Typography>
-                  </LinkStyled>
+                  </NavLinkStyled>
                 ) : (
                   <Modal open={isOpen} onClose={() => setIsOpen(false)}>
                     <FormStyled>
@@ -166,35 +173,69 @@ const NavBar = () => {
                   <Icon icon={menu2Outline} width={24} height={24} />
                 )}
               </Box>
-              <NavLinkStyled key={navbar[0].path} to={navbar[0].path}>
+              <NavLinkStyled
+                onClick={() => setIsOpenMenu(false)}
+                key={navbar[0].path}
+                to={navbar[0].path}>
                 <img style={{ display: "inline", width: 30 }} src={Images.logo} alt="" />
               </NavLinkStyled>
               <Box hidden={!isOpenMenu} position="absolute" top={40} width="100%" zIndex={2}>
                 <Box
                   height="100vh"
                   sx={{ backgroundColor: "#fff", display: "flex", flexDirection: "column" }}>
-                  {navbar.map((item, _) => (
-                    <NavLinkStyled
-                      key={item.path}
-                      to={item.path}
-                      sx={{
-                        my: 1
-                      }}
-                      style={({ isActive }) => ({
-                        color: isActive && theme.palette.secondary.main
-                      })}
-                      onClick={() => setIsOpenMenu(false)}>
-                      {item.path !== "/" && item.name}
-                    </NavLinkStyled>
-                  ))}
-                  <Divider />
-                  {!!profileData ? (
+                  {/* {navbar.map(
+                    (item, _) =>
+                      ["/stay", "/experience", "/share", "/shop"].includes(item?.path) && (
+                        <NavLinkStyled
+                          key={item.path}
+                          to={item.path}
+                          sx={{
+                            my: 1
+                          }}
+                          style={({ isActive }) => ({
+                            color: isActive && theme.palette.secondary.main
+                          })}
+                          onClick={() => setIsOpenMenu(false)}>
+                          {item.path !== "/" && item.name}
+                        </NavLinkStyled>
+                      )
+                  )} */}
+                  <LinkStyled
+                    sx={{
+                      my: 1
+                    }}
+                    href="https://stay.triip.me/">
+                    Stay
+                  </LinkStyled>
+                  <LinkStyled
+                    sx={{
+                      my: 1
+                    }}
+                    href="https://experience.triip.me/">
+                    Experience
+                  </LinkStyled>
+                  <LinkStyled
+                    sx={{
+                      my: 1
+                    }}
+                    href="https://share.triip.me/">
+                    Share
+                  </LinkStyled>
+                  <LinkStyled
+                    sx={{
+                      my: 1
+                    }}
+                    href="https://shopping.triip.me/">
+                    Shop
+                  </LinkStyled>
+                  <Divider sx={{ my: 3 }} />
+                  {!!profileData?.user ? (
                     <>
-                      <LinkStyled to={account[1].nested[0].path}>
+                      <NavLinkStyled to="">
                         <Typography variant="body1" sx={{ my: 4, mr: 2 }}>
                           {profileData?.user?.username}
                         </Typography>
-                      </LinkStyled>
+                      </NavLinkStyled>
                       {account[1].nested.map(item => (
                         <NavLinkStyled
                           onClick={() => setIsOpenMenu(false)}

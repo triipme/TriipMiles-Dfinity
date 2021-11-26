@@ -1,6 +1,6 @@
 import React, { createContext, useState } from "react";
 import loadable from "@loadable/component";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, Redirect } from "react-router-dom";
 import { NavBar } from "../containers/index";
 
 import { navbar, account } from "../utils/paths";
@@ -24,7 +24,7 @@ const Main = () => {
           <Route key={item.path} path={item.path} exact={item?.exact} element={item.component} />
         ))}
         <Route path="/404" element={<NotFound />} />
-        <Route path="*" element={<Navigate to="/404" />} />
+        {/* <Route path="*" element={<Navigate to="/404" />} /> */}
         <Route key={account[0].path} path={account[0].path} element={account[0].component}>
           {account[1].nested.map(item => (
             <Route key={item.path} path={item.path} element={item.component} exact={item.exact} />

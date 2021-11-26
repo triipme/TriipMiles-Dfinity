@@ -1,6 +1,9 @@
 import { Container, Modal } from "@mui/material/index";
 import { styled } from "@mui/system";
 export const ContainerStyled = styled(Container)(({ theme }) => ({
+  position: "sticky",
+  top: 0,
+  zIndex: 1,
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",

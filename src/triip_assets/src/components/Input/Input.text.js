@@ -3,13 +3,16 @@ import { TextField } from "@mui/material/index";
 import { Controller } from "react-hook-form";
 import { styled } from "@mui/system";
 
-const InputText = ({ name, label, control, defaultValue = "", placeHolder }) => {
+const InputText = ({ name, label, control, defaultValue = "", placeHolder, helperTextError }) => {
   return (
     <Controller
       name={name}
       control={control}
       defaultValue={defaultValue}
-      render={({ field: { name, value = "", onChange } }) => (
+      rules={{
+        required: true
+      }}
+      render={({ field: { name, value = "", onChange }, fieldState: { error } }) => (
         <TextFieldStyled
           placeholder={placeHolder}
           onChange={onChange}
@@ -17,6 +20,8 @@ const InputText = ({ name, label, control, defaultValue = "", placeHolder }) => 
           name={name}
           label={label}
           type="text"
+          error={!!error}
+          helperText={helperTextError[error?.type]}
         />
       )}
     />

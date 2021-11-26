@@ -14,12 +14,12 @@ import {
 } from "../../components/index";
 import { resizeImg } from "../../functions";
 
-import { storage, firebaseStorage } from "../../firebase/firebase";
 import { useUploadFile } from "../../hooks";
 
 import moment from "moment";
 import { customAlphabet } from "nanoid";
 import toast, { Toaster } from "react-hot-toast";
+import { ERRORS } from "../../utils/constants";
 
 import { ContentModalStyled } from "./Home.style";
 import { useTheme } from "@mui/material/styles";
@@ -167,6 +167,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                   placeHolder="Enter your destination"
                   label="Destination"
                   name="destination"
+                  helperTextError={ERRORS}
                 />
                 <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
                   How many people will join?

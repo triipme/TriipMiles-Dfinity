@@ -1,6 +1,6 @@
 import React from "react";
 import loadable from "@loadable/component";
-import { Navigate } from "react-router-dom";
+import { Navigate, Redirect } from "react-router-dom";
 import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage } from "../../pages";
 const NotFound = loadable(() => import("../../pages/Admin/pages/Page404"));
 
@@ -14,7 +14,8 @@ export const navbar = [
   {
     path: "/stay",
     component: <StayPage />,
-    name: "Stay"
+    name: "Stay",
+    exact: true
   },
   {
     path: "/experience",
