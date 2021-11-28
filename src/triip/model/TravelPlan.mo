@@ -8,6 +8,8 @@ module{
       days:?Nat;
       public_mode: ?Bool;
       img: ?Text;
-      created_at:?Int;
+      specific_date: ?Bool;
+      created_at: ?Int;
+      proof: ?Text;
   };
 }

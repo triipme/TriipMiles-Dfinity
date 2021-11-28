@@ -33,7 +33,7 @@ const useUploadFile = () => {
           s3.getObject(target, (err, data) => {
             console.log("err", err);
             if (err != null) {
-              console.log("Failed to retrieve an object", error);
+              console.log("Failed to retrieve an object", err);
             } else {
               console.log("data", data);
               setResult({

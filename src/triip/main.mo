@@ -30,12 +30,6 @@ actor {
         Debug.print("Begin preupgrade");
         profiles := Iter.toArray(state.profiles.entries());
         travelplans := Iter.toArray(state.travelplans.entries());
-        for((k,v) in Iter.fromArray(profiles)) {
-            Debug.print("uid : " # Principal.toText(k));
-        };
-        for((k,v) in Iter.fromArray(travelplans)) {
-            Debug.print("tpid : " # (k));
-        };
         Debug.print("End preupgrade");
     };
 
@@ -43,11 +37,9 @@ actor {
         Debug.print("Begin postupgrade");
         for((k,v) in Iter.fromArray(profiles)) {
             state.profiles.put(k,v);
-            Debug.print("uid : " # Principal.toText(k));
         };
         for((k,v) in Iter.fromArray(travelplans)) {
             state.travelplans.put(k,v);
-            Debug.print("tpid : " # (k));
         };
         Debug.print("End postupgrade");
     };
@@ -102,6 +94,7 @@ actor {
         let plan : Types.TravelPlan = {
             uid = uid;
             travel_plan = travel_plan.travel_plan;
+            idtp = travel_plan.idtp;
         };
 
         state.travelplans.put(travel_plan.idtp,plan);
@@ -127,6 +120,7 @@ actor {
         let plan : Types.TravelPlan = {
             uid = uid;
             travel_plan = travel_plan.travel_plan;
+            idtp = travel_plan.idtp;
         };
 
         let rsReadTP = state.travelplans.replace(travel_plan.idtp,plan);
@@ -156,4 +150,27 @@ actor {
         };
         #ok((tps));
     };
+
+    public shared(msg) func proofTP(idtp:Text,img_key:Text) : async Result.Result<(),Types.Error>{
+        let uid = msg.caller;
+
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            return #err(#NotAuthorized);//isNotAuthorized
+        };
+
+        let findTP = state.travelplans.get(idtp);
+        
+        switch(findTP){
+            case null{
+                #err(#NotFound);
+            };
+            case (? v){
+                // findTP.travel_plan.img_key := img_key;
+                // let rs = state.travelplans.replace(idtp,findTP);
+                Debug.print(debug_show(findTP));
+                #ok(());
+            }
+        }
+
+    }
 }

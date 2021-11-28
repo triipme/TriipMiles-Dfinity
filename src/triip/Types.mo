@@ -12,6 +12,7 @@ module Types{
     public type TravelPlan = {
         travel_plan: TravelPlan.TravelPlanInformation;
         uid:Principal;
+        idtp:Text;
     };
 
     public type TravelPlanUpdate = {

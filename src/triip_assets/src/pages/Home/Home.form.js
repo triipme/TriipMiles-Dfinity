@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { Typography, Box } from "@mui/material/index";
-
+import { useNavigate } from "react-router-dom";
+import { Typography, Box, Stack, IconButton } from "@mui/material/index";
 import {
   ButtonPrimary,
+  InputCheckboxLabel,
   InputCheckbox,
   InputDate,
   InputRadio,
@@ -20,36 +21,48 @@ import moment from "moment";
 import { customAlphabet } from "nanoid";
 import toast, { Toaster } from "react-hot-toast";
 import { ERRORS } from "../../utils/constants";
+import { destinationService } from "../../services";
 
 import { ContentModalStyled } from "./Home.style";
 import { useTheme } from "@mui/material/styles";
+import { Icon } from "@iconify/react";
+import { clippingParents } from "@popperjs/core";
 
 const HomeForm = ({ handleIsOpenParent }) => {
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [createdStatus, setCreatedStatus] = useState("TP");
-  const { activities, join_type } = useSelector(state => state.static.travelplan);
+  const {
+    activities,
+    join_type,
+    destination: destinationStatic
+  } = useSelector(state => state.static.travelplan);
   const [nntp] = useState(customAlphabet(process.env.NANOID_ALPHABET_TP, 24)());
   const { actor } = useSelector(state => state.user);
-  const [isUpdate, setIsUpdate] = useState(false);
   const [image, progress, setFile] = useUploadFile();
   const { profile } = useSelector(state => state.user);
+  const [days, setDays] = useState(1);
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
     getValues,
-    setValue
+    setValue,
+    watch
   } = useForm({
     defaultValues: {
       destination: "",
       join_type: join_type[0],
       public_mode: false,
-      img: ""
+      img: "",
+      specific_date: true,
+      days: 1
     }
   });
 
+  const specificDateWatch = watch("specific_date");
   const body = () => {
     const {
       destination,
@@ -58,6 +71,8 @@ const HomeForm = ({ handleIsOpenParent }) => {
       timeEnd,
       public_mode,
       img,
+      days,
+      specific_date,
       ...activities
     } = getValues();
     return {
@@ -69,60 +84,67 @@ const HomeForm = ({ handleIsOpenParent }) => {
         timeStart: [moment(timeStart).unix()],
         timeEnd: [moment(timeEnd).unix()],
         created_at: [moment(new Date()).unix()],
-        days: [
-          moment
-            .duration(moment(timeEnd).unix(), "s")
-            .subtract(moment.duration(moment(timeStart).unix(), "s"))
-            .days()
-        ],
+        // days: [
+        //   moment
+        //     .duration(moment(timeEnd).unix(), "s")
+        //     .subtract(moment.duration(moment(timeStart).unix(), "s"))
+        //     .days()
+        // ],
+        proof:  [""],
+        days: [days],
+        specific_date: [specific_date],
         public_mode: [public_mode],
-        img: [img]
+        img: destinationStatic.find(ides => ides?.name === destination)?.photos
       }
     };
   };
-
   const handleUpFileHP = async e => {
     try {
       const img = await resizeImg({ blob: e.target.files[0], asprX: 20, asprY: 20 });
-      await setFile({
-        file: img,
-        name: `${
-          process.env.NODE_ENV === "development" ? "development" : "production" || "production"
-        }/${profile?._id}/travel_plan/${nntp}/${customAlphabet(
-          img?.name ?? process.env.NANOID_ALPHABET_S3,
-          16
-        )()}`
-      });
+      // await setFile({
+      //   file: img,
+      //   name: `${
+      //     process.env.NODE_ENV === "development" ? "development" : "production" || "production"
+      //   }/${profile?._id}/travel_plan/${nntp}/${customAlphabet(
+      //     img?.name ?? process.env.NANOID_ALPHABET_S3,
+      //     16
+      //   )()}.${img?.type.split("/")[1]}`
+      // });
+      if(!!actor?.proofTP){
+        const rs = await actor?.proofTP(nntp,"CC");
+        console.log(rs)
+      }
     } catch (error) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    (async () => {
-      if (!!image) {
-        setIsLoading(true);
-        console.log(image?._id);
-        setValue("img", image?._id);
-        if (!!actor?.updateTravelPlan) {
-          const result = await actor?.updateTravelPlan(body());
-          if ("ok" in result) {
-            console.log(result.ok);
-            toast.success("Success !.");
-            setCreatedStatus("HPSuccess");
-            // handleIsOpenParent(false);
-          } else {
-            console.error(result.err);
-          }
-          setIsLoading(false);
-        } else {
-          toast.error("Please sign in!.");
-        }
-        setIsLoading(false);
-      } else {
-        // toast.error("Please check image size!");
-      }
-    })();
-  }, [image]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (!!image) {
+  //       setIsLoading(true);
+  //       console.log(image?._id);
+  //       setValue("img", image?._id);
+  //       if (!!actor?.updateTravelPlan) {
+  //         const result = await actor?.updateTravelPlan(body());
+  //         if ("ok" in result) {
+  //           console.log(result.ok);
+  //           toast.success("Success !.");
+  //           setCreatedStatus("HPSuccess");
+  //           // handleIsOpenParent(false);
+  //         } else {
+  //           console.error(result.err);
+  //         }
+  //         setIsLoading(false);
+  //       } else {
+  //         toast.error("Please sign in!.");
+  //       }
+  //       setIsLoading(false);
+  //     } else {
+  //       // toast.error("Please check image size!");
+  //     }
+  //   })();
+  // }, [image]);
+
   const onSubmit = async () => {
     if (!!actor) {
       setIsLoading(true);
@@ -149,6 +171,15 @@ const HomeForm = ({ handleIsOpenParent }) => {
       toast.error("Please sign in!.");
     }
   };
+
+  const handleDays = status => {
+    if (status === "increment") {
+      setDays(days => days + 1);
+    } else if (status === "decrease" && days > 1) {
+      setDays(days => days - 1);
+    }
+    setValue("days", days);
+  };
   return (
     <div>
       <ContentModalStyled>
@@ -168,6 +199,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                   label="Destination"
                   name="destination"
                   helperTextError={ERRORS}
+                  autocompleteOptions={destinationStatic}
                 />
                 <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
                   How many people will join?
@@ -183,7 +215,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                 </Typography>
                 <Box display="flex" flexWrap="wrap">
                   {activities.map(item => (
-                    <InputCheckbox
+                    <InputCheckboxLabel
                       key={item}
                       data={activities}
                       control={control}
@@ -195,9 +227,44 @@ const HomeForm = ({ handleIsOpenParent }) => {
                 <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
                   When will you be there?
                 </Typography>
-                <InputDate control={control} name="timeStart" label="Start" />
-                <Box marginTop={2}>
-                  <InputDate control={control} name="timeEnd" label="End" />
+                <Box py={2} px={3} sx={{ backgroundColor: "#fafafa", borderRadius: 3 }}>
+                  <Stack mb={2} direction="row" alignItems="center" justifyContent="space-between">
+                    <Typography fontWeight="bold" variant="body2">
+                      Have sepecific date?
+                    </Typography>
+                    <InputCheckbox control={control} name="specific_date" />
+                  </Stack>
+                  {specificDateWatch ? (
+                    <>
+                      <InputDate control={control} name="timeStart" label="Start" />
+                      <Box marginTop={2}>
+                        <InputDate control={control} name="timeEnd" label="End" />
+                      </Box>
+                    </>
+                  ) : (
+                    <>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <Typography fontWeight="bold" variant="body2">
+                          How many days
+                        </Typography>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          sx={{ backgroundColor: theme.palette.white.main, borderRadius: 10 }}>
+                          <IconButton onClick={() => handleDays("decrease")}>
+                            <Icon icon="ic:baseline-remove-circle" />
+                          </IconButton>
+                          <Typography mx={2}>{days}</Typography>
+                          <IconButton onClick={() => handleDays("increment")}>
+                            <Icon
+                              icon="ic:baseline-add-circle"
+                              color={theme.palette.primary.main}
+                            />
+                          </IconButton>
+                        </Stack>
+                      </Stack>
+                    </>
+                  )}
                 </Box>
                 <Box
                   display="flex"
@@ -251,7 +318,11 @@ const HomeForm = ({ handleIsOpenParent }) => {
                     />
                     <ButtonPrimary loading={isLoading} title="Submit Proof" />
                   </label>
-                  <ButtonPrimary sx={{ mt: 2 }} title="Go to travel plans" onClick={() => {}} />
+                  <ButtonPrimary
+                    sx={{ mt: 2 }}
+                    title="Go to travel plans"
+                    onClick={() => navigate("/account/travelplans")}
+                  />
                 </Box>
               </ScrollHidden>
             ),

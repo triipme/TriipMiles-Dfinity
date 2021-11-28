@@ -6,6 +6,7 @@ import { ButtonPrimary, InputText } from "../../components";
 import { styled } from "@mui/system";
 import { Typography } from "@mui/material";
 import { useSelector } from "react-redux";
+import { ERRORS } from "../../utils/constants";
 
 const FormProfileStyled = styled("div")({});
 
@@ -42,7 +43,12 @@ const FormProfile = ({ handleModalEvent }) => {
       <Typography sx={{ mb: 2 }} variant="h6">
         Create Profile
       </Typography>
-      <InputText control={control} name="username" placeHolder="Username" />
+      <InputText
+        control={control}
+        name="username"
+        placeHolder="Username"
+        helperTextError={ERRORS}
+      />
       <ButtonPrimary title="Submit" onClick={handleSubmit(onSubmit)} />
     </FormProfileStyled>
   );

@@ -130,7 +130,7 @@ module.exports = {
       NODE_ENV: "development",
       TRIIP_CANISTER_ID: canisters["triip"],
       II_URL: isDevelopment
-        ? "http://localhost:8000?canisterId=r7inp-6aaaa-aaaaa-aaabq-cai#authorize"
+        ? "http://localhost:8000?canisterId=rkp4c-7iaaa-aaaaa-aaaca-cai#authorize"
         : "https://identity.ic0.app/#authorize"
     }),
     new webpack.ProvidePlugin({
@@ -158,9 +158,9 @@ module.exports = {
     port: 3000,
     historyApiFallback: true
   },
-  optimization: {
-    removeAvailableModules: false,
-    removeEmptyChunks: false,
-    splitChunks: false
-  }
+  // optimization: {
+  //   removeAvailableModules: false,
+  //   removeEmptyChunks: false,
+  //   splitChunks: false
+  // }
 };

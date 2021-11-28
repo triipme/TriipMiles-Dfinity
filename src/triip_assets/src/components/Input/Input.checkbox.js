@@ -3,7 +3,7 @@ import React from "react";
 import { Checkbox, Typography } from "@mui/material/index";
 import { useTheme } from "@mui/material/styles";
 import { styled } from "@mui/system";
-const InputCheckbox = ({ name, control, defaultValue, data }) => {
+export const InputCheckboxLabel = ({ name, control, defaultValue, data }) => {
   const theme = useTheme();
   return (
     <Controller
@@ -32,6 +32,18 @@ const InputCheckbox = ({ name, control, defaultValue, data }) => {
   );
 };
 
+export const InputCheckbox = ({ name, control, defaultValue }) => {
+  const theme = useTheme();
+  return (
+    <Controller
+      name={name}
+      control={control}
+      defaultValue={defaultValue}
+      render={({ field: { value, onChange } }) => <Checkbox checked={value} onChange={onChange} />}
+    />
+  );
+};
+
 const ContainerCheckbox = styled("div")`
   margin: 10px 10px 10px 0;
 `;
@@ -41,5 +53,3 @@ const Label = styled(Typography)(({ theme }) => ({
   // backgroundColor: theme.palette.primary.main,
   borderRadius: 10
 }));
-
-export default InputCheckbox;
