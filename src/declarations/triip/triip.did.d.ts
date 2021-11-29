@@ -6,7 +6,7 @@ export type Error = { 'AlreadyExisting' : null } |
 export interface Profile { 'user' : User }
 export type Result = { 'ok' : null } |
   { 'err' : Error };
-export type Result_1 = { 'ok' : Array<TravelPlan> } |
+export type Result_1 = { 'ok' : Array<[string, TravelPlan]> } |
   { 'err' : Error };
 export type Result_2 = { 'ok' : [] | [Profile] } |
   { 'err' : Error };

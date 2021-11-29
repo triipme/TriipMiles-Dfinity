@@ -158,9 +158,9 @@ module.exports = {
     port: 3000,
     historyApiFallback: true
   },
-  // optimization: {
-  //   removeAvailableModules: false,
-  //   removeEmptyChunks: false,
-  //   splitChunks: false
-  // }
+  optimization: {
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false
+  }
 };

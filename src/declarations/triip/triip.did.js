@@ -31,7 +31,10 @@ export const idlFactory = ({ IDL }) => {
     'idtp' : IDL.Text,
     'travel_plan' : TravelPlanInformation,
   });
-  const Result_1 = IDL.Variant({ 'ok' : IDL.Vec(TravelPlan), 'err' : Error });
+  const Result_1 = IDL.Variant({
+    'ok' : IDL.Vec(IDL.Tuple(IDL.Text, TravelPlan)),
+    'err' : Error,
+  });
   return IDL.Service({
     'create' : IDL.Func([Profile], [Result], []),
     'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),

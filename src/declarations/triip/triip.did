@@ -32,7 +32,10 @@ type Result_2 =
 type Result_1 = 
  variant {
    err: Error;
-   ok: vec TravelPlan;
+   ok: vec record {
+             text;
+             TravelPlan;
+           };
  };
 type Result = 
  variant {

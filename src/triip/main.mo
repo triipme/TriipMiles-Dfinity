@@ -6,6 +6,7 @@ import Text "mo:base/Text";
 import Array "mo:base/Array";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
+import List "mo:base/List";
 import Principal "mo:base/Principal";
 
 import Types "Types";
@@ -135,17 +136,22 @@ actor {
         }
     };
 
-    public shared(msg) func readAllTPUser() : async Result.Result<[Types.TravelPlan],Types.Error>{
+    public shared(msg) func readAllTPUser() : async Result.Result<[(Text,Types.TravelPlan)],Types.Error>{
         let uid = msg.caller;
-        var tps : [Types.TravelPlan] = [];
+        var tps : [(Text,Types.TravelPlan)] = [];
 
         if(Principal.toText(uid)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
-        
-        for(val in state.travelplans.vals()){
-            if(Principal.toText(val.uid) == Principal.toText(uid)){
-                tps := Array.append<Types.TravelPlan>([val],tps);
+        // Debug.print(debug_show(Array.filter(Iter.toArray(state.travelplans.entries()),func (key:Text,val : Types.TravelPlan) : Bool {
+        //         Principal.toText(val.uid) == Principal.toText(uid);
+        //     }
+        // )));
+        Debug.print(debug_show(Iter.toArray(state.travelplans.entries())));
+
+        for((K,V) in state.travelplans.entries()){
+            if(Principal.toText(V.uid) == Principal.toText(uid)){
+                tps := Array.append<(Text,Types.TravelPlan)>([(K,V)],tps);
             }
         };
         #ok((tps));
