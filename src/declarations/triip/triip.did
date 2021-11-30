@@ -12,7 +12,6 @@ type TravelPlanInformation =
    destination: opt text;
    img: opt text;
    join_type: opt nat;
-   proof: opt text;
    public_mode: opt bool;
    specific_date: opt bool;
    timeEnd: opt int;
@@ -20,7 +19,6 @@ type TravelPlanInformation =
  };
 type TravelPlan = 
  record {
-   idtp: text;
    travel_plan: TravelPlanInformation;
    uid: principal;
  };
@@ -42,6 +40,12 @@ type Result =
    err: Error;
    ok;
  };
+type ProofTP = 
+ record {
+   created_at: opt nat;
+   idtp: opt text;
+   img_key: opt text;
+ };
 type Profile = record {user: User;};
 type Error = 
  variant {
@@ -52,8 +56,8 @@ type Error =
  };
 service : {
   create: (Profile) -> (Result);
+  createProofTP: (text, ProofTP) -> (Result);
   createTravelPlan: (TravelPlanUpdate) -> (Result);
-  proofTP: (text, text) -> (Result);
   read: () -> (Result_2);
   readAllTPUser: () -> (Result_1);
   updateTravelPlan: (TravelPlanUpdate) -> (Result);

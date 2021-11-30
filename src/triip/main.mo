@@ -11,6 +11,7 @@ import Principal "mo:base/Principal";
 
 import Types "Types";
 import State "State";
+import ProofTP "model/ProofTP";
 
 actor {
     /*------------------------ App state--------------------------- */
@@ -26,11 +27,13 @@ actor {
 
     stable var profiles : [(Principal,Types.Profile)] = [];
     stable var travelplans : [(Text,Types.TravelPlan)] = [];
+    stable var proofs : [(Text,Types.ProofTP)] = [];
 
     system func preupgrade() {
         Debug.print("Begin preupgrade");
         profiles := Iter.toArray(state.profiles.entries());
         travelplans := Iter.toArray(state.travelplans.entries());
+        proofs := Iter.toArray(state.proofs.entries());
         Debug.print("End preupgrade");
     };
 
@@ -41,6 +44,9 @@ actor {
         };
         for((k,v) in Iter.fromArray(travelplans)) {
             state.travelplans.put(k,v);
+        };
+        for((k,v) in Iter.fromArray(proofs)) {
+            state.proofs.put(k,v);
         };
         Debug.print("End postupgrade");
     };
@@ -95,7 +101,6 @@ actor {
         let plan : Types.TravelPlan = {
             uid = uid;
             travel_plan = travel_plan.travel_plan;
-            idtp = travel_plan.idtp;
         };
 
         state.travelplans.put(travel_plan.idtp,plan);
@@ -121,7 +126,6 @@ actor {
         let plan : Types.TravelPlan = {
             uid = uid;
             travel_plan = travel_plan.travel_plan;
-            idtp = travel_plan.idtp;
         };
 
         let rsReadTP = state.travelplans.replace(travel_plan.idtp,plan);
@@ -157,14 +161,21 @@ actor {
         #ok((tps));
     };
 
-    public shared(msg) func proofTP(idtp:Text,img_key:Text) : async Result.Result<(),Types.Error>{
+    public shared(msg) func createProofTP(idptp: Text,prooftp:ProofTP.ProofTP) : async Result.Result<(),Types.Error>{
         let uid = msg.caller;
 
         if(Principal.toText(uid)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
 
-        let findTP = state.travelplans.get(idtp);
+        let newProof : Types.ProofTP = {
+            uid = uid;
+            proof = prooftp;
+            status = false;
+        };
+        Debug.print(debug_show(newProof));
+
+        let findTP = state.travelplans.get(idptp);
         
         switch(findTP){
             case null{
@@ -173,10 +184,9 @@ actor {
             case (? v){
                 // findTP.travel_plan.img_key := img_key;
                 // let rs = state.travelplans.replace(idtp,findTP);
-                Debug.print(debug_show(findTP));
+                Debug.print(debug_show(v.travel_plan));
                 #ok(());
             }
         }
-
     }
 }

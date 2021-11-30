@@ -3,7 +3,6 @@ import { Box, styled } from "@mui/system";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetFile } from "../../../hooks";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router";
 import TravelPlanDetail from "../container/TravelPlan/TravelPlan";
@@ -16,12 +15,30 @@ const TravelPlans = () => {
   // console.log(fileUrl);
   useEffect(() => {
     (async () => {
-      if (!!actor.readAllTPUser) {
+      if (!!actor?.readAllTPUser) {
         const rs = await actor?.readAllTPUser();
         setTps(rs.ok);
+        if ("ok" in rs) {
+          console.log(rs);
+        } else {
+          console.log(rs);
+        }
       }
     })();
   }, [actor]);
+
+  useEffect(() => {
+    (async () => {
+      if (!!actor.createProofTP) {
+        const rs = await actor?.createProofTP("idptp", {
+          img_key: ["key"],
+          created_at: [123145],
+          idtp: ["pt_pjppt_djp___jtiip_fpt"]
+        });
+        console.log(rs);
+      }
+    })();
+  }, []);
 
   const handleTPItem = idtp => {
     setTpDetail(idtp);

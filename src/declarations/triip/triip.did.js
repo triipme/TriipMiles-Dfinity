@@ -8,6 +8,11 @@ export const idlFactory = ({ IDL }) => {
     'SomethingWrong' : IDL.Null,
   });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+  const ProofTP = IDL.Record({
+    'img_key' : IDL.Opt(IDL.Text),
+    'idtp' : IDL.Opt(IDL.Text),
+    'created_at' : IDL.Opt(IDL.Nat),
+  });
   const TravelPlanInformation = IDL.Record({
     'img' : IDL.Opt(IDL.Text),
     'destination' : IDL.Opt(IDL.Text),
@@ -18,7 +23,6 @@ export const idlFactory = ({ IDL }) => {
     'activities' : IDL.Opt(IDL.Vec(IDL.Bool)),
     'created_at' : IDL.Opt(IDL.Int),
     'public_mode' : IDL.Opt(IDL.Bool),
-    'proof' : IDL.Opt(IDL.Text),
     'timeEnd' : IDL.Opt(IDL.Int),
   });
   const TravelPlanUpdate = IDL.Record({
@@ -28,7 +32,6 @@ export const idlFactory = ({ IDL }) => {
   const Result_2 = IDL.Variant({ 'ok' : IDL.Opt(Profile), 'err' : Error });
   const TravelPlan = IDL.Record({
     'uid' : IDL.Principal,
-    'idtp' : IDL.Text,
     'travel_plan' : TravelPlanInformation,
   });
   const Result_1 = IDL.Variant({
@@ -37,8 +40,8 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     'create' : IDL.Func([Profile], [Result], []),
+    'createProofTP' : IDL.Func([IDL.Text, ProofTP], [Result], []),
     'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
-    'proofTP' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
     'read' : IDL.Func([], [Result_2], []),
     'readAllTPUser' : IDL.Func([], [Result_1], []),
     'updateTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),

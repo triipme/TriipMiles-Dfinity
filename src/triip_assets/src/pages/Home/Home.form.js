@@ -90,7 +90,6 @@ const HomeForm = ({ handleIsOpenParent }) => {
         //     .subtract(moment.duration(moment(timeStart).unix(), "s"))
         //     .days()
         // ],
-        proof:  [""],
         days: [days],
         specific_date: [specific_date],
         public_mode: [public_mode],
@@ -110,10 +109,6 @@ const HomeForm = ({ handleIsOpenParent }) => {
       //     16
       //   )()}.${img?.type.split("/")[1]}`
       // });
-      if(!!actor?.proofTP){
-        const rs = await actor?.proofTP(nntp,"CC");
-        console.log(rs)
-      }
     } catch (error) {
       console.log(error);
     }

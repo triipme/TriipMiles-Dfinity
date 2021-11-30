@@ -10,6 +10,5 @@ module{
       img: ?Text;
       specific_date: ?Bool;
       created_at: ?Int;
-      proof: ?Text;
   };
 }
