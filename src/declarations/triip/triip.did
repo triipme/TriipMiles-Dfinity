@@ -22,22 +22,22 @@ type TravelPlan =
    travel_plan: TravelPlanInformation;
    uid: principal;
  };
-type Result_4 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: opt text;
  };
-type Result_3 = 
+type Result_4 = 
  variant {
    err: Error;
    ok: text;
  };
-type Result_2 = 
+type Result_3 = 
  variant {
    err: Error;
    ok: opt Profile;
  };
-type Result_1 = 
+type Result_2 = 
  variant {
    err: Error;
    ok: vec record {
@@ -45,15 +45,26 @@ type Result_1 =
              TravelPlan;
            };
  };
+type Result_1 = 
+ variant {
+   err: Error;
+   ok: ProofTP;
+ };
 type Result = 
  variant {
    err: Error;
    ok;
  };
-type ProofTP = 
+type ProofTP__1 = 
  record {
    created_at: opt nat;
    img_key: opt text;
+ };
+type ProofTP = 
+ record {
+   proof: ProofTP__1;
+   status: bool;
+   uid: principal;
  };
 type Profile = record {user: User;};
 type Error = 
@@ -66,10 +77,11 @@ type Error =
  };
 service : {
   create: (Profile) -> (Result);
-  createProofTP: (text, ProofTP) -> (Result_4);
-  createTravelPlan: (TravelPlanUpdate) -> (Result_3);
-  read: () -> (Result_2);
+  createProofTP: (text, ProofTP__1) -> (Result_5);
+  createTravelPlan: (TravelPlanUpdate) -> (Result_4);
+  read: () -> (Result_3);
   readAllProof: () -> (Result);
-  readAllTPUser: () -> (Result_1);
+  readAllTPUser: () -> (Result_2);
+  readProofOfTP: (text) -> (Result_1);
   updateTravelPlan: (TravelPlanUpdate) -> (Result);
 }

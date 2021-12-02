@@ -17,9 +17,8 @@ const TravelPlans = () => {
     (async () => {
       if (!!actor?.readAllTPUser) {
         const rs = await actor?.readAllTPUser();
-        setTps(rs.ok);
         if ("ok" in rs) {
-          console.log(rs);
+          setTps(rs.ok);
         } else {
           console.log(rs);
         }

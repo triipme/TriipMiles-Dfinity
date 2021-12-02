@@ -16,7 +16,8 @@ export const ContentModalStyled = styled("div")(({ theme }) => ({
   transform: " translate(-50%, -50%)",
   backgroundColor: theme.palette.white.main,
   borderRadius: 20,
-  overflow: "hidden"
+  overflow: "hidden",
+  outline: "none"
 }));
 
 export const Banner = styled("div")(({ theme }) => ({

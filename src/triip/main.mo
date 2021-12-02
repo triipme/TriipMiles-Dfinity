@@ -210,8 +210,17 @@ actor {
         };
     };
 
+    public shared(msg) func readProofOfTP(idtp:Text) : async Result.Result<Types.ProofTP,Types.Error>{
+        let uid = msg.caller;
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            return #err(#NotAuthorized);//isNotAuthorized
+        };
+        
+        let proof = state.proofs.get(idtp);
+        return Result.fromOption(proof,#NotFound);
+    };
     public shared(msg) func readAllProof() : async Result.Result<(),Types.Error>{
         Debug.print(debug_show(Iter.toArray(state.proofs.entries())));
         #ok(());
-    }
+    };
 }
