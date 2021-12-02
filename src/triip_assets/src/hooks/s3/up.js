@@ -5,7 +5,6 @@ import S3 from "aws-sdk/clients/s3";
 
 const useUploadFile = () => {
   const [fileState, setFileState] = useState({});
-  const [status, setStatus] = useState(false);
   const [result, setResult] = useState();
   const [progress, setProgress] = useState(0);
   const creds = {
@@ -17,6 +16,7 @@ const useUploadFile = () => {
     (async () => {
       try {
         if (!!fileState?.file) {
+          console.log(fileState);
           const target = {
             Bucket: process.env.S3_BUCKET,
             Key: fileState?.name

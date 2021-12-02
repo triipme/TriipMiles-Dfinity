@@ -6,7 +6,9 @@ import Text "mo:base/Text";
 import Array "mo:base/Array";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
+import Option "mo:base/Option";
 import List "mo:base/List";
+import Time "mo:base/Time";
 import Principal "mo:base/Principal";
 
 import Types "Types";
@@ -91,7 +93,7 @@ actor {
         }
     };
 
-    public shared(msg) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(),Types.Error>{
+    public shared(msg) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<Text,Types.Error>{
         let uid = msg.caller;
 
         if(Principal.toText(uid)=="2vxsx-fae"){
@@ -112,7 +114,7 @@ actor {
                 #err(#NotFound);
             };
             case (? v){
-                #ok(());
+                #ok((travel_plan.idtp));
             };
         }
     };
@@ -151,8 +153,6 @@ actor {
         //         Principal.toText(val.uid) == Principal.toText(uid);
         //     }
         // )));
-        Debug.print(debug_show(Iter.toArray(state.travelplans.entries())));
-
         for((K,V) in state.travelplans.entries()){
             if(Principal.toText(V.uid) == Principal.toText(uid)){
                 tps := Array.append<(Text,Types.TravelPlan)>([(K,V)],tps);
@@ -161,32 +161,57 @@ actor {
         #ok((tps));
     };
 
-    public shared(msg) func createProofTP(idptp: Text,prooftp:ProofTP.ProofTP) : async Result.Result<(),Types.Error>{
+    public shared(msg) func createProofTP(idptp: Text,prooftp:ProofTP.ProofTP) : async Result.Result<?Text,Types.Error>{
         let uid = msg.caller;
-
         if(Principal.toText(uid)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
-
-        let newProof : Types.ProofTP = {
-            uid = uid;
-            proof = prooftp;
-            status = false;
-        };
-        Debug.print(debug_show(newProof));
-
-        let findTP = state.travelplans.get(idptp);
-        
-        switch(findTP){
-            case null{
-                #err(#NotFound);
-            };
+        // kiem tra proof cua tp da co hay chua
+        // neu co thi tra exist
+        // neu chua thi tiep tuc
+            // kiem tra co specific_date hay khong
+            // neu khong thi cho submit thoai mai
+            // neu co thi tiep tuc
+                // kiem tra start_date < current_Date < end_date
+                // neu co cho submit
+                // neu khong tra failed
+        let findPTP = state.proofs.get(idptp);
+        switch(findPTP){
             case (? v){
-                // findTP.travel_plan.img_key := img_key;
-                // let rs = state.travelplans.replace(idtp,findTP);
-                Debug.print(debug_show(v.travel_plan));
-                #ok(());
-            }
-        }
+                #err(#AlreadyExisting);
+            };
+            case (null){
+                let findTP = state.travelplans.get(idptp);
+                switch(findTP){
+                    case null{
+                        #err(#NotFound);
+                    };
+                    case (? tp){
+                        let newProof : Types.ProofTP = {
+                            uid = uid;
+                            proof = prooftp;
+                            status = false;
+                        };
+                        if(Option.get(tp.travel_plan.specific_date,false)){
+                            if( (Option.get(tp.travel_plan.timeStart,0) <= Time.now()/1000000000 ) and 
+                                (Time.now()/1000000000 <= Option.get(tp.travel_plan.timeEnd,0))){
+                                    state.proofs.put(idptp,newProof);
+                                    #ok((prooftp.img_key));
+                            } else{
+                                #err(#Failed);
+                            };
+                        } else{
+                            state.proofs.put(idptp,newProof);
+                            #ok((prooftp.img_key));
+                        };
+                    };
+                };
+            };
+        };
+    };
+
+    public shared(msg) func readAllProof() : async Result.Result<(),Types.Error>{
+        Debug.print(debug_show(Iter.toArray(state.proofs.entries())));
+        #ok(());
     }
 }

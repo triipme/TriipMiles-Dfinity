@@ -32,5 +32,6 @@ module Types{
         #AlreadyExisting;
         #NotAuthorized;
         #SomethingWrong;
+        #Failed;
     };
 }

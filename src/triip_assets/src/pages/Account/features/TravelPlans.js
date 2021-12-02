@@ -27,19 +27,6 @@ const TravelPlans = () => {
     })();
   }, [actor]);
 
-  useEffect(() => {
-    (async () => {
-      if (!!actor.createProofTP) {
-        const rs = await actor?.createProofTP("idptp", {
-          img_key: ["key"],
-          created_at: [123145],
-          idtp: ["pt_pjppt_djp___jtiip_fpt"]
-        });
-        console.log(rs);
-      }
-    })();
-  }, []);
-
   const handleTPItem = idtp => {
     setTpDetail(idtp);
   };

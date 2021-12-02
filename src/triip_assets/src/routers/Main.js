@@ -27,8 +27,10 @@ const Main = () => {
         {/* <Route path="*" element={<Navigate to="/404" />} /> */}
         <Route key={account[0].path} path={account[0].path} element={account[0].component}>
           {account[1].nested.map(item => (
-            <Route key={item.path} path={item.path} element={item.component} exact={item.exact} >
-              {item?.children?.map(child=><Route path={child?.path} element={child?.component} />)}
+            <Route key={item.path} path={item.path} element={item.component} exact={item.exact}>
+              {item?.children?.map(child => (
+                <Route key={child?.path} path={child?.path} element={child?.component} />
+              ))}
             </Route>
           ))}
         </Route>

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { Typography, Box, Stack, IconButton } from "@mui/material/index";
 import {
   ButtonPrimary,
@@ -13,20 +12,16 @@ import {
   InputText,
   ScrollHidden
 } from "../../components/index";
-import { resizeImg } from "../../functions";
-
-import { useUploadFile } from "../../hooks";
 
 import moment from "moment";
 import { customAlphabet } from "nanoid";
 import toast, { Toaster } from "react-hot-toast";
 import { ERRORS } from "../../utils/constants";
-import { destinationService } from "../../services";
 
 import { ContentModalStyled } from "./Home.style";
 import { useTheme } from "@mui/material/styles";
 import { Icon } from "@iconify/react";
-import { clippingParents } from "@popperjs/core";
+import { HP } from "./containers";
 
 const HomeForm = ({ handleIsOpenParent }) => {
   const theme = useTheme();
@@ -39,10 +34,8 @@ const HomeForm = ({ handleIsOpenParent }) => {
   } = useSelector(state => state.static.travelplan);
   const [nntp] = useState(customAlphabet(process.env.NANOID_ALPHABET_TP, 24)());
   const { actor } = useSelector(state => state.user);
-  const [image, progress, setFile] = useUploadFile();
-  const { profile } = useSelector(state => state.user);
   const [days, setDays] = useState(1);
-  const navigate = useNavigate();
+  const [idtp, setIdtp] = useState("");
   const {
     control,
     handleSubmit,
@@ -97,49 +90,6 @@ const HomeForm = ({ handleIsOpenParent }) => {
       }
     };
   };
-  const handleUpFileHP = async e => {
-    try {
-      const img = await resizeImg({ blob: e.target.files[0], asprX: 20, asprY: 20 });
-      // await setFile({
-      //   file: img,
-      //   name: `${
-      //     process.env.NODE_ENV === "development" ? "development" : "production" || "production"
-      //   }/${profile?._id}/travel_plan/${nntp}/${customAlphabet(
-      //     img?.name ?? process.env.NANOID_ALPHABET_S3,
-      //     16
-      //   )()}.${img?.type.split("/")[1]}`
-      // });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  // useEffect(() => {
-  //   (async () => {
-  //     if (!!image) {
-  //       setIsLoading(true);
-  //       console.log(image?._id);
-  //       setValue("img", image?._id);
-  //       if (!!actor?.updateTravelPlan) {
-  //         const result = await actor?.updateTravelPlan(body());
-  //         if ("ok" in result) {
-  //           console.log(result.ok);
-  //           toast.success("Success !.");
-  //           setCreatedStatus("HPSuccess");
-  //           // handleIsOpenParent(false);
-  //         } else {
-  //           console.error(result.err);
-  //         }
-  //         setIsLoading(false);
-  //       } else {
-  //         toast.error("Please sign in!.");
-  //       }
-  //       setIsLoading(false);
-  //     } else {
-  //       // toast.error("Please check image size!");
-  //     }
-  //   })();
-  // }, [image]);
-
   const onSubmit = async () => {
     if (!!actor) {
       setIsLoading(true);
@@ -148,6 +98,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
         .then(async result => {
           if ("ok" in result) {
             console.log(result.ok);
+            setIdtp(result.ok);
             toast.success("Success !.");
             setCreatedStatus("HP");
             // handleIsOpenParent(false);
@@ -281,75 +232,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                 />
               </ScrollHidden>
             ),
-            "HP": (
-              <ScrollHidden
-                sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <Box>
-                  <Typography sx={{ mb: 4 }} variant="h6" align="center">
-                    Happy Planning
-                  </Typography>
-                  <Typography sx={{ mb: 2 }} variant="body2" align="center">
-                    You will receive 1.0 TIIM <br />
-                    for submitting your travel plan.
-                  </Typography>
-                  <Typography sx={{ mb: 2 }} variant="body2" align="center">
-                    Go to your Travel Plans to review, edit your submitted plans.
-                  </Typography>
-                  <Typography sx={{ mb: 2 }} variant="body2" align="center">
-                    Submit your proof of travel after the trip <br />
-                    to earn 33.0 TIIM more for every plan you
-                    <br />
-                    create.
-                  </Typography>
-                </Box>
-                <Box>
-                  <label htmlFor="fileHP">
-                    <input
-                      type="file"
-                      name="fileHP"
-                      id="fileHP"
-                      style={{ display: "none" }}
-                      onChange={handleUpFileHP}
-                    />
-                    <ButtonPrimary loading={isLoading} title="Submit Proof" />
-                  </label>
-                  <ButtonPrimary
-                    sx={{ mt: 2 }}
-                    title="Go to travel plans"
-                    onClick={() => navigate("/account/travelplans")}
-                  />
-                </Box>
-              </ScrollHidden>
-            ),
-            "HPSuccess": (
-              <ScrollHidden
-                sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <Box>
-                  <Typography sx={{ mb: 2 }} variant="h6" align="center">
-                    Uploading travel document
-                  </Typography>
-                  <img
-                    src={image?.image}
-                    style={{ width: "80%", height: 160, objectFit: "cover", borderRadius: 12 }}
-                    alt="Uploading travel document"
-                  />
-                  <Typography
-                    sx={{ mt: 2, mb: 1, color: theme.palette.primary.main }}
-                    variant="h6"
-                    align="center">
-                    Upload Completed
-                  </Typography>
-                  <Typography sx={{ mb: 1 }} variant="body2" align="center">
-                    You will receive 33.0 TIIM <br />
-                    when your travel proof is approved
-                  </Typography>
-                  <Typography sx={{ mb: 1 }} variant="body2" align="center">
-                    Go to your Travel Plans to review, edit your submitted plans.
-                  </Typography>
-                </Box>
-                <ButtonPrimary sx={{ mt: 2 }} title="Go to travel plans" onClick={() => {}} />
-              </ScrollHidden>
-            )
+            "HP": <HP idtp={idtp} />
           }[createdStatus]
         }
       </ContentModalStyled>

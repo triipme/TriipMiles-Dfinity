@@ -1,12 +1,12 @@
 import type { Principal } from '@dfinity/principal';
 export type Error = { 'AlreadyExisting' : null } |
+  { 'Failed' : null } |
   { 'NotFound' : null } |
   { 'NotAuthorized' : null } |
   { 'SomethingWrong' : null };
 export interface Profile { 'user' : User }
 export interface ProofTP {
   'img_key' : [] | [string],
-  'idtp' : [] | [string],
   'created_at' : [] | [bigint],
 }
 export type Result = { 'ok' : null } |
@@ -14,6 +14,10 @@ export type Result = { 'ok' : null } |
 export type Result_1 = { 'ok' : Array<[string, TravelPlan]> } |
   { 'err' : Error };
 export type Result_2 = { 'ok' : [] | [Profile] } |
+  { 'err' : Error };
+export type Result_3 = { 'ok' : string } |
+  { 'err' : Error };
+export type Result_4 = { 'ok' : [] | [string] } |
   { 'err' : Error };
 export interface TravelPlan {
   'uid' : Principal,
@@ -38,9 +42,10 @@ export interface TravelPlanUpdate {
 export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
   'create' : (arg_0: Profile) => Promise<Result>,
-  'createProofTP' : (arg_0: string, arg_1: ProofTP) => Promise<Result>,
-  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
+  'createProofTP' : (arg_0: string, arg_1: ProofTP) => Promise<Result_4>,
+  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_3>,
   'read' : () => Promise<Result_2>,
+  'readAllProof' : () => Promise<Result>,
   'readAllTPUser' : () => Promise<Result_1>,
   'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }
