@@ -1,5 +1,6 @@
 import React from "react";
 import { AccountPage } from "../../pages";
+import { TravelPlanContainer } from "../../pages/Account/container";
 import {
   AccountFeature,
   BookingFeature,
@@ -24,7 +25,14 @@ export const account = [
       {
         path: "/account/travelplans",
         name: "Travel Plans",
-        component: <TravelPlansFeature />
+        component: <TravelPlansFeature />,
+        children:[
+          {
+            path: "/account/travelplans/:idtp",
+            name: "Travel Plans Detaild",
+            component: <TravelPlanContainer />,
+          }
+        ]
       },
       {
         path: "/account/notifications",

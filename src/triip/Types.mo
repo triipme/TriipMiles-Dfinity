@@ -1,5 +1,6 @@
 import User "model/User";
 import TravelPlan "model/TravelPlan";
+import ProofTP "model/ProofTP";
 import Principal "mo:base/Principal";
 
 module Types{
@@ -20,10 +21,17 @@ module Types{
     };
 
     /* ------------------------- Error --------------------------- */
+    public type ProofTP = {
+        proof: ProofTP.ProofTP;
+        uid: Principal;
+        status: Bool;
+    };
+    /* ------------------------- Error --------------------------- */
     public type Error = {
         #NotFound;
         #AlreadyExisting;
         #NotAuthorized;
         #SomethingWrong;
+        #Failed;
     };
 }

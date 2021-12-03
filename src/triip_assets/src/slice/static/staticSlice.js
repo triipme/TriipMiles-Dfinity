@@ -27,15 +27,25 @@ const initialState = {
       " GTEC",
       " MTEC"
     ],
-    join_type: ["Solo", "Couple", "Family", "Group"]
+    join_type: ["Solo", "Couple", "Family", "Group"],
+    destination: []
   }
 };
 
 const staticSlice = createSlice({
   name: "static",
   initialState,
-  reducers: {}
+  reducers: {
+    destinationReducer: (state, action) => {
+      return {
+        travelplan: {
+          ...state.travelplan,
+          destination: action.payload
+        }
+      };
+    }
+  }
 });
 
-export const {} = staticSlice.actions;
+export const { destinationReducer } = staticSlice.actions;
 export default staticSlice.reducer;

@@ -1,9 +1,17 @@
 import React from "react";
-import { TextField } from "@mui/material/index";
+import { TextField, Autocomplete } from "@mui/material/index";
 import { Controller } from "react-hook-form";
 import { styled } from "@mui/system";
 
-const InputText = ({ name, label, control, defaultValue = "", placeHolder, helperTextError }) => {
+const InputText = ({
+  name,
+  label,
+  control,
+  autocompleteOptions,
+  defaultValue = "",
+  placeHolder,
+  helperTextError
+}) => {
   return (
     <Controller
       name={name}
@@ -12,17 +20,39 @@ const InputText = ({ name, label, control, defaultValue = "", placeHolder, helpe
       rules={{
         required: true
       }}
-      render={({ field: { name, value = "", onChange }, fieldState: { error } }) => (
-        <TextFieldStyled
-          placeholder={placeHolder}
-          onChange={onChange}
-          value={value}
-          name={name}
-          label={label}
-          type="text"
-          error={!!error}
-          helperText={helperTextError[error?.type]}
-        />
+      render={({ field: { name, value, onChange }, fieldState: { error } }) => (
+        <>
+          {autocompleteOptions ? (
+            <Autocomplete
+              disablePortal
+              options={autocompleteOptions ?? []}
+              onInputChange={(evt, newValue) => onChange(newValue)}
+              inputValue={value}
+              renderInput={params => (
+                <TextFieldStyled
+                  {...params}
+                  placeholder={placeHolder}
+                  name={name}
+                  label={label}
+                  type="text"
+                  error={!!error}
+                  helperText={helperTextError[error?.type]}
+                />
+              )}
+            />
+          ) : (
+            <TextFieldStyled
+              placeholder={placeHolder}
+              name={name}
+              label={label}
+              onChange={onChange}
+              value={value}
+              type="text"
+              error={!!error}
+              helperText={helperTextError[error?.type]}
+            />
+          )}
+        </>
       )}
     />
   );

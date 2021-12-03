@@ -13,6 +13,7 @@ type TravelPlanInformation =
    img: opt text;
    join_type: opt nat;
    public_mode: opt bool;
+   specific_date: opt bool;
    timeEnd: opt int;
    timeStart: opt int;
  };
@@ -21,33 +22,66 @@ type TravelPlan =
    travel_plan: TravelPlanInformation;
    uid: principal;
  };
-type Result_2 = 
+type Result_5 = 
+ variant {
+   err: Error;
+   ok: opt text;
+ };
+type Result_4 = 
+ variant {
+   err: Error;
+   ok: text;
+ };
+type Result_3 = 
  variant {
    err: Error;
    ok: opt Profile;
  };
+type Result_2 = 
+ variant {
+   err: Error;
+   ok: vec record {
+             text;
+             TravelPlan;
+           };
+ };
 type Result_1 = 
  variant {
    err: Error;
-   ok: vec TravelPlan;
+   ok: ProofTP;
  };
 type Result = 
  variant {
    err: Error;
    ok;
  };
+type ProofTP__1 = 
+ record {
+   created_at: opt nat;
+   img_key: opt text;
+ };
+type ProofTP = 
+ record {
+   proof: ProofTP__1;
+   status: bool;
+   uid: principal;
+ };
 type Profile = record {user: User;};
 type Error = 
  variant {
    AlreadyExisting;
+   Failed;
    NotAuthorized;
    NotFound;
    SomethingWrong;
  };
 service : {
   create: (Profile) -> (Result);
-  createTravelPlan: (TravelPlanUpdate) -> (Result);
-  read: () -> (Result_2);
-  readAllTPUser: () -> (Result_1);
+  createProofTP: (text, ProofTP__1) -> (Result_5);
+  createTravelPlan: (TravelPlanUpdate) -> (Result_4);
+  read: () -> (Result_3);
+  readAllProof: () -> (Result);
+  readAllTPUser: () -> (Result_2);
+  readProofOfTP: (text) -> (Result_1);
   updateTravelPlan: (TravelPlanUpdate) -> (Result);
 }
