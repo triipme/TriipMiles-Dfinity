@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Modal } from "@mui/material";
 import { ButtonPrimary, ScrollHidden } from "../../../components/index";
 import { useNavigate } from "react-router-dom";
 import { resizeImg } from "../../../functions";
@@ -8,13 +8,15 @@ import { useUploadFile } from "../../../hooks";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import toast from "react-hot-toast";
-import { useTheme } from "@mui/system";
+import { styled, useTheme } from "@mui/system";
+import { Icon } from "@iconify/react";
 
 const HP = ({ idtp }) => {
   const theme = useTheme();
   const { actor } = useSelector(state => state.user);
   const { profile } = useSelector(state => state.user);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState();
   const [status, setStatus] = useState(false);
   const [image, progress, setFile] = useUploadFile();
   const navigate = useNavigate();
@@ -43,30 +45,29 @@ const HP = ({ idtp }) => {
           await setStatus(true);
           // handleIsOpenParent(false);
         } else {
-          console.error(result?.err);
+          throw result?.err;
         }
-        setIsLoading(false);
       } else {
         toast.error("Please sign in!.");
       }
-      setIsLoading(false);
     } catch (error) {
+      setIsError(Object.keys(error)[0]);
+    } finally {
       setIsLoading(false);
-      console.log(error);
     }
   };
+  console.log(isError);
   return (
     <>
       {!status ? (
         <ScrollHidden
           sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           <Box>
-            {console.log("HP")}
             <Typography sx={{ mb: 4 }} variant="h6" align="center">
               Happy Planning
             </Typography>
             <Typography sx={{ mb: 2 }} variant="body2" align="center">
-              You will receive 1.0 TIIM <br />
+              You will receive 0.000001 ICP <br />
               for submitting your travel plan.
             </Typography>
             <Typography sx={{ mb: 2 }} variant="body2" align="center">
@@ -74,7 +75,7 @@ const HP = ({ idtp }) => {
             </Typography>
             <Typography sx={{ mb: 2 }} variant="body2" align="center">
               Submit your proof of travel after the trip <br />
-              to earn 33.0 TIIM more for every plan you
+              to earn 0.000033 ICP more for every plan you
               <br />
               create.
             </Typography>
@@ -130,8 +131,54 @@ const HP = ({ idtp }) => {
           />
         </ScrollHidden>
       )}
+      <Modal open={!!isError}>
+        <ContentModalStyled sx={{ textAlign: "center" }}>
+          <Typography variant="h6">Warning</Typography>
+          <Box>
+            <Box
+              width={70}
+              height={70}
+              display="grid"
+              borderRadius={100}
+              mx="auto"
+              sx={{ placeItems: "center", backgroundColor: theme.palette.grey[700] }}>
+              <Icon icon="ant-design:warning-filled" color={theme.palette.white.main} />
+            </Box>
+            <Typography mt={3}>
+              {
+                {
+                  AlreadyExisting: "Proof of Travel already !.",
+                  NotFound: "Not Found Travel Plan !.",
+                  Failed:
+                    "You just only submit Proof of Travel after start date and before end date !."
+                }[isError]
+              }
+            </Typography>
+          </Box>
+          <ButtonPrimary sx={{ mt: 2 }} title="Close" onClick={() => setIsError()} />
+        </ContentModalStyled>
+      </Modal>
     </>
   );
 };
 
+const ContentModalStyled = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.up("sm")]: {
+    width: 400
+  },
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  width: "90%",
+  height: 500,
+  padding: "25px 15px",
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: " translate(-50%, -50%)",
+  backgroundColor: theme.palette.white.main,
+  borderRadius: 20,
+  overflow: "hidden",
+  outline: "none"
+}));
 export default HP;

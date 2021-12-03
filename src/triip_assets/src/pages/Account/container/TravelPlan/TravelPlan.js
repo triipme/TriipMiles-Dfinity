@@ -127,15 +127,34 @@ const HappyProof = styled(Box)`
   align-items: center;
 `;
 const TPDContainer = styled(Box)(({ theme }) => ({
-  width: "30%",
+  [theme.breakpoints.up("sm")]: {
+    width: "50%"
+  },
+  [theme.breakpoints.up("md")]: {
+    width: "40%"
+  },
+  [theme.breakpoints.up("lg")]: {
+    width: "35%"
+  },
+  width: "80%",
   height: "100vh",
   backgroundColor: "white",
   outline: "none",
   overflowY: "scroll"
 }));
 const TPDImage = styled("img")(({ theme }) => ({
-  width: "100%",
-  height: 220,
+  [theme.breakpoints.up("sm")]: {
+    maxWidth: "100%",
+    maxHeight: 270,
+    minHeight: 220
+  },
+  [theme.breakpoints.up("md")]: {
+    maxWidth: "100%",
+    maxHeight: 220,
+    minHeight: 220
+  },
+  minWidth: "100%",
+  minHeight: 200,
   objectFit: "cover"
 }));
 const TPDBody = styled(Box)(({ theme }) => ({
