@@ -4,6 +4,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
+const CompressionPlugin = require("compression-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+
 let localCanisters, prodCanisters, canisters;
 
 function initCanisterIds() {
@@ -39,15 +42,12 @@ module.exports = {
   entry: {
     // The frontend.entrypoint points to the HTML file for this build, so we need
     // to replace the extension to `.js`.
-    index: path.join(__dirname, asset_entry).replace(/\.html$/, ".jsx")
+    index: path.join(__dirname, asset_entry).replace(/\.html$/, ".js")
   },
   devtool: isDevelopment ? "source-map" : false,
-  optimization: {
-    minimize: !isDevelopment,
-    minimizer: [new TerserPlugin()]
-  },
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
+    modules: ["node_modules"],
     fallback: {
       assert: require.resolve("assert/"),
       buffer: require.resolve("buffer/"),
@@ -57,7 +57,8 @@ module.exports = {
     }
   },
   output: {
-    filename: "index.js",
+    // filename: "index.js",
+    filename: "[name].[chunkhash].index.js",
     path: path.join(__dirname, "dist", "triip_assets")
   },
 
@@ -96,6 +97,10 @@ module.exports = {
           }
         ]
       },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"]
+      },
       // {
       //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
       //   include: path.resolve(__dirname, "assets"),
@@ -115,7 +120,21 @@ module.exports = {
         "images",
         "triip_tiim_logo.png"
       ),
-      cache: false
+      cache: false,
+      minify: !isDevelopment
+        ? {
+            removeComments: true,
+            collapseWhitespace: true,
+            removeRedundantAttributes: true,
+            useShortDoctype: true,
+            removeEmptyAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            keepClosingSlash: true,
+            minifyJS: true,
+            minifyCSS: true,
+            minifyURLs: true
+          }
+        : undefined
     }),
     new CopyPlugin({
       patterns: [
@@ -130,7 +149,7 @@ module.exports = {
       NODE_ENV: "development",
       TRIIP_CANISTER_ID: canisters["triip"],
       II_URL: isDevelopment
-        ? "http://localhost:8000?canisterId=rkp4c-7iaaa-aaaaa-aaaca-cai#authorize"
+        ? "http://localhost:8000?canisterId=rno2w-sqaaa-aaaaa-aaacq-cai#authorize"
         : "https://identity.ic0.app/#authorize"
     }),
     new webpack.ProvidePlugin({
@@ -139,6 +158,9 @@ module.exports = {
     }),
     new Dotenv({
       path: "./.env" // Path to .env file (this is the default)
+    }),
+    new CompressionPlugin({
+      test: /\.js(\?.*)?$/i
     })
   ],
   // proxy /api to port 8000 during development
@@ -158,9 +180,57 @@ module.exports = {
     port: 3000,
     historyApiFallback: true
   },
+  performance: {
+    hints: "warning",
+    // Calculates sizes of gziped bundles.
+    assetFilter: function (assetFilename) {
+      return assetFilename.endsWith(".js.gz");
+    }
+  },
   optimization: {
-    removeAvailableModules: false,
-    removeEmptyChunks: false,
-    splitChunks: false
+    // usedExports: true,
+    splitChunks: {
+      cacheGroups: {
+        vendors: {
+          test: /node_modules\/(?!@mui\/).*/,
+          name: "vendors",
+          chunks: "all"
+        },
+        // This can be your own design library.
+        mui: {
+          test: /node_modules\/(@mui\/).*/,
+          name: "mui",
+          chunks: "all"
+        }
+      }
+    },
+    runtimeChunk: {
+      name: "manifest"
+    },
+    minimize: !isDevelopment,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          ecma: undefined,
+          parse: {},
+          compress: {
+            drop_console: true
+          },
+          mangle: true, // Note `mangle.properties` is `false` by default.
+          module: false,
+          // Deprecated
+          output: null,
+          format: null,
+          toplevel: false,
+          nameCache: null,
+          ie8: false,
+          keep_classnames: undefined,
+          keep_fnames: false,
+          safari10: false
+        },
+        // Use multi-process parallel running to improve the build speed
+        parallel: true
+      })
+    ]
   }
 };

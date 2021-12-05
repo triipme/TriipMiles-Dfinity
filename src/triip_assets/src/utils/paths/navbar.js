@@ -1,8 +1,7 @@
-import React from "react";
-import loadable from "@loadable/component";
+import React, { lazy } from "react";
 import { Navigate, Redirect } from "react-router-dom";
 import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage } from "../../pages";
-const NotFound = loadable(() => import("../../pages/Admin/pages/Page404"));
+const NotFound = lazy(() => import("../../pages/Admin/pages/Page404"));
 
 export const navbar = [
   {

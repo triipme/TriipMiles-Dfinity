@@ -7,3 +7,4 @@ export { default as InputSwitch } from "./Input/Input.switch";
 export { default as ScrollHidden } from "./Scroll/Scroll.hidden";
 export { LinkStyled } from "./Link/Link";
 export { NavLinkStyled } from "./NavLink/NavLink";
+export { default as Loading } from "./Loading/Loading.index";

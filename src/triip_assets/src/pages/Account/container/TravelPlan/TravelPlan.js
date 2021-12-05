@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 import { useGetFile } from "../../../../hooks";
 import { HP } from "../../../Home/containers";
 import { ContentModalStyled } from "../../../Home/Home.style";
+import SimpleBarReact from "simplebar-react";
 
 const TravelPlanDetail = forwardRef(({ travelplan }, ref) => {
   const theme = useTheme();
@@ -30,74 +31,76 @@ const TravelPlanDetail = forwardRef(({ travelplan }, ref) => {
       setIdtp();
     };
   }, [travelplan[0]]);
-  console.log(proofImg);
+  console.log(travelplan[1]?.travel_plan?.specific_date[0]);
   return (
     <TPDContainer ref={ref}>
-      <TPDImage src={travelplan[1]?.travel_plan?.img[0]} />
-      <TPDBody>
-        <Typography variant="h5">{travelplan[1]?.travel_plan?.destination}</Typography>
-        <Stack direction="row" alignItems="center" my={2}>
-          <Icon style={{ marginRight: 10 }} icon="bx:bx-calendar" />
-          <Typography variant="body1">
-            {travelplan[1]?.travel_plan?.specific_date
-              ? `${travelplan[1]?.travel_plan?.days} days`
-              : `${moment
-                  .unix(travelplan[1]?.travel_plan?.timeStart)
-                  .format("LL")
-                  .toString()} - ${moment
-                  .unix(travelplan[1]?.travel_plan?.timeEnd)
-                  .format("LL")
-                  .toString()}`}
-          </Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" my={2}>
-          <Icon style={{ marginRight: 10 }} icon="healthicons:travel-alt" />
-          <Typography>{join_type[travelplan[1]?.travel_plan?.join_type - 1]}</Typography>
-        </Stack>
-        <Stack direction="row" mt={2}>
-          <Icon style={{ marginRight: 10 }} icon="bx:bxs-star" />
-          <Typography sx={{ flex: 1 }}>
-            {activities
-              .filter((_, inact) => travelplan[1]?.travel_plan?.activities[0][inact])
-              .join(",")}
-          </Typography>
-        </Stack>
-      </TPDBody>
-      <Divider />
-      <TPDBody>
-        <Stack direction="row" alignItems="center" mb={1}>
-          <Typography fontWeight="bold" variant="body1">
-            Travel Documents (proof of travel)
-          </Typography>
-          <Icon
-            style={{ marginLeft: 10 }}
-            icon="ph:warning-circle-fill"
-            color={theme.palette.secondary.main}
-          />
-        </Stack>
-        <Typography variant="body2">Your fight detail, booking information, etc...</Typography>
-        <HappyProof>
-          {proofImg ? (
-            <HPImg
-              src={proofImg?.image ?? "https://source.unsplash.com/random"}
-              alt="proof image"
+      <SimpleBarReact style={{ maxHeight: "100vh" }}>
+        <TPDImage src={travelplan[1]?.travel_plan?.img[0]} />
+        <TPDBody>
+          <Typography variant="h5">{travelplan[1]?.travel_plan?.destination}</Typography>
+          <Stack direction="row" alignItems="center" my={2}>
+            <Icon style={{ marginRight: 10 }} icon="bx:bx-calendar" />
+            <Typography variant="body1">
+              {travelplan[1]?.travel_plan?.specific_date[0]
+                ? `${moment
+                    .unix(travelplan[1]?.travel_plan?.timeStart)
+                    .format("LL")
+                    .toString()} - ${moment
+                    .unix(travelplan[1]?.travel_plan?.timeEnd)
+                    .format("LL")
+                    .toString()}`
+                : `${travelplan[1]?.travel_plan?.days} days`}
+            </Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center" my={2}>
+            <Icon style={{ marginRight: 10 }} icon="healthicons:travel-alt" />
+            <Typography>{join_type[travelplan[1]?.travel_plan?.join_type - 1]}</Typography>
+          </Stack>
+          <Stack direction="row" mt={2}>
+            <Icon style={{ marginRight: 10 }} icon="bx:bxs-star" />
+            <Typography sx={{ flex: 1 }}>
+              {activities
+                .filter((_, inact) => travelplan[1]?.travel_plan?.activities[0][inact])
+                .join(",")}
+            </Typography>
+          </Stack>
+        </TPDBody>
+        <Divider />
+        <TPDBody>
+          <Stack direction="row" alignItems="center" mb={1}>
+            <Typography fontWeight="bold" variant="body1">
+              Travel Documents (proof of travel)
+            </Typography>
+            <Icon
+              style={{ marginLeft: 10 }}
+              icon="ph:warning-circle-fill"
+              color={theme.palette.secondary.main}
             />
-          ) : (
-            <HPUploadProof onClick={() => setIdtp(travelplan[0])}>
-              <Icon icon="bi:image-fill" color={theme.palette.secondary.main} />
-            </HPUploadProof>
-          )}
-          <Typography variant="body2">
-            Submit your Proof-Of-Travel before your last day, and earn 0.000033 ICP when your proof
-            get approved.
-          </Typography>
-        </HappyProof>
-      </TPDBody>
-      <Modal open={!!idtp} onClose={() => setIdtp()}>
-        <ContentModalStyled>
-          <HP idtp={idtp} />
-        </ContentModalStyled>
-      </Modal>
+          </Stack>
+          <Typography variant="body2">Your fight detail, booking information, etc...</Typography>
+          <HappyProof>
+            {proofImg ? (
+              <HPImg
+                src={proofImg?.image ?? "https://source.unsplash.com/random"}
+                alt="proof image"
+              />
+            ) : (
+              <HPUploadProof onClick={() => setIdtp(travelplan[0])}>
+                <Icon icon="bi:image-fill" color={theme.palette.secondary.main} />
+              </HPUploadProof>
+            )}
+            <Typography variant="body2">
+              Submit your Proof-Of-Travel before your last day, and earn 0.000033 ICP when your
+              proof get approved.
+            </Typography>
+          </HappyProof>
+        </TPDBody>
+        <Modal open={!!idtp} onClose={() => setIdtp()}>
+          <ContentModalStyled>
+            <HP idtp={idtp} />
+          </ContentModalStyled>
+        </Modal>
+      </SimpleBarReact>
     </TPDContainer>
   );
 });
@@ -138,9 +141,7 @@ const TPDContainer = styled(Box)(({ theme }) => ({
   },
   width: "80%",
   height: "100vh",
-  backgroundColor: "white",
-  outline: "none",
-  overflowY: "scroll"
+  backgroundColor: "white"
 }));
 const TPDImage = styled("img")(({ theme }) => ({
   [theme.breakpoints.up("sm")]: {

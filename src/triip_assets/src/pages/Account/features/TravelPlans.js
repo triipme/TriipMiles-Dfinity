@@ -57,7 +57,7 @@ const TravelPlanItem = ({ idtp, tp, onClick }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   return (
-    <Grid item xs={9} sm={6} md={4} lg={3} onClick={onClick}>
+    <Grid item xs={10} sm={6} md={4} lg={3} onClick={onClick}>
       <Box sx={{ borderRadius: "16px", boxShadow: theme.shadows[18] }}>
         <Box position="relative">
           <TPImg

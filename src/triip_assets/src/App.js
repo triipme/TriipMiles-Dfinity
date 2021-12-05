@@ -6,6 +6,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { destinationService } from "./services";
 import { useDispatch } from "react-redux";
 import { destinationReducer } from "./slice/static/staticSlice";
+import SimpleBarReact from "simplebar-react";
+import "simplebar/src/simplebar.css";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -20,12 +22,14 @@ const App = () => {
     })();
   }, []);
   return (
-    <HelmetProvider>
-      <ThemeConfig>
-        <CssBaseline />
-        <Main />
-      </ThemeConfig>
-    </HelmetProvider>
+    <SimpleBarReact style={{ maxHeight: "100vh" }}>
+      <HelmetProvider>
+        <ThemeConfig>
+          <CssBaseline />
+          <Main />
+        </ThemeConfig>
+      </HelmetProvider>
+    </SimpleBarReact>
   );
 };
 

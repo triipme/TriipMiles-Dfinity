@@ -242,8 +242,8 @@ const TabPanel = ({ value, index, children, data, title }) => {
             alt=""
             style={{
               marginTop: 50,
-              maxWidth: index === 0 ? "100%" : "auto",
-              maxHeight: index === 0 ? 400 : "100%",
+              maxWidth: "100%",
+              maxHeight: 400,
               objectFit: index === 0 ? "contain" : "cover"
             }}
           />

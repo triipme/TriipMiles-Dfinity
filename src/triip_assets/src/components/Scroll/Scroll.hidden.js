@@ -1,12 +1,12 @@
 import { Box } from "@mui/system";
 import React from "react";
-import { Scroll } from "./Scroll";
+import SimpleBarReact from "simplebar-react";
 
 const ScrollHidden = ({ children, sx }) => {
   return (
-    <Scroll>
-      <Box sx={{ width: "100%", height: "100%", ...sx }}>{children}</Box>
-    </Scroll>
+    <SimpleBarReact style={{ maxHeight: 500 }}>
+      <Box sx={{ my: 2, px: 2, width: "100%", height: 500 - 32, ...sx }}>{children}</Box>
+    </SimpleBarReact>
   );
 };
 

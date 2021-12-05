@@ -4,19 +4,16 @@ import { ImageUrls } from "../../theme";
 
 export const ContentModalStyled = styled(Box)(({ theme }) => ({
   [theme.breakpoints.up("sm")]: {
-    width: 400,
-    padding: "25px 0 25px 15px"
+    width: 400
   },
   width: "90%",
   height: 500,
-  padding: "25px 15px",
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: " translate(-50%, -50%)",
   backgroundColor: theme.palette.white.main,
   borderRadius: 20,
-  overflow: "hidden",
   outline: "none"
 }));
 
@@ -68,8 +65,8 @@ export const TabPanelButton = styled(Button)(({ theme }) => ({
     width: "60%"
   },
   width: "100%",
-  height: 70,
-  fontSize: 28,
+  height: 60,
+  fontSize: 24,
   fontWeight: "bold",
   borderRadius: 24,
   color: theme.palette.white.main,
