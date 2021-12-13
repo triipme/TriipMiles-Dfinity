@@ -15,8 +15,17 @@ shared({caller = owner}) actor class ICP() = this {
         AId.toText(aId());
     };
 
+    public shared({caller}) func accountIdP() : async Text {
+        Debug.print(debug_show(caller));
+        AId.toText(principalToAid(caller));
+    };
+
     private func aId() : AId.AccountIdentifier {
         AId.fromPrincipal(Principal.fromActor(this), null);
+    };
+
+    private func principalToAid(p : Principal) : AId.AccountIdentifier {
+        AId.fromPrincipal(p,null)
     };
 
     public func balance() : async Ledger.ICP {
@@ -24,11 +33,17 @@ shared({caller = owner}) actor class ICP() = this {
             account = aId();
         });
     };
+    public shared({caller}) func balanceShared() : async Ledger.ICP {
+        assert(caller == owner);
+        await ledger.account_balance({
+            account = principalToAid(caller);
+        });
+    };
 
     public shared({caller}) func transfer(amount : Ledger.ICP, to : Text) : async Ledger.TransferResult {
+        Debug.print(debug_show(caller,owner));
         assert(caller == owner);
-        Debug.print(debug_show(amount,to));
-        let aId : AId.AccountIdentifier = switch(AId.fromText(to)) {
+        let toAId : AId.AccountIdentifier = switch(AId.fromText(to)) {
             case (#err(_)) {
                 assert(false);
                 loop {};
@@ -40,7 +55,7 @@ shared({caller = owner}) actor class ICP() = this {
             amount          = amount;
             fee             = { e8s = 10_000 };
             from_subaccount = null;
-            to              = aId;
+            to              = toAId;
             created_at_time = null;
         });
     };

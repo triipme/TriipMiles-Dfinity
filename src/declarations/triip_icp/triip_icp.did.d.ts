@@ -2,7 +2,9 @@ import type { Principal } from '@dfinity/principal';
 export type BlockIndex = bigint;
 export interface ICP {
   'accountId' : () => Promise<string>,
+  'accountIdP' : () => Promise<string>,
   'balance' : () => Promise<ICP__1>,
+  'balanceShared' : () => Promise<ICP__1>,
   'transfer' : (arg_0: ICP__1, arg_1: string) => Promise<TransferResult>,
 }
 export interface ICP__1 { 'e8s' : bigint }

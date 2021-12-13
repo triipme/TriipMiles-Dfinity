@@ -7,9 +7,10 @@ import { AuthClient } from "@dfinity/auth-client";
 import { Principal } from "@dfinity/principal";
 import { useLocation } from "react-router-dom";
 
-import { actorSlice, login, profile } from "../../slice/user/userSlice";
+import { actorMain, actorTransfer, login, profile } from "../../slice/user/userSlice";
 import { ContainerStyled, FormStyled } from "./NavBar.style";
 import { canisterId, createActor } from "../../../../declarations/triip";
+import { canisterIdTransfer, createActorTransfer } from "../../../../declarations/triip_icp";
 import FormProfile from "./NavBar.form";
 import { Images } from "../../theme";
 import { LinkStyled, NavLinkStyled } from "../../components";
@@ -19,7 +20,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Divider } from "@mui/material";
 import { Icon } from "@iconify/react";
 import menu2Outline from "@iconify/icons-eva/menu-2-outline";
-import { clippingParents } from "@popperjs/core";
 
 const NavBar = () => {
   const theme = useTheme();
@@ -44,12 +44,18 @@ const NavBar = () => {
   }, []);
 
   const initActor = () => {
-    const actor = createActor(canisterId, {
+    const actor_main = createActor(canisterId, {
       agentOptions: {
         identity: authClient?.getIdentity()
       }
     });
-    dispatch(actorSlice(actor));
+    const actor_transfer = createActorTransfer(canisterIdTransfer, {
+      agentOptions: {
+        identity: authClient?.getIdentity()
+      }
+    });
+    dispatch(actorMain(actor_main));
+    dispatch(actorTransfer(actor_transfer));
   };
 
   useLayoutEffect(() => {
@@ -61,7 +67,7 @@ const NavBar = () => {
     // Read Profile
     if (!!actor.read) {
       actor?.read().then(rs => {
-        console.log("profile",rs);
+        console.log("profile", rs);
         if ("ok" in rs) {
           // setProfile(rs.ok[0]);
           dispatch(profile({ ...rs?.ok[0], _id: rs?.ok[1] }));

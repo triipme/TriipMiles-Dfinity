@@ -148,6 +148,7 @@ module.exports = {
       // NODE_ENV: "production",
       NODE_ENV: "development",
       TRIIP_CANISTER_ID: canisters["triip"],
+      TRIIP_ICP_CANISTER_ID: canisters["triip_icp"],
       II_URL: isDevelopment
         ? "http://localhost:8000?canisterId=rno2w-sqaaa-aaaaa-aaacq-cai#authorize"
         : "https://identity.ic0.app/#authorize"

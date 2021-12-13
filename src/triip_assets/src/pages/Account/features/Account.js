@@ -18,6 +18,7 @@ const Account = props => {
   const theme = useTheme();
   const { control, handleSubmit } = useForm();
   const { actor, profile } = useSelector(state => state.user);
+  console.log(actor);
   const [isOpen, setIsOpen] = useState(false);
   const [transactions, setTransactions] = useState();
   const [isOpenTransaction, setIsOpenTransaction] = useState(false);
@@ -47,9 +48,14 @@ const Account = props => {
     <div>
       <Stack flexDirection="row" justifyContent="space-between" marginBottom={5}>
         <Typography variant="h3">Accounts</Typography>
-        <Box>
-          <ButtonPrimary onClick={() => setIsOpen(!isOpen)} title="Link a new account" />
-        </Box>
+        <Stack flexDirection="row" alignItems="center">
+          <Box>
+            <ButtonPrimary onClick={() => {}} title="New Transaction" />
+          </Box>
+          <Box ml={1}>
+            <ButtonPrimary onClick={() => setIsOpen(!isOpen)} title="Link a new account" />
+          </Box>
+        </Stack>
         {/* <Typography variant="h3" textAlign="end">
           125125
           <Typography variant="body1">ICP</Typography>
@@ -58,7 +64,7 @@ const Account = props => {
       {profile?.wallets?.at(0)?.map(w => (
         <Wallet key={w} aid={w} onClickCard={() => handlePressCard(w)} />
       ))}
-      <Modal open={isOpen} onClose={() => setIsOpen(!isOpen)}>
+      <Modal open={isOpen} onClose={() => setIsOpen(!isOpen)} keepMounted>
         <ContentModalStyled>
           <ScrollHidden
             sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
@@ -73,25 +79,39 @@ const Account = props => {
         </ContentModalStyled>
       </Modal>
       <Modal open={isOpenTransaction} onClose={() => setIsOpenTransaction(!isOpenTransaction)}>
-        <ContentModalStyled width={{ sm: "700px !important" }}>
+        <ContentModalStyled width={{ sm: "700px !important" }} pb={5}>
           <ScrollHidden
             sx={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between"
             }}>
-            {transactions?.map((tran, trani) => (
-              <Box key={trani} p={2} mb={4} boxShadow={theme.shadows[10]} borderRadius={3}>
-                <Stack flexDirection="row">
-                  <Typography variant="h5">{Number(tran?.fee) / 1e8}</Typography>
+            {transactions?.reverse()?.map((tran, trani) => (
+              <Box
+                key={trani}
+                p={2}
+                mb={transactions?.length - 1 === trani ? 0 : 2}
+                boxShadow={theme.shadows[5]}
+                borderRadius={1}>
+                <Stack flexDirection="row" alignItems="center">
+                  <Box maxWidth="35%" mr={1}>
+                    <Typography width="100%" textOverflow="ellipsis" overflow="hidden">
+                      {tran?.hash}
+                    </Typography>
+                    <Typography>{moment(tran?.timestamp).format("LL")}</Typography>
+                  </Box>
+                  <Box maxWidth="40%" mr={1}>
+                    <Typography whiteSpace="nowrap" textOverflow="ellipsis" overflow="hidden">
+                      <b>From:</b> {tran?.account1Address}
+                    </Typography>
+                    <Typography whiteSpace="nowrap" textOverflow="ellipsis" overflow="hidden">
+                      <b>To:</b> {tran?.account2Address}
+                    </Typography>
+                  </Box>
+                  <Typography align="center" width="25%" variant="body1">
+                    <b>{(Number(tran?.amount) / 1e8).toFixed(8)}</b> ICP
+                  </Typography>
                 </Stack>
-                <Stack flexDirection="row">
-                  {/* <Typography width={350} overflow="hidden" textOverflow="ellipsis">
-                    {tran?.account1Address}
-                  </Typography> */}
-                </Stack>
-                <Typography>{moment(tran?.timestamp).format("LL")}</Typography>
-                <Typography>To: {tran?.account2Address}</Typography>
               </Box>
             ))}
           </ScrollHidden>

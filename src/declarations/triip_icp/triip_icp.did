@@ -15,7 +15,9 @@ type ICP__1 = record {e8s: nat64;};
 type ICP = 
  service {
    accountId: () -> (text);
+   accountIdP: () -> (text);
    balance: () -> (ICP__1);
+   balanceShared: () -> (ICP__1);
    transfer: (ICP__1, text) -> (TransferResult);
  };
 type BlockIndex = nat64;

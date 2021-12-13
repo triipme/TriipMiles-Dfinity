@@ -1,6 +1,6 @@
 import React from "react";
 import { styled } from "@mui/system";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 const ButtonStyled = styled(LoadingButton)(({ theme }) => ({

@@ -11,6 +11,8 @@ import List "mo:base/List";
 import Time "mo:base/Time";
 import Principal "mo:base/Principal";
 
+import AId "mo:principal/blob/AccountIdentifier";
+
 import Types "Types";
 import State "State";
 import ProofTP "model/ProofTP";
@@ -61,7 +63,14 @@ actor {
             return #err(#NotAuthorized);//isNotAuthorized
         };
 
-        let rsCreateUser = state.profiles.put(uid,profile);
+        let profile_update : Types.Profile = {
+            user = profile.user;
+            wallets = ?[AId.toText(AId.fromPrincipal(uid,null))];
+        };
+
+        Debug.print(debug_show(profile_update));
+
+        let rsCreateUser = state.profiles.put(uid,profile_update);
         let rsReadUser = state.profiles.get(uid);
 
         switch(rsReadUser){

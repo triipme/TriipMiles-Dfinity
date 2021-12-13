@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isLogin: false,
   actor: {},
+  actor_transfer: {},
   profile: {}
 };
 
@@ -22,14 +23,20 @@ export const userSlice = createSlice({
         profile: action.payload
       };
     },
-    actorSlice: (state, action) => {
+    actorMain: (state, action) => {
       return {
         ...state,
         actor: action.payload
+      };
+    },
+    actorTransfer: (state, action) => {
+      return {
+        ...state,
+        actor_transfer: action.payload
       };
     }
   }
 });
 
-export const { login, actorSlice, profile } = userSlice.actions;
+export const { login, actorMain, profile, actorTransfer } = userSlice.actions;
 export default userSlice.reducer;

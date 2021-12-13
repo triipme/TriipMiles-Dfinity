@@ -226,7 +226,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                 </Typography>
                 <ButtonPrimary
                   loading={isLoading}
-                  sx={{ my: 2 }}
+                  sx={{ mt: 2 }}
                   title="Create Travel Plan"
                   onClick={handleSubmit(onSubmit)}
                 />

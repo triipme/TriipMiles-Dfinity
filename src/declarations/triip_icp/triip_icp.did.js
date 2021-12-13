@@ -14,7 +14,9 @@ export const idlFactory = ({ IDL }) => {
   });
   const ICP = IDL.Service({
     'accountId' : IDL.Func([], [IDL.Text], []),
+    'accountIdP' : IDL.Func([], [IDL.Text], []),
     'balance' : IDL.Func([], [ICP__1], []),
+    'balanceShared' : IDL.Func([], [ICP__1], []),
     'transfer' : IDL.Func([ICP__1, IDL.Text], [TransferResult], []),
   });
   return ICP;

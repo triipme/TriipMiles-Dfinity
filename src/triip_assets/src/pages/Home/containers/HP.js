@@ -59,78 +59,84 @@ const HP = ({ idtp }) => {
   console.log(isError);
   return (
     <>
-      {!status ? (
-        <ScrollHidden
-          sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-          <Box>
-            <Typography sx={{ mb: 4 }} variant="h6" align="center">
-              Happy Planning
-            </Typography>
-            <Typography sx={{ mb: 2 }} variant="body2" align="center">
-              You will receive 0.000001 ICP <br />
-              for submitting your travel plan.
-            </Typography>
-            <Typography sx={{ mb: 2 }} variant="body2" align="center">
-              Go to your Travel Plans to review, edit your submitted plans.
-            </Typography>
-            <Typography sx={{ mb: 2 }} variant="body2" align="center">
-              Submit your proof of travel after the trip <br />
-              to earn 0.000033 ICP more for every plan you
-              <br />
-              create.
-            </Typography>
-          </Box>
-          <Box>
-            <label htmlFor="fileHP">
-              <input
-                type="file"
-                name="fileHP"
-                id="fileHP"
-                style={{ display: "none" }}
-                onChange={handleUpFileHP}
+      <ScrollHidden
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          height: 500 - 32
+        }}>
+        {!status ? (
+          <>
+            <Box>
+              <Typography sx={{ mb: 4 }} variant="h6" align="center">
+                Happy Planning
+              </Typography>
+              <Typography sx={{ mb: 2 }} variant="body2" align="center">
+                You will receive 0.000001 ICP <br />
+                for submitting your travel plan.
+              </Typography>
+              <Typography sx={{ mb: 2 }} variant="body2" align="center">
+                Go to your Travel Plans to review, edit your submitted plans.
+              </Typography>
+              <Typography sx={{ mb: 2 }} variant="body2" align="center">
+                Submit your proof of travel after the trip <br />
+                to earn 0.000033 ICP more for every plan you
+                <br />
+                create.
+              </Typography>
+            </Box>
+            <Box>
+              <label htmlFor="fileHP">
+                <input
+                  type="file"
+                  name="fileHP"
+                  id="fileHP"
+                  style={{ display: "none" }}
+                  onChange={handleUpFileHP}
+                />
+                <ButtonPrimary loading={isLoading} title="Submit Proof" />
+              </label>
+              <ButtonPrimary
+                sx={{ mt: 2 }}
+                title="Go to travel plans"
+                onClick={() => navigate("/account/travelplans")}
               />
-              <ButtonPrimary loading={isLoading} title="Submit Proof" />
-            </label>
+            </Box>
+          </>
+        ) : (
+          <>
+            <Box>
+              <Typography sx={{ mb: 2 }} variant="h6" align="center">
+                Uploading travel document
+              </Typography>
+              <img
+                src={image?.image}
+                style={{ width: "80%", height: 160, objectFit: "cover", borderRadius: 12 }}
+                alt="Uploading travel document"
+              />
+              <Typography
+                sx={{ mt: 2, mb: 1, color: theme.palette.primary.main }}
+                variant="h6"
+                align="center">
+                Upload Completed
+              </Typography>
+              <Typography sx={{ mb: 1 }} variant="body2" align="center">
+                You will receive 33.0 TIIM <br />
+                when your travel proof is approved
+              </Typography>
+              <Typography sx={{ mb: 1 }} variant="body2" align="center">
+                Go to your Travel Plans to review, edit your submitted plans.
+              </Typography>
+            </Box>
             <ButtonPrimary
               sx={{ mt: 2 }}
               title="Go to travel plans"
               onClick={() => navigate("/account/travelplans")}
             />
-          </Box>
-        </ScrollHidden>
-      ) : (
-        <ScrollHidden
-          sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-          <Box>
-            <Typography sx={{ mb: 2 }} variant="h6" align="center">
-              Uploading travel document
-            </Typography>
-            <img
-              src={image?.image}
-              style={{ width: "80%", height: 160, objectFit: "cover", borderRadius: 12 }}
-              alt="Uploading travel document"
-            />
-            <Typography
-              sx={{ mt: 2, mb: 1, color: theme.palette.primary.main }}
-              variant="h6"
-              align="center">
-              Upload Completed
-            </Typography>
-            <Typography sx={{ mb: 1 }} variant="body2" align="center">
-              You will receive 33.0 TIIM <br />
-              when your travel proof is approved
-            </Typography>
-            <Typography sx={{ mb: 1 }} variant="body2" align="center">
-              Go to your Travel Plans to review, edit your submitted plans.
-            </Typography>
-          </Box>
-          <ButtonPrimary
-            sx={{ mt: 2 }}
-            title="Go to travel plans"
-            onClick={() => navigate("/account/travelplans")}
-          />
-        </ScrollHidden>
-      )}
+          </>
+        )}
+      </ScrollHidden>
       <Modal open={!!isError}>
         <ContentModalStyled sx={{ textAlign: "center" }}>
           <Typography variant="h6">Warning</Typography>
