@@ -4,7 +4,7 @@ export type Error = { 'AlreadyExisting' : null } |
   { 'NotFound' : null } |
   { 'NotAuthorized' : null } |
   { 'SomethingWrong' : null };
-export interface Profile { 'user' : User }
+export interface Profile { 'user' : User, 'wallets' : [] | [Array<string>] }
 export interface ProofTP {
   'uid' : Principal,
   'status' : boolean,
@@ -20,7 +20,7 @@ export type Result_1 = { 'ok' : ProofTP } |
   { 'err' : Error };
 export type Result_2 = { 'ok' : Array<[string, TravelPlan]> } |
   { 'err' : Error };
-export type Result_3 = { 'ok' : [] | [Profile] } |
+export type Result_3 = { 'ok' : [Profile, string] } |
   { 'err' : Error };
 export type Result_4 = { 'ok' : string } |
   { 'err' : Error };
@@ -48,6 +48,7 @@ export interface TravelPlanUpdate {
 }
 export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
+  'addWallet' : (arg_0: string) => Promise<Result>,
   'create' : (arg_0: Profile) => Promise<Result>,
   'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_5>,
   'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_4>,

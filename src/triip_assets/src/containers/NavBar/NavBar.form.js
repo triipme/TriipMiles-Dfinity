@@ -18,9 +18,8 @@ const FormProfile = ({ handleModalEvent }) => {
     formState: { error }
   } = useForm({ defaultValues: { username: [] } });
   const onSubmit = async data => {
-    console.log({ user: { username: [data.username] } });
     actor
-      ?.create({ user: { username: [data.username] } })
+      ?.create({ user: { username: [data.username] }, wallets: [[]] })
       .then(async result => {
         if ("ok" in result) {
           const profileUploaded = await actor?.read();

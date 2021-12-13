@@ -35,7 +35,10 @@ type Result_4 =
 type Result_3 = 
  variant {
    err: Error;
-   ok: opt Profile;
+   ok: record {
+         Profile;
+         text;
+       };
  };
 type Result_2 = 
  variant {
@@ -66,7 +69,11 @@ type ProofTP =
    status: bool;
    uid: principal;
  };
-type Profile = record {user: User;};
+type Profile = 
+ record {
+   user: User;
+   wallets: opt vec text;
+ };
 type Error = 
  variant {
    AlreadyExisting;
@@ -76,6 +83,7 @@ type Error =
    SomethingWrong;
  };
 service : {
+  addWallet: (text) -> (Result);
   create: (Profile) -> (Result);
   createProofTP: (text, ProofTP__1) -> (Result_5);
   createTravelPlan: (TravelPlanUpdate) -> (Result_4);

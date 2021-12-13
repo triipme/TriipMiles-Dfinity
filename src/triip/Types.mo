@@ -7,6 +7,7 @@ module Types{
     /* ------------------------- User --------------------------- */
     public type Profile = {
         user : User.User;
+        wallets: ?[Text];
     };
 
     /* ------------------------- TravelPlan --------------------------- */

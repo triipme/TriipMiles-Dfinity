@@ -26,7 +26,6 @@ actor {
     // /*public*/ func setState(st : State.StateShared) : async () {
     //     state := State.fromShared(st);
     // };
-
     stable var profiles : [(Principal,Types.Profile)] = [];
     stable var travelplans : [(Text,Types.TravelPlan)] = [];
     stable var proofs : [(Text,Types.ProofTP)] = [];
@@ -63,7 +62,6 @@ actor {
         };
 
         let rsCreateUser = state.profiles.put(uid,profile);
-
         let rsReadUser = state.profiles.get(uid);
 
         switch(rsReadUser){
@@ -75,7 +73,7 @@ actor {
             };
         }
     };
-    public shared(msg) func read() : async Result.Result<?Types.Profile,Types.Error>{
+    public shared(msg) func read() : async Result.Result<(Types.Profile,Text),Types.Error>{
         let uid = msg.caller;
 
         if(Principal.toText(uid)=="2vxsx-fae"){
@@ -88,11 +86,38 @@ actor {
                 #err(#NotFound);
             };
             case (? v){
-                #ok(rsReadUser);
+                #ok((v,Principal.toText(uid)));
             };
         }
     };
-
+    // Wallet
+    public shared({caller}) func addWallet(wallet_id:Text) : async Result.Result<(),Types.Error>{
+        if(Principal.toText(caller)=="2vxsx-fae"){
+            return #err(#NotAuthorized);//isNotAuthorized
+        };
+        let rsReadUser = state.profiles.get(caller);
+        switch(rsReadUser){
+            case null{
+                #err(#NotFound);
+            };
+            case (? v){
+                if(?Array.find(Option.get(v.wallets,[]),func(rs : Text) : Bool{
+                    rs == wallet_id
+                }) == ?null){
+                    let updateInfo : Types.Profile = {
+                        user = v.user;
+                        wallets = ?Array.append(Option.get(v.wallets,[]),[wallet_id]);
+                    };
+                    let rs = state.profiles.replace(caller,updateInfo);
+                    Debug.print(debug_show(rs));
+                    #ok(());
+                } else {
+                    #err(#AlreadyExisting);
+                }
+            }
+        }
+    };
+    // TravelPlan
     public shared(msg) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<Text,Types.Error>{
         let uid = msg.caller;
 

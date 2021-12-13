@@ -4,6 +4,10 @@
       "main": "src/triip/main.mo",
       "type": "motoko"
     },
+    "triip_icp":{
+      "main": "src/triip_icp/main.mo",
+      "type": "motoko"
+    },
     "triip_assets": {
       "dependencies": [
         "triip"
@@ -21,10 +25,10 @@
   "defaults": {
     "build": {
       "args": "",
-      "packtool": ""
+      "packtool": "vessel sources"
     }
   },
-  "dfx": "0.8.3",
+  "dfx": "0.8.4",
   "networks": {
     "local": {
       "bind": "127.0.0.1:8000",
