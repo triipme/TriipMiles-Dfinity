@@ -10,7 +10,10 @@ import { useLocation } from "react-router-dom";
 import { actorMain, actorTransfer, login, profile } from "../../slice/user/userSlice";
 import { ContainerStyled, FormStyled } from "./NavBar.style";
 import { canisterId, createActor } from "../../../../declarations/triip";
-import { canisterIdTransfer, createActorTransfer } from "../../../../declarations/triip_icp";
+import {
+  canisterId as canisterIdTransfer,
+  createActor as createActorTransfer
+} from "../../../../declarations/triip_icp";
 import FormProfile from "./NavBar.form";
 import { Images } from "../../theme";
 import { LinkStyled, NavLinkStyled } from "../../components";

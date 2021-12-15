@@ -63,14 +63,13 @@ actor {
             return #err(#NotAuthorized);//isNotAuthorized
         };
 
-        let profile_update : Types.Profile = {
-            user = profile.user;
-            wallets = ?[AId.toText(AId.fromPrincipal(uid,null))];
-        };
+        // let profile_update : Types.Profile = {
+        //     user = profile.user;
+        //     wallets = ?[AId.toText(AId.fromPrincipal(uid,null))];
+        // };
 
-        Debug.print(debug_show(profile_update));
-
-        let rsCreateUser = state.profiles.put(uid,profile_update);
+        // let rsCreateUser = state.profiles.put(uid,profile_update);
+        let rsCreateUser = state.profiles.put(uid,profile);
         let rsReadUser = state.profiles.get(uid);
 
         switch(rsReadUser){
@@ -100,7 +99,7 @@ actor {
         }
     };
     // Wallet
-    public shared({caller}) func addWallet(wallet_id:Text) : async Result.Result<(),Types.Error>{
+    public shared({caller}) func addWallet(wallet_id:Text) : async Result.Result<(Types.Profile,Text),Types.Error>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
@@ -110,22 +109,41 @@ actor {
                 #err(#NotFound);
             };
             case (? v){
-                if(?Array.find(Option.get(v.wallets,[]),func(rs : Text) : Bool{
-                    rs == wallet_id
-                }) == ?null){
-                    let updateInfo : Types.Profile = {
-                        user = v.user;
-                        wallets = ?Array.append(Option.get(v.wallets,[]),[wallet_id]);
-                    };
-                    let rs = state.profiles.replace(caller,updateInfo);
-                    Debug.print(debug_show(rs));
-                    #ok(());
-                } else {
-                    #err(#AlreadyExisting);
-                }
+                let updateInfo : Types.Profile = {
+                    user = v.user;
+                    wallets = ?[wallet_id];
+                };
+                let rs = state.profiles.replace(caller,updateInfo);
+                #ok((updateInfo,Principal.toText(caller)));
             }
         }
     };
+    // public shared({caller}) func addWallet(wallet_id:Text) : async Result.Result<(),Types.Error>{
+    //     if(Principal.toText(caller)=="2vxsx-fae"){
+    //         return #err(#NotAuthorized);//isNotAuthorized
+    //     };
+    //     let rsReadUser = state.profiles.get(caller);
+    //     switch(rsReadUser){
+    //         case null{
+    //             #err(#NotFound);
+    //         };
+    //         case (? v){
+    //             if(?Array.find(Option.get(v.wallets,[]),func(rs : Text) : Bool{
+    //                 rs == wallet_id
+    //             }) == ?null){
+    //                 let updateInfo : Types.Profile = {
+    //                     user = v.user;
+    //                     wallets = ?Array.append(Option.get(v.wallets,[]),[wallet_id]);
+    //                 };
+    //                 let rs = state.profiles.replace(caller,updateInfo);
+    //                 Debug.print(debug_show(rs));
+    //                 #ok(());
+    //             } else {
+    //                 #err(#AlreadyExisting);
+    //             }
+    //         }
+    //     }
+    // };
     // TravelPlan
     public shared(msg) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<Text,Types.Error>{
         let uid = msg.caller;
@@ -137,6 +155,7 @@ actor {
         let plan : Types.TravelPlan = {
             uid = uid;
             travel_plan = travel_plan.travel_plan;
+            is_received = false;
         };
 
         state.travelplans.put(travel_plan.idtp,plan);
@@ -158,19 +177,42 @@ actor {
         if(Principal.toText(uid)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
+        let rsReadTP = state.travelplans.get(travel_plan.idtp);
 
-        let plan : Types.TravelPlan = {
-            uid = uid;
-            travel_plan = travel_plan.travel_plan;
-        };
-
-        let rsReadTP = state.travelplans.replace(travel_plan.idtp,plan);
 
         switch(rsReadTP){
             case null{
                 #err(#NotFound);
             };
             case (? v){
+                let plan : Types.TravelPlan = {
+                    uid = uid;
+                    travel_plan = travel_plan.travel_plan;
+                    is_received = v.is_received;
+                };
+                let rsUpdateTP = state.travelplans.replace(travel_plan.idtp,plan);
+                #ok(());
+            };
+        }
+    };
+    public shared({caller}) func setStatusReceivedICP(status : Bool,idtp: Text) : async Result.Result<(),Types.Error>{
+        if(Principal.toText(caller)=="2vxsx-fae"){
+            return #err(#NotAuthorized);//isNotAuthorized
+        };
+
+        let rsReadTP = state.travelplans.get(idtp);
+
+        switch(rsReadTP){
+            case null{
+                #err(#NotFound);
+            };
+            case (? v){
+                let plan : Types.TravelPlan = {
+                    uid = caller;
+                    travel_plan = v.travel_plan;
+                    is_received = status;
+                };
+                let rsUpdateTP = state.travelplans.replace(idtp,plan);
                 #ok(());
             };
         }

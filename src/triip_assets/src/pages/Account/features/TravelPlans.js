@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router";
 import TravelPlanDetail from "../container/TravelPlan/TravelPlan";
+import { Empty } from "../../../components";
 
 const TravelPlans = () => {
   const { actor } = useSelector(state => state.user);
@@ -32,14 +33,18 @@ const TravelPlans = () => {
   return (
     <>
       <Grid container spacing={3} justifyContent={{ xs: "center", sm: "flex-start" }}>
-        {tps?.map((tp, intp) => (
-          <TravelPlanItem
-            key={intp}
-            idtp={tp[0]}
-            tp={tp[1]?.travel_plan}
-            onClick={() => handleTPItem(tp)}
-          />
-        ))}
+        {tps?.length > 0 ? (
+          tps?.map((tp, intp) => (
+            <TravelPlanItem
+              key={intp}
+              idtp={tp[0]}
+              tp={tp[1]?.travel_plan}
+              onClick={() => handleTPItem(tp)}
+            />
+          ))
+        ) : (
+          <Empty />
+        )}
       </Grid>
       <Modal
         open={!!tpDetail?.length > 0}

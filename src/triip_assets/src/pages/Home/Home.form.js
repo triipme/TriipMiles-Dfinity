@@ -33,7 +33,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
     destination: destinationStatic
   } = useSelector(state => state.static.travelplan);
   const [nntp] = useState(customAlphabet(process.env.NANOID_ALPHABET_TP, 24)());
-  const { actor } = useSelector(state => state.user);
+  const { actor, actor_transfer, profile } = useSelector(state => state.user);
   const [days, setDays] = useState(1);
   const [idtp, setIdtp] = useState("");
   const {
@@ -91,28 +91,34 @@ const HomeForm = ({ handleIsOpenParent }) => {
     };
   };
   const onSubmit = async () => {
-    if (!!actor) {
+    if (!!actor?.createTravelPlan) {
       setIsLoading(true);
-      actor
-        ?.createTravelPlan(body())
-        .then(async result => {
-          if ("ok" in result) {
-            console.log(result.ok);
-            setIdtp(result.ok);
-            toast.success("Success !.");
-            setCreatedStatus("HP");
-            // handleIsOpenParent(false);
-          } else {
-            console.error(result.err);
-            setIsLoading(false);
+      try {
+        const result = await actor?.createTravelPlan(body());
+        if ("ok" in result) {
+          setIdtp(result.ok);
+          if (!!actor_transfer?.transfer) {
+            const result_transfer = await actor_transfer?.transfer(
+              ["tp"],
+              profile?.wallets?.at(0)[0]
+            );
+            await actor?.setStatusReceivedICP("Ok" in result_transfer, result.ok);
+            console.log(result_transfer);
           }
-        })
-        .catch(err => {
-          console.log(err);
-        })
-        .finally(() => {
+          toast.success("Success !.");
+          setCreatedStatus("HP");
+          // handleIsOpenParent(false);
+        } else {
+          console.error(result?.err);
+          toast.error("Submit Travelplan Failed !.");
           setIsLoading(false);
-        });
+        }
+      } catch (error) {
+        toast.error("Submit Travelplan Failed !.");
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       toast.error("Please sign in!.");
     }

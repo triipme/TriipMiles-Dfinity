@@ -28,6 +28,7 @@ export type Result_5 = { 'ok' : [] | [string] } |
   { 'err' : Error };
 export interface TravelPlan {
   'uid' : Principal,
+  'is_received' : boolean,
   'travel_plan' : TravelPlanInformation,
 }
 export interface TravelPlanInformation {
@@ -48,7 +49,7 @@ export interface TravelPlanUpdate {
 }
 export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
-  'addWallet' : (arg_0: string) => Promise<Result>,
+  'addWallet' : (arg_0: string) => Promise<Result_3>,
   'create' : (arg_0: Profile) => Promise<Result>,
   'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_5>,
   'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_4>,
@@ -56,5 +57,6 @@ export interface _SERVICE {
   'readAllProof' : () => Promise<Result>,
   'readAllTPUser' : () => Promise<Result_2>,
   'readProofOfTP' : (arg_0: string) => Promise<Result_1>,
+  'setStatusReceivedICP' : (arg_0: boolean, arg_1: string) => Promise<Result>,
   'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }

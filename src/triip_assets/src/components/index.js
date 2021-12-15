@@ -8,3 +8,5 @@ export { default as ScrollHidden } from "./Scroll/Scroll.hidden";
 export { LinkStyled } from "./Link/Link";
 export { NavLinkStyled } from "./NavLink/NavLink";
 export { default as Loading } from "./Loading/Loading.index";
+export { Empty } from "./Empty/Empty.index";
+export { Notification } from "./Notification/Notification.index";

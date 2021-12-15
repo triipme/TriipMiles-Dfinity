@@ -4,10 +4,11 @@ import { Banner, StepItemImage, TabPanelButton, TabStyled } from "./Home.style";
 import HomeForm from "./Home.form";
 import { Images } from "../../theme";
 import { Footer } from "../../containers";
-import { useToaster } from "react-hot-toast";
 import ReactPlayer from "react-player/lazy";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { Notification } from "../../components";
+import toast from "react-hot-toast";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +21,7 @@ const Home = () => {
 
   return (
     <Container maxWidth="xl" style={{ padding: 0 }}>
-      <Notifications />
+      <Notification />
       <Banner
         sx={{
           p: 0,
@@ -254,30 +255,4 @@ const TabPanel = ({ value, index, children, data, title }) => {
   );
 };
 
-const Notifications = () => {
-  const { toasts, handlers } = useToaster();
-  const { startPause, endPause } = handlers;
-  return (
-    <div
-      onMouseEnter={startPause}
-      onMouseLeave={endPause}
-      style={{
-        position: "fixed",
-        zIndex: 999,
-        top: 10,
-        right: 20
-      }}>
-      {toasts
-        .filter(toast => toast.visible)
-        .map(toast => (
-          <div
-            key={toast.id}
-            {...toast.ariaProps}
-            style={{ backgroundColor: "white", padding: "10px 20px", borderRadius: 100 }}>
-            {toast.message}
-          </div>
-        ))}
-    </div>
-  );
-};
 export default Home;

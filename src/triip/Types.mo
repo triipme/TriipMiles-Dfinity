@@ -14,6 +14,7 @@ module Types{
     public type TravelPlan = {
         travel_plan: TravelPlan.TravelPlanInformation;
         uid:Principal;
+        is_received: Bool;
     };
 
     public type TravelPlanUpdate = {

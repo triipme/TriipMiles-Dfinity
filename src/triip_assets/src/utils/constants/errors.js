@@ -1,3 +1,4 @@
 export const ERRORS = {
-  required: "Required"
+  required: "Required",
+  pattern: "Format Incorrect"
 };

@@ -215,7 +215,7 @@ module.exports = {
           ecma: undefined,
           parse: {},
           compress: {
-            drop_console: true
+            // drop_console: true
           },
           mangle: true, // Note `mangle.properties` is `false` by default.
           module: false,

@@ -10,7 +10,9 @@ const InputText = ({
   autocompleteOptions,
   defaultValue = "",
   placeHolder,
-  helperTextError
+  helperTextError,
+  helperTextErrorCustom,
+  rules
 }) => {
   return (
     <Controller
@@ -18,7 +20,8 @@ const InputText = ({
       control={control}
       defaultValue={defaultValue}
       rules={{
-        required: true
+        required: true,
+        ...rules
       }}
       render={({ field: { name, value, onChange }, fieldState: { error } }) => (
         <>
@@ -36,7 +39,7 @@ const InputText = ({
                   label={label}
                   type="text"
                   error={!!error}
-                  helperText={helperTextError[error?.type]}
+                  helperText={helperTextError[error?.type] ?? helperTextErrorCustom}
                 />
               )}
             />
@@ -49,7 +52,7 @@ const InputText = ({
               value={value}
               type="text"
               error={!!error}
-              helperText={helperTextError[error?.type]}
+              helperText={helperTextError[error?.type] ?? helperTextErrorCustom}
             />
           )}
         </>

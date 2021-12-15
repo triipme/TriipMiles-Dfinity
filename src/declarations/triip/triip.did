@@ -19,6 +19,7 @@ type TravelPlanInformation =
  };
 type TravelPlan = 
  record {
+   is_received: bool;
    travel_plan: TravelPlanInformation;
    uid: principal;
  };
@@ -83,7 +84,7 @@ type Error =
    SomethingWrong;
  };
 service : {
-  addWallet: (text) -> (Result);
+  addWallet: (text) -> (Result_3);
   create: (Profile) -> (Result);
   createProofTP: (text, ProofTP__1) -> (Result_5);
   createTravelPlan: (TravelPlanUpdate) -> (Result_4);
@@ -91,5 +92,6 @@ service : {
   readAllProof: () -> (Result);
   readAllTPUser: () -> (Result_2);
   readProofOfTP: (text) -> (Result_1);
+  setStatusReceivedICP: (bool, text) -> (Result);
   updateTravelPlan: (TravelPlanUpdate) -> (Result);
 }
