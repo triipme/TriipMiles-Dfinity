@@ -58,9 +58,9 @@ shared({caller = owner}) actor class ICP() = this {
             case (null) {
             };
             case (?v){
-                if(v=="tp") amount := {e8s = 0};
-                if(v=="ptp") amount := {e8s = 0};
-                if(v=="ptp_approve") amount := {e8s = 0};
+                if(v=="tp") amount := {e8s = 1};
+                if(v=="ptp") amount := {e8s = 1};
+                if(v=="ptp_approve") amount := {e8s = 1};
             }
         };
 

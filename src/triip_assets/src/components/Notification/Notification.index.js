@@ -34,7 +34,7 @@ export const Notification = () => {
     //       </Box>
     //     ))}
     // </div>
-    <Toaster position="top-right">
+    <Toaster position="top-right" containerStyle={{ top: 70, zIndex: 1500 }}>
       {t => (
         <ToastBar
           style={{

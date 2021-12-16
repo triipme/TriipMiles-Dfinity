@@ -10,8 +10,9 @@ import {
   InputRadio,
   InputSwitch,
   InputText,
-  ScrollHidden
-} from "../../components/index";
+  ScrollHidden,
+  Notification
+} from "../../components";
 
 import moment from "moment";
 import { customAlphabet } from "nanoid";
@@ -39,11 +40,10 @@ const HomeForm = ({ handleIsOpenParent }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
-    reset,
     getValues,
     setValue,
-    watch
+    watch,
+    formState: { errors }
   } = useForm({
     defaultValues: {
       destination: "",
@@ -103,18 +103,27 @@ const HomeForm = ({ handleIsOpenParent }) => {
               profile?.wallets?.at(0)[0]
             );
             await actor?.setStatusReceivedICP("Ok" in result_transfer, result.ok);
-            console.log(result_transfer);
+            if ("Ok" in result_transfer)
+              toast(
+                "You received 0.00001 ICP for Tranvel Plan. Countine submit Proof of Travel Plan. 🥳",
+                { duration: 10000 }
+              );
+            else throw result_transfer?.Err;
           }
           toast.success("Success !.");
           setCreatedStatus("HP");
           // handleIsOpenParent(false);
         } else {
-          console.error(result?.err);
-          toast.error("Submit Travelplan Failed !.");
-          setIsLoading(false);
+          throw result?.err;
         }
       } catch (error) {
-        toast.error("Submit Travelplan Failed !.");
+        toast.error(
+          {
+            "NotAuthorized": "Please sign in!.",
+            "NotFound": "Creat a new travel plan failed !.",
+            "InsufficientFunds": "We don't have enough funds."
+          }[Object.keys(error)[0]]
+        );
         console.log(error);
       } finally {
         setIsLoading(false);
@@ -134,6 +143,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
   };
   return (
     <div>
+      <Notification />
       <ContentModalStyled>
         {
           {

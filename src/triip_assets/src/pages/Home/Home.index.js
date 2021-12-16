@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography, Modal, Container, Button, Box, Grid, Tabs } from "@mui/material/index";
+import { Typography, Modal, Container, Button, Box, Grid, Tabs, Fade } from "@mui/material/index";
 import { Banner, StepItemImage, TabPanelButton, TabStyled } from "./Home.style";
 import HomeForm from "./Home.form";
 import { Images } from "../../theme";
@@ -7,8 +7,6 @@ import { Footer } from "../../containers";
 import ReactPlayer from "react-player/lazy";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Notification } from "../../components";
-import toast from "react-hot-toast";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,14 +16,12 @@ const Home = () => {
   const handleTab = (_, v) => setTab(v);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
-
   return (
     <Container maxWidth="xl" style={{ padding: 0 }}>
-      <Notification />
       <Banner
         sx={{
           p: 0,
-          backgroundImage: `url(https://ik.imagekit.io/1cfogorcfir/home-guess_woTiAsOzG.png?updatedAt=1635851168116)`
+          backgroundImage: `url(${Images.home.guess})`
         }}
       />
       <Container maxWidth="md" sx={{ my: 10, textAlign: "center" }}>
@@ -38,10 +34,12 @@ const Home = () => {
         <Button variant="primary" onClick={handleOpenModal}>
           Create travel plan to earn $ICP
         </Button>
-        <Modal open={isOpen} onClose={handleCloseModal}>
-          <div>
-            <HomeForm handleIsOpenParent={setIsOpen} />
-          </div>
+        <Modal open={isOpen} onClose={handleCloseModal} sx={{ zIndex: "7 !important" }}>
+          <Fade in={isOpen}>
+            <div>
+              <HomeForm handleIsOpenParent={setIsOpen} />
+            </div>
+          </Fade>
         </Modal>
       </Container>
       <Banner
@@ -49,7 +47,7 @@ const Home = () => {
           display: "grid",
           placeItems: "center",
           p: 0,
-          backgroundImage: `url(https://ik.imagekit.io/1cfogorcfir/home_login_gcY1vzK7V_.png?updatedAt=1635851167552)`
+          backgroundImage: `url(${Images.home.login})`
         }}>
         <ReactPlayer width="75%" height="85%" url="https://youtu.be/78hvrYFh26w" />
       </Banner>

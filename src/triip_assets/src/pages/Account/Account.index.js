@@ -14,7 +14,6 @@ const Account = props => {
   const isSM = useMediaQuery(theme.breakpoints.up("sm"));
   return (
     <AccountContainer maxWidth="xl">
-      <Notification />
       {isSM && <MenuContainer />}
       <div style={{ padding: "40px 0", width: "100%" }}>
         <Outlet />

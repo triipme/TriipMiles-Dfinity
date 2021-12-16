@@ -1,7 +1,7 @@
 import { Box } from "@mui/system";
 import React, { createContext, lazy, Suspense, useState } from "react";
 import { BrowserRouter, Route, Routes, Navigate, Redirect } from "react-router-dom";
-import { Loading } from "../components";
+import { Loading, Notification } from "../components";
 import { NavBar } from "../containers/index";
 
 import { navbar, account } from "../utils/paths";
@@ -19,6 +19,7 @@ const NotFound = lazy(() => import("../pages/Admin/pages/Page404"));
 const Main = () => {
   return (
     <BrowserRouter>
+      <Notification />
       <NavBar />
       <Suspense fallback={<Loading />}>
         <Routes>
