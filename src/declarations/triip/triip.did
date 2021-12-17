@@ -7,7 +7,6 @@ type TravelPlanUpdate =
 type TravelPlanInformation = 
  record {
    activities: opt vec bool;
-   created_at: opt int;
    days: opt nat;
    destination: opt text;
    img: opt text;
@@ -16,9 +15,11 @@ type TravelPlanInformation =
    specific_date: opt bool;
    timeEnd: opt int;
    timeStart: opt int;
+   week_of_year: opt text;
  };
 type TravelPlan = 
  record {
+   created_at: int;
    is_received: bool;
    travel_plan: TravelPlanInformation;
    uid: principal;
@@ -59,13 +60,10 @@ type Result =
    err: Error;
    ok;
  };
-type ProofTP__1 = 
- record {
-   created_at: opt nat;
-   img_key: opt text;
- };
+type ProofTP__1 = record {img_key: opt text;};
 type ProofTP = 
  record {
+   created_at: int;
    proof: ProofTP__1;
    status: bool;
    uid: principal;
@@ -78,6 +76,7 @@ type Profile =
 type Error = 
  variant {
    AlreadyExisting;
+   Enough;
    Failed;
    NotAuthorized;
    NotFound;

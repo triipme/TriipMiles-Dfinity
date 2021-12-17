@@ -1,6 +1,7 @@
 import type { Principal } from '@dfinity/principal';
 export type Error = { 'AlreadyExisting' : null } |
   { 'Failed' : null } |
+  { 'Enough' : null } |
   { 'NotFound' : null } |
   { 'NotAuthorized' : null } |
   { 'SomethingWrong' : null };
@@ -8,12 +9,10 @@ export interface Profile { 'user' : User, 'wallets' : [] | [Array<string>] }
 export interface ProofTP {
   'uid' : Principal,
   'status' : boolean,
+  'created_at' : bigint,
   'proof' : ProofTP__1,
 }
-export interface ProofTP__1 {
-  'img_key' : [] | [string],
-  'created_at' : [] | [bigint],
-}
+export interface ProofTP__1 { 'img_key' : [] | [string] }
 export type Result = { 'ok' : null } |
   { 'err' : Error };
 export type Result_1 = { 'ok' : ProofTP } |
@@ -29,6 +28,7 @@ export type Result_5 = { 'ok' : [] | [string] } |
 export interface TravelPlan {
   'uid' : Principal,
   'is_received' : boolean,
+  'created_at' : bigint,
   'travel_plan' : TravelPlanInformation,
 }
 export interface TravelPlanInformation {
@@ -39,7 +39,7 @@ export interface TravelPlanInformation {
   'timeStart' : [] | [bigint],
   'days' : [] | [bigint],
   'activities' : [] | [Array<boolean>],
-  'created_at' : [] | [bigint],
+  'week_of_year' : [] | [string],
   'public_mode' : [] | [boolean],
   'timeEnd' : [] | [bigint],
 }

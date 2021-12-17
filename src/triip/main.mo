@@ -145,31 +145,55 @@ actor {
     //     }
     // };
     // TravelPlan
-    public shared(msg) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<Text,Types.Error>{
-        let uid = msg.caller;
+    public shared({caller}) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<Text,Types.Error>{
+        var tp_temp : Int = 0;
 
-        if(Principal.toText(uid)=="2vxsx-fae"){
+        if(Principal.toText(caller)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
 
-        let plan : Types.TravelPlan = {
-            uid = uid;
-            travel_plan = travel_plan.travel_plan;
-            is_received = false;
+        for((K,V) in state.travelplans.entries()){
+            if(Principal.toText(V.uid)==Principal.toText(caller) 
+                and 
+                travel_plan.travel_plan.week_of_year == V.travel_plan.week_of_year){
+                    tp_temp := tp_temp+1;
+                    Debug.print(debug_show("Have",V));
+            }
         };
+        Debug.print(debug_show(tp_temp));
 
-        state.travelplans.put(travel_plan.idtp,plan);
+        //Kiem tra tp cua user (uid,idtime)
+        //neu ko co idtime phu hop thi tao moi
+        //neu co kiem tra xem co bn cai
+            //neu co 2 thi khong cho tao nua va tra error
+            //neu co 1 thi tao tiep
+                //kiem tra xem current time trong tuan hay ko
 
-        let rsReadTP = state.travelplans.get(travel_plan.idtp);
-
-        switch(rsReadTP){
-            case null{
-                #err(#NotFound);
+        if(tp_temp < 2){
+            let plan : Types.TravelPlan = {
+                uid = caller;
+                travel_plan = travel_plan.travel_plan;
+                is_received = false;
+                created_at = Time.now();
             };
-            case (? v){
-                #ok((travel_plan.idtp));
-            };
+            Debug.print("T");
+            state.travelplans.put(travel_plan.idtp,plan);
+            #ok((travel_plan.idtp));
+        } else {
+            Debug.print("F");
+            #err(#Enough);
         }
+
+        // let rsReadTP = state.travelplans.get(travel_plan.idtp);
+
+        // switch(rsReadTP){
+        //     case null{
+        //         #err(#NotFound);
+        //     };
+        //     case (? v){
+        //         #ok((travel_plan.idtp));
+        //     };
+        // }
     };
     public shared(msg) func updateTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(),Types.Error>{
         let uid = msg.caller;
@@ -189,6 +213,7 @@ actor {
                     uid = uid;
                     travel_plan = travel_plan.travel_plan;
                     is_received = v.is_received;
+                    created_at = Time.now();
                 };
                 let rsUpdateTP = state.travelplans.replace(travel_plan.idtp,plan);
                 #ok(());
@@ -211,6 +236,7 @@ actor {
                     uid = caller;
                     travel_plan = v.travel_plan;
                     is_received = status;
+                    created_at = v.created_at;
                 };
                 let rsUpdateTP = state.travelplans.replace(idtp,plan);
                 #ok(());
@@ -267,6 +293,7 @@ actor {
                             uid = uid;
                             proof = prooftp;
                             status = false;
+                            created_at = Time.now();
                         };
                         if(Option.get(tp.travel_plan.specific_date,false)){
                             if( (Option.get(tp.travel_plan.timeStart,0) <= Time.now()/1000000000 ) and 

@@ -76,7 +76,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
         activities: [Object.values(activities)],
         timeStart: [moment(timeStart).unix()],
         timeEnd: [moment(timeEnd).unix()],
-        created_at: [moment(new Date()).unix()],
+        // created_at: [moment(new Date()).unix()],
         // days: [
         //   moment
         //     .duration(moment(timeEnd).unix(), "s")
@@ -86,7 +86,8 @@ const HomeForm = ({ handleIsOpenParent }) => {
         days: [days],
         specific_date: [specific_date],
         public_mode: [public_mode],
-        img: destinationStatic.find(ides => ides?.name === destination)?.photos
+        img: destinationStatic.find(ides => ides?.name === destination)?.photos,
+        week_of_year: [`${Math.floor(moment().dayOfYear() / 7)}-${moment().year()}`]
       }
     };
   };
@@ -121,7 +122,9 @@ const HomeForm = ({ handleIsOpenParent }) => {
           {
             "NotAuthorized": "Please sign in!.",
             "NotFound": "Creat a new travel plan failed !.",
-            "InsufficientFunds": "We don't have enough funds."
+            "InsufficientFunds":
+              "Your travel plan created but we don't have enough funds . We will transfer your ICP tomorrow.",
+            "Enough": "You cannot create more than 2 travel plans in a week"
           }[Object.keys(error)[0]]
         );
         console.log(error);

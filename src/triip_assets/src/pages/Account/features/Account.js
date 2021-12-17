@@ -54,8 +54,6 @@ const Account = props => {
       }
     })();
   };
-  toast.success("LOL");
-
   return (
     <div>
       <Stack flexDirection="row" justifyContent="space-between" marginBottom={5}>

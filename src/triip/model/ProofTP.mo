@@ -1,6 +1,6 @@
 module{
   public type ProofTP = {
     img_key: ?Text;
-    created_at: ?Nat;
+    // created_at: ?Nat;
   }
 }

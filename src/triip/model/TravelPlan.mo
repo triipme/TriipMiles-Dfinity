@@ -9,6 +9,6 @@ module{
       public_mode: ?Bool;
       img: ?Text;
       specific_date: ?Bool;
-      created_at: ?Int;
+      week_of_year: ?Text;
   };
 }

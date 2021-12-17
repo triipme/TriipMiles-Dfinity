@@ -7,6 +7,7 @@ export const idlFactory = ({ IDL }) => {
   const Error = IDL.Variant({
     'AlreadyExisting' : IDL.Null,
     'Failed' : IDL.Null,
+    'Enough' : IDL.Null,
     'NotFound' : IDL.Null,
     'NotAuthorized' : IDL.Null,
     'SomethingWrong' : IDL.Null,
@@ -16,10 +17,7 @@ export const idlFactory = ({ IDL }) => {
     'err' : Error,
   });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
-  const ProofTP__1 = IDL.Record({
-    'img_key' : IDL.Opt(IDL.Text),
-    'created_at' : IDL.Opt(IDL.Nat),
-  });
+  const ProofTP__1 = IDL.Record({ 'img_key' : IDL.Opt(IDL.Text) });
   const Result_5 = IDL.Variant({ 'ok' : IDL.Opt(IDL.Text), 'err' : Error });
   const TravelPlanInformation = IDL.Record({
     'img' : IDL.Opt(IDL.Text),
@@ -29,7 +27,7 @@ export const idlFactory = ({ IDL }) => {
     'timeStart' : IDL.Opt(IDL.Int),
     'days' : IDL.Opt(IDL.Nat),
     'activities' : IDL.Opt(IDL.Vec(IDL.Bool)),
-    'created_at' : IDL.Opt(IDL.Int),
+    'week_of_year' : IDL.Opt(IDL.Text),
     'public_mode' : IDL.Opt(IDL.Bool),
     'timeEnd' : IDL.Opt(IDL.Int),
   });
@@ -41,6 +39,7 @@ export const idlFactory = ({ IDL }) => {
   const TravelPlan = IDL.Record({
     'uid' : IDL.Principal,
     'is_received' : IDL.Bool,
+    'created_at' : IDL.Int,
     'travel_plan' : TravelPlanInformation,
   });
   const Result_2 = IDL.Variant({
@@ -50,6 +49,7 @@ export const idlFactory = ({ IDL }) => {
   const ProofTP = IDL.Record({
     'uid' : IDL.Principal,
     'status' : IDL.Bool,
+    'created_at' : IDL.Int,
     'proof' : ProofTP__1,
   });
   const Result_1 = IDL.Variant({ 'ok' : ProofTP, 'err' : Error });

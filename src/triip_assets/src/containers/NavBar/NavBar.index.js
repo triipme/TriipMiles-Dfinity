@@ -23,6 +23,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Divider } from "@mui/material";
 import { Icon } from "@iconify/react";
 import menu2Outline from "@iconify/icons-eva/menu-2-outline";
+import { useNavigate } from "react-router";
 
 const NavBar = () => {
   const theme = useTheme();
@@ -30,7 +31,7 @@ const NavBar = () => {
   // const [profile, setProfile] = useState();
   const [authClient, setAuthClient] = useState(undefined);
   const [isOpen, setIsOpen] = useState(false);
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLogin, actor, profile: profileData } = useSelector(state => state.user);
 
@@ -98,6 +99,9 @@ const NavBar = () => {
     await authClient.logout();
     dispatch(login(false));
     dispatch(profile({}));
+    dispatch(actorMain({}));
+    dispatch(actorTransfer({}));
+    navigate("/");
     // setPrincipal(await authClient.getIdentity());
   };
   // console.log(profile);

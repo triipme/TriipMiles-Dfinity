@@ -15,6 +15,7 @@ module Types{
         travel_plan: TravelPlan.TravelPlanInformation;
         uid:Principal;
         is_received: Bool;
+        created_at: Int;
     };
 
     public type TravelPlanUpdate = {
@@ -27,6 +28,7 @@ module Types{
         proof: ProofTP.ProofTP;
         uid: Principal;
         status: Bool;
+        created_at: Int;
     };
     /* ------------------------- Error --------------------------- */
     public type Error = {
@@ -35,5 +37,6 @@ module Types{
         #NotAuthorized;
         #SomethingWrong;
         #Failed;
+        #Enough;
     };
 }
