@@ -98,21 +98,19 @@ const HomeForm = ({ handleIsOpenParent }) => {
         const result = await actor?.createTravelPlan(body());
         if ("ok" in result) {
           setIdtp(result.ok);
-          if (!!actor_transfer?.transfer) {
-            const result_transfer = await actor_transfer?.transfer(
-              ["tp"],
-              profile?.wallets?.at(0)[0]
-            );
-            await actor?.setStatusReceivedICP("Ok" in result_transfer, result.ok);
-            if ("Ok" in result_transfer)
-              toast(
-                "You received 0.00001 ICP for Tranvel Plan. Countine submit Proof of Travel Plan. 🥳",
-                { duration: 10000 }
-              );
-            else throw result_transfer?.Err;
-          }
+          const result_transfer = await actor_transfer?.transfer(
+            ["tp"],
+            profile?.wallets?.at(0)[0]
+          );
+          await actor?.setStatusReceivedICP("Ok" in result_transfer, result.ok);
           toast.success("Success !.");
           setCreatedStatus("HP");
+          if ("Ok" in result_transfer)
+            toast(
+              "You received 0.00001 ICP for Tranvel Plan. Countine submit Proof of Travel Plan. 🥳",
+              { duration: 10000 }
+            );
+          else throw result_transfer?.Err;
           // handleIsOpenParent(false);
         } else {
           throw result?.err;

@@ -2,7 +2,7 @@ import { Box } from "@mui/system";
 import React, { createContext, lazy, Suspense, useState } from "react";
 import { BrowserRouter, Route, Routes, Navigate, Redirect } from "react-router-dom";
 import { Loading, Notification } from "../components";
-import { NavBar } from "../containers/index";
+import { AdminRequiredAuth, NavBar, NormalRequiredAuth } from "../containers";
 
 import { navbar, account } from "../utils/paths";
 
@@ -14,6 +14,8 @@ const DashboardApp = lazy(() => import("../pages/Admin/pages/DashboardApp"));
 const User = lazy(() => import("../pages/Admin/pages/User"));
 const Products = lazy(() => import("../pages/Admin/pages/Products"));
 const Blog = lazy(() => import("../pages/Admin/pages/Blog"));
+const Login = lazy(() => import("../pages/Admin/pages/Login"));
+const Register = lazy(() => import("../pages/Admin/pages/Register"));
 const NotFound = lazy(() => import("../pages/Admin/pages/Page404"));
 
 const Main = () => {
@@ -30,19 +32,59 @@ const Main = () => {
           {/* <Route path="*" element={<Navigate to="/404" />} /> */}
           <Route key={account[0].path} path={account[0].path} element={account[0].component}>
             {account[1].nested.map(item => (
-              <Route key={item.path} path={item.path} element={item.component} exact={item.exact}>
+              <Route
+                key={item.path}
+                path={item.path}
+                element={<NormalRequiredAuth>{item.component}</NormalRequiredAuth>}
+                exact={item.exact}>
                 {item?.children?.map(child => (
                   <Route key={child?.path} path={child?.path} element={child?.component} />
                 ))}
               </Route>
             ))}
           </Route>
-          <Route path="/triip-admin" element={<Admin />}>
+          <Route
+            path="/triip-admin"
+            element={
+              <NormalRequiredAuth>
+                <Admin />
+              </NormalRequiredAuth>
+            }>
             <Route path="/triip-admin/dashboard" element={<DashboardLayout />}>
-              <Route path="/triip-admin/dashboard/app" element={<DashboardApp />} />
-              <Route path="/triip-admin/dashboard/user" element={<User />} />
-              <Route path="/triip-admin/dashboard/products" element={<Products />} />
-              <Route path="/triip-admin/dashboard/blog" element={<Blog />} />
+              <Route
+                path="/triip-admin/dashboard/app"
+                element={
+                  <AdminRequiredAuth>
+                    <DashboardApp />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route
+                path="/triip-admin/dashboard/user"
+                element={
+                  <AdminRequiredAuth>
+                    <User />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route
+                path="/triip-admin/dashboard/products"
+                element={
+                  <AdminRequiredAuth>
+                    <Products />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route
+                path="/triip-admin/dashboard/blog"
+                element={
+                  <AdminRequiredAuth>
+                    <Blog />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route path="/triip-admin/dashboard/login" element={<Login />} />
+              <Route path="/triip-admin/dashboard/register" element={<Register />} />
             </Route>
           </Route>
         </Routes>

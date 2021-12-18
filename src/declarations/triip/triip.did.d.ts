@@ -1,4 +1,10 @@
 import type { Principal } from '@dfinity/principal';
+export interface Admin { 'admin' : Admin__1 }
+export interface Admin__1 {
+  'email' : [] | [string],
+  'first_name' : [] | [string],
+  'last_name' : [] | [string],
+}
 export type Error = { 'AlreadyExisting' : null } |
   { 'Failed' : null } |
   { 'Enough' : null } |
@@ -15,15 +21,17 @@ export interface ProofTP {
 export interface ProofTP__1 { 'img_key' : [] | [string] }
 export type Result = { 'ok' : null } |
   { 'err' : Error };
-export type Result_1 = { 'ok' : ProofTP } |
+export type Result_1 = { 'ok' : Admin } |
   { 'err' : Error };
-export type Result_2 = { 'ok' : Array<[string, TravelPlan]> } |
+export type Result_2 = { 'ok' : ProofTP } |
   { 'err' : Error };
-export type Result_3 = { 'ok' : [Profile, string] } |
+export type Result_3 = { 'ok' : Array<[string, TravelPlan]> } |
   { 'err' : Error };
-export type Result_4 = { 'ok' : string } |
+export type Result_4 = { 'ok' : [Profile, string] } |
   { 'err' : Error };
-export type Result_5 = { 'ok' : [] | [string] } |
+export type Result_5 = { 'ok' : string } |
+  { 'err' : Error };
+export type Result_6 = { 'ok' : [] | [string] } |
   { 'err' : Error };
 export interface TravelPlan {
   'uid' : Principal,
@@ -49,14 +57,16 @@ export interface TravelPlanUpdate {
 }
 export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
-  'addWallet' : (arg_0: string) => Promise<Result_3>,
+  'addWallet' : (arg_0: string) => Promise<Result_4>,
   'create' : (arg_0: Profile) => Promise<Result>,
-  'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_5>,
-  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_4>,
-  'read' : () => Promise<Result_3>,
+  'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_6>,
+  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_5>,
+  'loginAdmin' : () => Promise<Result_1>,
+  'read' : () => Promise<Result_4>,
   'readAllProof' : () => Promise<Result>,
-  'readAllTPUser' : () => Promise<Result_2>,
-  'readProofOfTP' : (arg_0: string) => Promise<Result_1>,
+  'readAllTPUser' : () => Promise<Result_3>,
+  'readProofOfTP' : (arg_0: string) => Promise<Result_2>,
+  'registerAdmin' : (arg_0: string, arg_1: Admin) => Promise<Result_1>,
   'setStatusReceivedICP' : (arg_0: boolean, arg_1: string) => Promise<Result>,
   'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }

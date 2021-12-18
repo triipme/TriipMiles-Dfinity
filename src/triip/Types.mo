@@ -1,9 +1,21 @@
 import User "model/User";
+import Admin "model/Admin";
 import TravelPlan "model/TravelPlan";
 import ProofTP "model/ProofTP";
 import Principal "mo:base/Principal";
 
+
 module Types{
+    /* ------------------------- Admin --------------------------- */
+    // public type Role ={
+    //     #owner;
+    //     #member;
+    // };
+    public type Admin = {
+        admin : Admin.Admin;
+        // role : Role;
+    };
+    
     /* ------------------------- User --------------------------- */
     public type Profile = {
         user : User.User;

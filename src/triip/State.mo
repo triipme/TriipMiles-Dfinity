@@ -8,6 +8,7 @@ module{
   public type Map<K,V> = TrieMap.TrieMap<K,V>;
   // public type MapShared<K,V> = Trie.Trie<K,V>;
   public type State = {
+    admin : Map<Principal,Types.Admin>;
     profiles : Map<Principal,Types.Profile>;
     travelplans : Map<Text,Types.TravelPlan>;
     proofs : Map<Text,Types.ProofTP>;
@@ -18,6 +19,7 @@ module{
   // };
   public func empty() : State { 
     {
+      admin = TrieMap.TrieMap<Principal,Types.Admin>(Principal.equal, Principal.hash);
       profiles = TrieMap.TrieMap<Principal,Types.Profile>(Principal.equal, Principal.hash);
       travelplans = TrieMap.TrieMap<Text,Types.TravelPlan>(Text.equal,Text.hash);
       proofs = TrieMap.TrieMap<Text,Types.ProofTP>(Text.equal,Text.hash);

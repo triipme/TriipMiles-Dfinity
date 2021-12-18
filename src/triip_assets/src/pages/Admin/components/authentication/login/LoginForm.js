@@ -1,10 +1,11 @@
-import * as Yup from 'yup';
-import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useFormik, Form, FormikProvider } from 'formik';
-import { Icon } from '@iconify/react';
-import eyeFill from '@iconify/icons-eva/eye-fill';
-import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
+import React from "react";
+import * as Yup from "yup";
+import { useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useFormik, Form, FormikProvider } from "formik";
+import { Icon } from "@iconify/react";
+import eyeFill from "@iconify/icons-eva/eye-fill";
+import eyeOffFill from "@iconify/icons-eva/eye-off-fill";
 // material
 import {
   Link,
@@ -14,8 +15,8 @@ import {
   IconButton,
   InputAdornment,
   FormControlLabel
-} from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 
 // ----------------------------------------------------------------------
 
@@ -24,26 +25,26 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required')
+    username: Yup.string().required("Username is required"),
+    secret_key: Yup.string().required("Secret Key is required")
   });
 
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: '',
+      username: "",
+      secret_key: "",
       remember: true
     },
     validationSchema: LoginSchema,
     onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+      navigate("/dashboard", { replace: true });
     }
   });
 
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
 
   const handleShowPassword = () => {
-    setShowPassword((show) => !show);
+    setShowPassword(show => !show);
   };
 
   return (
@@ -53,19 +54,19 @@ export default function LoginForm() {
           <TextField
             fullWidth
             autoComplete="username"
-            type="email"
-            label="Email address"
-            {...getFieldProps('email')}
-            error={Boolean(touched.email && errors.email)}
-            helperText={touched.email && errors.email}
+            type="username"
+            label="Username address"
+            {...getFieldProps("username")}
+            error={Boolean(touched.username && errors.username)}
+            helperText={touched.username && errors.username}
           />
 
           <TextField
             fullWidth
-            autoComplete="current-password"
-            type={showPassword ? 'text' : 'password'}
-            label="Password"
-            {...getFieldProps('password')}
+            autoComplete="current-secret_key"
+            type={showPassword ? "text" : "secret_key"}
+            label="Secret Key"
+            {...getFieldProps("secret_key")}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -75,19 +76,19 @@ export default function LoginForm() {
                 </InputAdornment>
               )
             }}
-            error={Boolean(touched.password && errors.password)}
-            helperText={touched.password && errors.password}
+            error={Boolean(touched.secret_key && errors.secret_key)}
+            helperText={touched.secret_key && errors.secret_key}
           />
         </Stack>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
           <FormControlLabel
-            control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
+            control={<Checkbox {...getFieldProps("remember")} checked={values.remember} />}
             label="Remember me"
           />
 
           <Link component={RouterLink} variant="subtitle2" to="#">
-            Forgot password?
+            Forgot secret_key?
           </Link>
         </Stack>
 
@@ -96,8 +97,7 @@ export default function LoginForm() {
           size="large"
           type="submit"
           variant="contained"
-          loading={isSubmitting}
-        >
+          loading={isSubmitting}>
           Login
         </LoadingButton>
       </Form>

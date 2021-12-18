@@ -10,6 +10,7 @@ import Option "mo:base/Option";
 import List "mo:base/List";
 import Time "mo:base/Time";
 import Principal "mo:base/Principal";
+import Error "mo:base/Error";
 
 import AId "mo:principal/blob/AccountIdentifier";
 
@@ -28,20 +29,25 @@ actor {
     // /*public*/ func setState(st : State.StateShared) : async () {
     //     state := State.fromShared(st);
     // };
-    stable var profiles : [(Principal,Types.Profile)] = [];
-    stable var travelplans : [(Text,Types.TravelPlan)] = [];
-    stable var proofs : [(Text,Types.ProofTP)] = [];
+    private stable var profiles : [(Principal,Types.Profile)] = [];
+    private stable var travelplans : [(Text,Types.TravelPlan)] = [];
+    private stable var proofs : [(Text,Types.ProofTP)] = [];
+    private stable var admin : [(Principal,Types.Admin)] = [];
 
     system func preupgrade() {
         Debug.print("Begin preupgrade");
         profiles := Iter.toArray(state.profiles.entries());
         travelplans := Iter.toArray(state.travelplans.entries());
         proofs := Iter.toArray(state.proofs.entries());
+        admin := Iter.toArray(state.admin.entries());
         Debug.print("End preupgrade");
     };
 
     system func postupgrade() {
         Debug.print("Begin postupgrade");
+        for((k,v) in Iter.fromArray(admin)) {
+            state.admin.put(k,v);
+        };
         for((k,v) in Iter.fromArray(profiles)) {
             state.profiles.put(k,v);
         };
@@ -53,15 +59,51 @@ actor {
         };
         Debug.print("End postupgrade");
     };
+    func require_permission(p : Principal) : async () {
+        if(Principal.toText(p)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };
+    };
+
+    //Admin
+    private func isAdmin(key : Principal) : ?Types.Admin{
+        let findAdmin = state.admin.get(key);
+        return findAdmin;
+    };
+    private func isSecretKey(key : Text) : Bool{
+        return Text.hash(key)==Text.hash("55315361-b26f-4536-942b-2293133fea20");
+    };
+    public shared({caller}) func loginAdmin() : async Result.Result<Types.Admin,Types.Error>{
+        await require_permission(caller);
+        let is_admin = isAdmin(caller);
+        Debug.print(debug_show(is_admin));
+        switch(is_admin){
+            case(null) #err(#NotFound);
+            case(? v) #ok((v));
+        }
+    };
+    public shared({caller}) func registerAdmin(key : Text,info : Types.Admin) : async Result.Result<Types.Admin,Types.Error>{
+        await require_permission(caller);
+        let isKey = isSecretKey(key);
+        if(isKey){
+            state.admin.put(caller,info);
+            let rs = isAdmin(caller);
+            switch(rs){
+                case(null) #err(#NotFound);
+                case(? v) #ok((v));
+            };
+        } else {
+            #err(#Failed);
+        }
+    };
+
     /* ------------------------------------------------------------------------------------------------------- */
     // User
     // Create
     public shared(msg) func create(profile: Types.Profile) : async Result.Result<(),Types.Error> {
         let uid = msg.caller;
 
-        if(Principal.toText(uid)=="2vxsx-fae"){
-            return #err(#NotAuthorized);//isNotAuthorized
-        };
+        await require_permission(uid);
 
         // let profile_update : Types.Profile = {
         //     user = profile.user;
@@ -84,9 +126,7 @@ actor {
     public shared(msg) func read() : async Result.Result<(Types.Profile,Text),Types.Error>{
         let uid = msg.caller;
 
-        if(Principal.toText(uid)=="2vxsx-fae"){
-            return #err(#NotAuthorized);//isNotAuthorized
-        };
+        await require_permission(uid);
         let rsReadUser = state.profiles.get(uid);
 
         switch(rsReadUser){
@@ -198,9 +238,7 @@ actor {
     public shared(msg) func updateTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(),Types.Error>{
         let uid = msg.caller;
 
-        if(Principal.toText(uid)=="2vxsx-fae"){
-            return #err(#NotAuthorized);//isNotAuthorized
-        };
+        await require_permission(uid);
         let rsReadTP = state.travelplans.get(travel_plan.idtp);
 
 
@@ -248,9 +286,7 @@ actor {
         let uid = msg.caller;
         var tps : [(Text,Types.TravelPlan)] = [];
 
-        if(Principal.toText(uid)=="2vxsx-fae"){
-            return #err(#NotAuthorized);//isNotAuthorized
-        };
+        await require_permission(uid);
         // Debug.print(debug_show(Array.filter(Iter.toArray(state.travelplans.entries()),func (key:Text,val : Types.TravelPlan) : Bool {
         //         Principal.toText(val.uid) == Principal.toText(uid);
         //     }
@@ -265,9 +301,7 @@ actor {
 
     public shared(msg) func createProofTP(idptp: Text,prooftp:ProofTP.ProofTP) : async Result.Result<?Text,Types.Error>{
         let uid = msg.caller;
-        if(Principal.toText(uid)=="2vxsx-fae"){
-            return #err(#NotAuthorized);//isNotAuthorized
-        };
+        await require_permission(uid);
         // kiem tra proof cua tp da co hay chua
         // neu co thi tra exist
         // neu chua thi tiep tuc
@@ -315,9 +349,7 @@ actor {
 
     public shared(msg) func readProofOfTP(idtp:Text) : async Result.Result<Types.ProofTP,Types.Error>{
         let uid = msg.caller;
-        if(Principal.toText(uid)=="2vxsx-fae"){
-            return #err(#NotAuthorized);//isNotAuthorized
-        };
+        await require_permission(uid);
         
         let proof = state.proofs.get(idtp);
         return Result.fromOption(proof,#NotFound);

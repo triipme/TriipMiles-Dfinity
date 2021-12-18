@@ -28,7 +28,7 @@ export default function Router() {
       ]
     },
     {
-      path: "/",
+      path: "/dashboard",
       element: <LogoOnlyLayout />,
       children: [
         { path: "login", element: <Login /> },

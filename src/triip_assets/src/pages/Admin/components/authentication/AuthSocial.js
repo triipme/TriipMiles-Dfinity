@@ -1,9 +1,10 @@
-import { Icon } from '@iconify/react';
-import googleFill from '@iconify/icons-eva/google-fill';
-import twitterFill from '@iconify/icons-eva/twitter-fill';
-import facebookFill from '@iconify/icons-eva/facebook-fill';
+import React from "react";
+import { Icon } from "@iconify/react";
+import googleFill from "@iconify/icons-eva/google-fill";
+import twitterFill from "@iconify/icons-eva/twitter-fill";
+import facebookFill from "@iconify/icons-eva/facebook-fill";
 // material
-import { Stack, Button, Divider, Typography } from '@mui/material';
+import { Stack, Button, Divider, Typography } from "@mui/material";
 
 // ----------------------------------------------------------------------
 
@@ -25,7 +26,7 @@ export default function AuthSocial() {
       </Stack>
 
       <Divider sx={{ my: 3 }}>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
           OR
         </Typography>
       </Divider>

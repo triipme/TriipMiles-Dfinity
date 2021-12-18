@@ -35,12 +35,12 @@ const sidebarConfig = [
   },
   {
     title: "login",
-    path: "/triip-admin/login",
+    path: "/triip-admin/dashboard/login",
     icon: getIcon(lockFill)
   },
   {
     title: "register",
-    path: "/triip-admin/register",
+    path: "/triip-admin/dashboard/register",
     icon: getIcon(personAddFill)
   },
   {
