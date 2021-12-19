@@ -8,7 +8,7 @@ const NormalRequiredAuth = ({ children }) => {
   if (!isLogin) {
     navigate("/");
   }
-  return children;
+  return <>{children}</>;
 };
 
 export default NormalRequiredAuth;

@@ -29,9 +29,11 @@ export type Result_3 = { 'ok' : Array<[string, TravelPlan]> } |
   { 'err' : Error };
 export type Result_4 = { 'ok' : [Profile, string] } |
   { 'err' : Error };
-export type Result_5 = { 'ok' : string } |
+export type Result_5 = { 'ok' : Array<[string, TravelPlan, any]> } |
   { 'err' : Error };
-export type Result_6 = { 'ok' : [] | [string] } |
+export type Result_6 = { 'ok' : string } |
+  { 'err' : Error };
+export type Result_7 = { 'ok' : [] | [string] } |
   { 'err' : Error };
 export interface TravelPlan {
   'uid' : Principal,
@@ -59,8 +61,9 @@ export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
   'addWallet' : (arg_0: string) => Promise<Result_4>,
   'create' : (arg_0: Profile) => Promise<Result>,
-  'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_6>,
-  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_5>,
+  'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_7>,
+  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_6>,
+  'getAllTP_admin' : () => Promise<Result_5>,
   'loginAdmin' : () => Promise<Result_1>,
   'read' : () => Promise<Result_4>,
   'readAllProof' : () => Promise<Result>,

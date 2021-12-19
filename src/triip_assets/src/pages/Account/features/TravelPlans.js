@@ -6,23 +6,29 @@ import { useSelector } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router";
 import TravelPlanDetail from "../container/TravelPlan/TravelPlan";
-import { Empty } from "../../../components";
+import { Empty, Loading } from "../../../components";
 
 const TravelPlans = () => {
   const { actor } = useSelector(state => state.user);
   const [tps, setTps] = useState([]);
   const [tpDetail, setTpDetail] = useState([]);
-  // const [fileUrl, setNameFile] = useGetFile();
-  // console.log(fileUrl);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
+    setIsLoading(true);
     (async () => {
-      if (!!actor?.readAllTPUser) {
-        const rs = await actor?.readAllTPUser();
-        if ("ok" in rs) {
-          setTps(rs.ok);
-        } else {
-          console.log(rs);
+      try {
+        if (!!actor?.readAllTPUser) {
+          const rs = await actor?.readAllTPUser();
+          if ("ok" in rs) {
+            setTps(rs.ok);
+          } else {
+            throw rs?.err;
+          }
         }
+      } catch (error) {
+        log(error);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, [actor]);
@@ -33,7 +39,9 @@ const TravelPlans = () => {
   return (
     <>
       <Grid container spacing={3} justifyContent={{ xs: "center", sm: "flex-start" }}>
-        {tps?.length > 0 ? (
+        {isLoading ? (
+          <Loading height="70vh" />
+        ) : tps?.length > 0 ? (
           tps?.map((tp, intp) => (
             <TravelPlanItem
               key={intp}

@@ -50,39 +50,17 @@ const Main = () => {
                 <Admin />
               </NormalRequiredAuth>
             }>
-            <Route path="/triip-admin/dashboard" element={<DashboardLayout />}>
-              <Route
-                path="/triip-admin/dashboard/app"
-                element={
-                  <AdminRequiredAuth>
-                    <DashboardApp />
-                  </AdminRequiredAuth>
-                }
-              />
-              <Route
-                path="/triip-admin/dashboard/user"
-                element={
-                  <AdminRequiredAuth>
-                    <User />
-                  </AdminRequiredAuth>
-                }
-              />
-              <Route
-                path="/triip-admin/dashboard/products"
-                element={
-                  <AdminRequiredAuth>
-                    <Products />
-                  </AdminRequiredAuth>
-                }
-              />
-              <Route
-                path="/triip-admin/dashboard/blog"
-                element={
-                  <AdminRequiredAuth>
-                    <Blog />
-                  </AdminRequiredAuth>
-                }
-              />
+            <Route
+              path="/triip-admin/dashboard"
+              element={
+                <AdminRequiredAuth>
+                  <DashboardLayout />
+                </AdminRequiredAuth>
+              }>
+              <Route path="/triip-admin/dashboard/app" element={<DashboardApp />} />
+              <Route path="/triip-admin/dashboard/user" element={<User />} />
+              <Route path="/triip-admin/dashboard/products" element={<Products />} />
+              <Route path="/triip-admin/dashboard/blog" element={<Blog />} />
               <Route path="/triip-admin/dashboard/login" element={<Login />} />
               <Route path="/triip-admin/dashboard/register" element={<Register />} />
             </Route>

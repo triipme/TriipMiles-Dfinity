@@ -18,7 +18,7 @@ export const account = [
     nested: [
       {
         path: "/account/me",
-        name: "Account",
+        name: "Wallet",
         component: <AccountFeature />,
         exact: false
       },
@@ -26,29 +26,29 @@ export const account = [
         path: "/account/travelplans",
         name: "Travel Plans",
         component: <TravelPlansFeature />,
-        children:[
+        children: [
           {
             path: "/account/travelplans/:idtp",
             name: "Travel Plans Detaild",
-            component: <TravelPlanContainer />,
+            component: <TravelPlanContainer />
           }
         ]
-      },
-      {
-        path: "/account/notifications",
-        name: "Notifications",
-        component: <NotificationFeature />
-      },
-      {
-        path: "/account/bookings",
-        name: "Bookings",
-        component: <BookingFeature />
-      },
-      {
-        path: "/account/sales",
-        name: "Sales",
-        component: <SalesFeature />
       }
+      // {
+      //   path: "/account/notifications",
+      //   name: "Notifications",
+      //   component: <NotificationFeature />
+      // },
+      // {
+      //   path: "/account/bookings",
+      //   name: "Bookings",
+      //   component: <BookingFeature />
+      // },
+      // {
+      //   path: "/account/sales",
+      //   name: "Sales",
+      //   component: <SalesFeature />
+      // }
     ]
   }
 ];

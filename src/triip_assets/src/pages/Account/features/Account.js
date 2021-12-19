@@ -19,7 +19,12 @@ const rosettaApi = new RosettaApi();
 const Account = props => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { control, handleSubmit } = useForm();
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+    reset
+  } = useForm();
   const { actor, profile: profileData } = useSelector(state => state.user);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenLink, setIsOpenLink] = useState(false);
@@ -28,11 +33,13 @@ const Account = props => {
   const handleAddWallet = async data => {
     if (!!actor?.addWallet) {
       try {
+        await rosettaApi.accountBalanceByAddress(data["account-id"]);
         const rs = await actor?.addWallet(data["account-id"]);
         if ("ok" in rs) {
           console.log(rs);
           dispatch(profile({ ...rs?.ok[0], _id: rs?.ok[1] }));
           setIsOpenLink(false);
+          reset();
         }
       } catch (error) {
         console.error(error);
@@ -59,11 +66,14 @@ const Account = props => {
       <Stack flexDirection="row" justifyContent="space-between" marginBottom={5}>
         <Typography variant="h3">Accounts</Typography>
         <Stack flexDirection="row" alignItems="center">
-          <Box>
+          {/* <Box>
             <ButtonPrimary onClick={() => setIsOpen(!isOpen)} title="New Transaction" />
-          </Box>
+          </Box> */}
           <Box ml={1}>
-            <ButtonPrimary onClick={() => setIsOpenLink(!isOpenLink)} title="Link a new account" />
+            <ButtonPrimary
+              onClick={() => setIsOpenLink(!isOpenLink)}
+              title={profileData?.wallets?.at(0) ? "Change wallet" : "Link a new wallet"}
+            />
           </Box>
         </Stack>
       </Stack>
@@ -94,7 +104,7 @@ const Account = props => {
             sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <Stack flex={1} justifyContent="space-between">
               <Typography variant="h4" align="center" mb={3}>
-                Link a new wallet
+                {profileData?.wallets?.at(0) ? "Change wallet" : "Link a new wallet"}
               </Typography>
               <Typography variant="body1" mb={1}>
                 Enter Address
@@ -109,7 +119,11 @@ const Account = props => {
                 If you add a new address, it will replace the current address!. Triip ICP will
                 transfer to new wallet next time.
               </Typography>
-              <ButtonPrimary onClick={handleSubmit(handleAddWallet)} title="Add" />
+              <ButtonPrimary
+                onClick={handleSubmit(handleAddWallet)}
+                title="Add"
+                loading={isSubmitting}
+              />
             </Stack>
           </ScrollHidden>
         </ContentModalStyled>
@@ -168,7 +182,7 @@ const FormNewTransaction = ({ source }) => {
     handleSubmit,
     getValues,
     setError,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm();
   const { actor_transfer } = useSelector(state => state.user);
   const handleAddress = async data => {
@@ -289,7 +303,7 @@ const Wallet = ({ aid, onClickCard }) => {
           <Typography variant="h5">DFINITY</Typography>
         </Stack>
         <Typography variant="h4" textAlign="end">
-          {balance?.value / 1e8 || 0}
+          {(Number(balance?.value) / 1e8).toFixed(8)}
           <Typography variant="body2">{balance?.currency?.symbol ?? "ICP"}</Typography>
         </Typography>
       </Stack>

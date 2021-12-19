@@ -24,5 +24,6 @@ const Menu = ({ url }) => {
 };
 const LinkLabel = styled(NavLinkStyled)`
   padding: 10px 20px;
+  white-space: nowrap;
 `;
 export default Menu;

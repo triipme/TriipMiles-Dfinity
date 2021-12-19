@@ -96,6 +96,26 @@ actor {
             #err(#Failed);
         }
     };
+    private func getHPofTP_admin(key : Text) : async ?Types.ProofTP{
+        let proof = state.proofs.get(key);
+        // switch(proof){
+        //     case(null) #err(#NotFound);
+        //     case(? v) #ok((key,v));
+        // };
+        return proof;
+    };
+    public shared({caller}) func getAllTP_admin() : async Result.Result<[(Text,Types.TravelPlan,Any)],Types.Error>{
+        var allTP : [(Text,Types.TravelPlan,Any)] = [];
+        await require_permission(caller);
+        for((K,V) in state.travelplans.entries()){
+            let p = await getHPofTP_admin(K);
+            switch(p){
+                case(null) allTP := Array.append<(Text,Types.TravelPlan,Any)>([(K,V,null)],allTP);
+                case(? v) allTP := Array.append<(Text,Types.TravelPlan,Any)>([(K,V,v)],allTP);
+            }
+        };
+        #ok((allTP));
+    };
 
     /* ------------------------------------------------------------------------------------------------------- */
     // User

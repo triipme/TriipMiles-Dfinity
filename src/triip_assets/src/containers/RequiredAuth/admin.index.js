@@ -5,24 +5,19 @@ import { useNavigate } from "react-router-dom";
 const AdminRequiredAuth = ({ children }) => {
   const { actor } = useSelector(state => state.user);
   const navigate = useNavigate();
-  useEffect(() => {
-    (async () => {
-      try {
-        if (!!actor?.loginAdmin) {
-          const rs = await actor?.loginAdmin();
-          if ("ok" in rs) {
-            console.log(rs?.ok);
-          } else {
-            throw rs?.err;
-          }
+  (async () => {
+    try {
+      if (!!actor?.loginAdmin) {
+        const rs = await actor?.loginAdmin();
+        if ("err" in rs) {
+          navigate("/triip-admin/dashboard/register");
         }
-      } catch (error) {
-        navigate("/triip-admin/dashboard/register");
-        console.log(error);
       }
-    })();
-  }, [actor]);
-  return children;
+    } catch (error) {
+      navigate("/triip-admin/dashboard/register");
+    }
+  })();
+  return <>{children}</>;
 };
 
 export default AdminRequiredAuth;

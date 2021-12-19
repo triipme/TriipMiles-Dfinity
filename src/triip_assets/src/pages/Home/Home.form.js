@@ -26,7 +26,6 @@ import { HP } from "./containers";
 
 const HomeForm = ({ handleIsOpenParent }) => {
   const theme = useTheme();
-  const [isLoading, setIsLoading] = useState(false);
   const [createdStatus, setCreatedStatus] = useState("TP");
   const {
     activities,
@@ -43,7 +42,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
     getValues,
     setValue,
     watch,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm({
     defaultValues: {
       destination: "",
@@ -93,7 +92,6 @@ const HomeForm = ({ handleIsOpenParent }) => {
   };
   const onSubmit = async () => {
     if (!!actor?.createTravelPlan) {
-      setIsLoading(true);
       try {
         const result = await actor?.createTravelPlan(body());
         if ("ok" in result) {
@@ -106,10 +104,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
           toast.success("Success !.");
           setCreatedStatus("HP");
           if ("Ok" in result_transfer)
-            toast(
-              "You received 0.00001 ICP for Tranvel Plan. Countine submit Proof of Travel Plan. 🥳",
-              { duration: 10000 }
-            );
+            toast("You received 0.00001 ICP. Please check your wallet.🥳", { duration: 10000 });
           else throw result_transfer?.Err;
           // handleIsOpenParent(false);
         } else {
@@ -123,11 +118,10 @@ const HomeForm = ({ handleIsOpenParent }) => {
             "InsufficientFunds":
               "Your travel plan created but we don't have enough funds . We will transfer your ICP tomorrow.",
             "Enough": "You cannot create more than 2 travel plans in a week"
-          }[Object.keys(error)[0]]
+          }[Object.keys(error)[0]],
+          { duration: 5000 }
         );
         console.log(error);
-      } finally {
-        setIsLoading(false);
       }
     } else {
       toast.error("Please sign in!.");
@@ -242,7 +236,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                   give you recommendations or just for you to share where you will be going next
                 </Typography>
                 <ButtonPrimary
-                  loading={isLoading}
+                  loading={isSubmitting}
                   sx={{ mt: 2 }}
                   title="Create Travel Plan"
                   onClick={handleSubmit(onSubmit)}

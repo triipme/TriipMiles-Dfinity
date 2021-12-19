@@ -24,15 +24,24 @@ type TravelPlan =
    travel_plan: TravelPlanInformation;
    uid: principal;
  };
-type Result_6 = 
+type Result_7 = 
  variant {
    err: Error;
    ok: opt text;
  };
-type Result_5 = 
+type Result_6 = 
  variant {
    err: Error;
    ok: text;
+ };
+type Result_5 = 
+ variant {
+   err: Error;
+   ok: vec record {
+             text;
+             TravelPlan;
+             reserved;
+           };
  };
 type Result_4 = 
  variant {
@@ -97,8 +106,9 @@ type Admin = record {admin: Admin__1;};
 service : {
   addWallet: (text) -> (Result_4);
   create: (Profile) -> (Result);
-  createProofTP: (text, ProofTP__1) -> (Result_6);
-  createTravelPlan: (TravelPlanUpdate) -> (Result_5);
+  createProofTP: (text, ProofTP__1) -> (Result_7);
+  createTravelPlan: (TravelPlanUpdate) -> (Result_6);
+  getAllTP_admin: () -> (Result_5);
   loginAdmin: () -> (Result_1);
   read: () -> (Result_4);
   readAllProof: () -> (Result);
