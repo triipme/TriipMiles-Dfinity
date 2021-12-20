@@ -29,7 +29,7 @@ export type Result_3 = { 'ok' : Array<[string, TravelPlan]> } |
   { 'err' : Error };
 export type Result_4 = { 'ok' : [Profile, string] } |
   { 'err' : Error };
-export type Result_5 = { 'ok' : Array<[string, TravelPlan, any]> } |
+export type Result_5 = { 'ok' : Array<[string, TravelPlan, [] | [ProofTP]]> } |
   { 'err' : Error };
 export type Result_6 = { 'ok' : string } |
   { 'err' : Error };
@@ -60,6 +60,7 @@ export interface TravelPlanUpdate {
 export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
   'addWallet' : (arg_0: string) => Promise<Result_4>,
+  'approveHP_admin' : (arg_0: string, arg_1: ProofTP) => Promise<Result>,
   'create' : (arg_0: Profile) => Promise<Result>,
   'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_7>,
   'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_6>,

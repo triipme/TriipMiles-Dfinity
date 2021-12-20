@@ -40,7 +40,7 @@ type Result_5 =
    ok: vec record {
              text;
              TravelPlan;
-             reserved;
+             opt ProofTP;
            };
  };
 type Result_4 = 
@@ -105,6 +105,7 @@ type Admin__1 =
 type Admin = record {admin: Admin__1;};
 service : {
   addWallet: (text) -> (Result_4);
+  approveHP_admin: (text, ProofTP) -> (Result);
   create: (Profile) -> (Result);
   createProofTP: (text, ProofTP__1) -> (Result_7);
   createTravelPlan: (TravelPlanUpdate) -> (Result_6);

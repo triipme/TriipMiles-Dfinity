@@ -104,17 +104,32 @@ actor {
         // };
         return proof;
     };
-    public shared({caller}) func getAllTP_admin() : async Result.Result<[(Text,Types.TravelPlan,Any)],Types.Error>{
-        var allTP : [(Text,Types.TravelPlan,Any)] = [];
+    public shared({caller}) func getAllTP_admin() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP)],Types.Error>{
+        var allTP : [(Text,Types.TravelPlan,?Types.ProofTP)] = [];
         await require_permission(caller);
         for((K,V) in state.travelplans.entries()){
             let p = await getHPofTP_admin(K);
             switch(p){
-                case(null) allTP := Array.append<(Text,Types.TravelPlan,Any)>([(K,V,null)],allTP);
-                case(? v) allTP := Array.append<(Text,Types.TravelPlan,Any)>([(K,V,v)],allTP);
+                case(null){
+                    allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP)>([(K,V,null)],allTP);
+                };
+                case(? v){
+                    allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP)>(allTP,[(K,V,?v)]);
+                }
             }
         };
-        #ok((allTP));
+        #ok(allTP);
+    };
+    public shared({caller}) func approveHP_admin(id_proof : Text,proof : Types.ProofTP) : async Result.Result<(),Types.Error>{
+        await require_permission(caller);
+        let proof_update : Types.ProofTP = {
+            proof = proof.proof;
+            uid = caller;
+            status = true;
+            created_at = proof.created_at;
+        };
+        let proof_replace = state.proofs.replace(id_proof,proof_update);
+        #ok(());
     };
 
     /* ------------------------------------------------------------------------------------------------------- */
