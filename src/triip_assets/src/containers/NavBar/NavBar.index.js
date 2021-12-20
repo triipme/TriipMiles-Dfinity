@@ -36,7 +36,6 @@ const NavBar = () => {
   const { isLogin, actor, profile: profileData } = useSelector(state => state.user);
 
   const location = useLocation();
-
   useLayoutEffect(() => {
     (async () => {
       AuthClient.create().then(async client => {
@@ -125,7 +124,7 @@ const NavBar = () => {
   }, [isOpenMenu]);
   return (
     <>
-      {location?.pathname !== "/triip-admin" && (
+      {!/\btriip-admin/.test(location.pathname) && (
         <ContainerStyled maxWidth="xl">
           {isSM ? (
             <>

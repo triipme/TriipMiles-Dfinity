@@ -187,7 +187,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
                 <Box py={2} px={3} sx={{ backgroundColor: "#fafafa", borderRadius: 3 }}>
                   <Stack mb={2} direction="row" alignItems="center" justifyContent="space-between">
                     <Typography fontWeight="bold" variant="body2">
-                      Have sepecific date?
+                      Have specific date?
                     </Typography>
                     <InputCheckbox control={control} name="specific_date" />
                   </Stack>

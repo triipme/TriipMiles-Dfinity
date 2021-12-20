@@ -1,6 +1,6 @@
 import { Box } from "@mui/system";
 import React, { createContext, lazy, Suspense, useState } from "react";
-import { BrowserRouter, Route, Routes, Navigate, Redirect } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import { Loading, Notification } from "../components";
 import { AdminRequiredAuth, NavBar, NormalRequiredAuth } from "../containers";
 
@@ -28,7 +28,7 @@ const Main = () => {
           {navbar.map((item, _) => (
             <Route key={item.path} path={item.path} exact={item?.exact} element={item.component} />
           ))}
-          <Route path="/404" element={<NotFound />} />
+          <Route path="404" element={<NotFound />} />
           {/* <Route path="*" element={<Navigate to="/404" />} /> */}
           <Route key={account[0].path} path={account[0].path} element={account[0].component}>
             {account[1].nested.map(item => (
@@ -44,25 +44,54 @@ const Main = () => {
             ))}
           </Route>
           <Route
-            path="/triip-admin"
+            path="triip-admin"
             element={
               <NormalRequiredAuth>
                 <Admin />
               </NormalRequiredAuth>
             }>
-            <Route
-              path="/triip-admin/dashboard"
-              element={
-                <AdminRequiredAuth>
-                  <DashboardLayout />
-                </AdminRequiredAuth>
-              }>
-              <Route path="/triip-admin/dashboard/app" element={<DashboardApp />} />
-              <Route path="/triip-admin/dashboard/user" element={<User />} />
-              <Route path="/triip-admin/dashboard/products" element={<Products />} />
-              <Route path="/triip-admin/dashboard/blog" element={<Blog />} />
-              <Route path="/triip-admin/dashboard/login" element={<Login />} />
-              <Route path="/triip-admin/dashboard/register" element={<Register />} />
+            <Route path="dashboard" element={<DashboardLayout />}>
+              <Route
+                path="app"
+                element={
+                  <AdminRequiredAuth>
+                    <DashboardApp />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route
+                path="user"
+                element={
+                  <AdminRequiredAuth>
+                    <User />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route
+                path="products"
+                element={
+                  <AdminRequiredAuth>
+                    <Products />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route
+                path="blog"
+                element={
+                  <AdminRequiredAuth>
+                    <Blog />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route
+                path="login"
+                element={
+                  <AdminRequiredAuth>
+                    <Login />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route path="register" element={<Register />} />
             </Route>
           </Route>
         </Routes>
