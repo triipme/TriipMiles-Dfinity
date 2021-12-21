@@ -120,16 +120,27 @@ actor {
         };
         #ok(allTP);
     };
-    public shared({caller}) func approveHP_admin(id_proof : Text,proof : Types.ProofTP) : async Result.Result<(),Types.Error>{
+    
+    public shared({caller}) func approveHP_admin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Result.Result<?[(Text)],Types.Error>{
         await require_permission(caller);
         let proof_update : Types.ProofTP = {
             proof = proof.proof;
-            uid = caller;
-            status = true;
+            uid = proof.uid;
+            status = status;
             created_at = proof.created_at;
         };
         let proof_replace = state.proofs.replace(id_proof,proof_update);
-        #ok(());
+        if(Text.equal(status,"approved")){
+            let wallet_id = state.profiles.get(proof.uid);
+            switch(wallet_id){
+                case(null) #err(#NotFound);
+                case(? v){
+                    #ok((v.wallets));
+                }
+            };
+        }else{
+            #ok((?[]));
+        }
     };
 
     /* ------------------------------------------------------------------------------------------------------- */
@@ -361,7 +372,7 @@ actor {
                         let newProof : Types.ProofTP = {
                             uid = uid;
                             proof = prooftp;
-                            status = false;
+                            status = "waitting";
                             created_at = Time.now();
                         };
                         if(Option.get(tp.travel_plan.specific_date,false)){

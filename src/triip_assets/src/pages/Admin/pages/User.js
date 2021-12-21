@@ -20,16 +20,21 @@ import {
   Container,
   Typography,
   TableContainer,
-  TablePagination
+  TablePagination,
+  Box
 } from "@mui/material";
 // components
 import Page from "../components/Page";
 import Label from "../components/Label";
 import Scrollbar from "../components/Scrollbar";
 import SearchNotFound from "../components/SearchNotFound";
+import { Collapse } from "react-collapse";
 import { UserListHead, UserListToolbar, UserMoreMenu } from "../components/_dashboard/user";
 //
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useGetFile } from "../../../hooks";
+import { getAllTP } from "../../../slice/admin/adminSlice";
+import toast, { useToaster, useToasterStore } from "react-hot-toast";
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +43,8 @@ const TABLE_HEAD = [
   { id: "destination", label: "Destination", alignRight: false },
   { id: "created_at", label: "Created At", alignRight: false },
   { id: "is_received", label: "Received", alignRight: false },
-  { id: "have_proof", label: "Proof", alignRight: false }
+  { id: "have_proof", label: "Proof", alignRight: false },
+  { id: "status_approve", label: "Approve status", alignRight: false }
   // { id: "status", label: "Status", alignRight: false },
   // { id: "" }
 ];
@@ -74,6 +80,31 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map(el => el[0]);
 }
 
+function switchColorApproveStatus(value) {
+  switch (value) {
+    case "approved":
+      return "success";
+    case "waitting":
+      return "default";
+    case "watting":
+      return "default";
+    default:
+      return "error";
+  }
+}
+function switchLabelApproveStatus(value) {
+  switch (value) {
+    case "approved":
+      return "APPROVED";
+    case "waitting":
+      return "WAITTING";
+    case "watting":
+      return "WAITTING";
+    default:
+      return "REJECTED";
+  }
+}
+
 export default function User() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState("asc");
@@ -81,10 +112,12 @@ export default function User() {
   const [orderBy, setOrderBy] = useState("tpid");
   const [filterName, setFilterName] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [data, setData] = useState([]);
   const { actor } = useSelector(state => state.user);
-
+  const { toasts: t } = useToaster();
   useEffect(() => {
+    console.log("èf");
     (async () => {
       try {
         const rs = await actor?.getAllTP_admin();
@@ -98,9 +131,7 @@ export default function User() {
         console.log(error);
       }
     })();
-  }, []);
-  console.log(data);
-
+  }, [t.length]);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -115,7 +146,6 @@ export default function User() {
     }
     setSelected([]);
   };
-
   const handleClick = (event, tpid) => {
     const selectedIndex = selected.indexOf(tpid);
     let newSelected = [];
@@ -152,7 +182,6 @@ export default function User() {
   const filteredUsers = applySortFilter(data, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
-
   return (
     <Page title="User | Minimal-UI">
       <Container>
@@ -196,44 +225,72 @@ export default function User() {
                         const { uid, is_received, created_at, ...tp } = row[1];
                         const isItemSelected = selected.indexOf(row[0]) !== -1;
                         return (
-                          <TableRow
-                            hover
-                            key={row[0]}
-                            tabIndex={-1}
-                            role="checkbox"
-                            selected={isItemSelected}
-                            aria-checked={isItemSelected}>
-                            <TableCell padding="checkbox">
-                              <Checkbox
-                                checked={isItemSelected}
-                                onChange={event => handleClick(event, row[0])}
-                              />
-                            </TableCell>
-                            <TableCell component="th" scope="row" padding="none">
-                              <Stack direction="row" alignItems="center" spacing={2}>
-                                <Avatar alt={row[0]} src={tp?.travel_plan?.img[0]} />
-                                <Typography variant="subtitle2" noWrap>
-                                  {row[0]}
-                                </Typography>
-                              </Stack>
-                            </TableCell>
-                            <TableCell align="left">{tp?.travel_plan?.destination[0]}</TableCell>
-                            <TableCell align="left">
-                              {moment.unix(parseInt(created_at / BigInt(1e9))).format("L")}
-                            </TableCell>
-                            <TableCell align="left">{is_received ? "Yes" : "No"}</TableCell>
-                            <TableCell align="left">
-                              <Label
-                                variant="ghost"
-                                color={row?.at(2)?.length > 0 ? "success" : "error"}>
-                                {row?.at(2)?.length > 0 ? "YES" : "NO"}
-                              </Label>
-                            </TableCell>
+                          <React.Fragment key={row[0]}>
+                            <TableRow
+                              hover
+                              tabIndex={-1}
+                              role="checkbox"
+                              selected={isItemSelected}
+                              aria-checked={isItemSelected}>
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  checked={isItemSelected}
+                                  onChange={event => handleClick(event, row[0])}
+                                />
+                              </TableCell>
+                              <TableCell component="th" scope="row" padding="none">
+                                <Box
+                                  onClick={() =>
+                                    setIsExpanded(row[0] === isExpanded ? "" : row[0])
+                                  }>
+                                  <Stack direction="row" alignItems="center" spacing={2}>
+                                    <Avatar alt={row[0]} src={tp?.travel_plan?.img[0]} />
+                                    <Typography variant="subtitle2" noWrap>
+                                      {row[0]}
+                                    </Typography>
+                                  </Stack>
+                                </Box>
+                              </TableCell>
+                              <TableCell align="left">{tp?.travel_plan?.destination[0]}</TableCell>
+                              <TableCell align="left">
+                                {moment.unix(parseInt(created_at / BigInt(1e9))).format("L")}
+                              </TableCell>
+                              <TableCell align="left">{is_received ? "Yes" : "No"}</TableCell>
+                              <TableCell align="left">
+                                <Label
+                                  variant="ghost"
+                                  color={row?.at(2)?.length > 0 ? "success" : "default"}>
+                                  {row?.at(2)?.length > 0 ? "SUBMITTED" : "WAITTING"}
+                                </Label>
+                              </TableCell>
 
-                            <TableCell align="right">
-                              <UserMoreMenu />
-                            </TableCell>
-                          </TableRow>
+                              <TableCell align="center">
+                                {row?.at(2)?.length > 0 ? (
+                                  <Label color={switchColorApproveStatus(row?.at(2)[0].status)}>
+                                    {switchLabelApproveStatus(row?.at(2)[0].status)}
+                                  </Label>
+                                ) : (
+                                  <Typography>-</Typography>
+                                )}
+                              </TableCell>
+                              <TableCell align="right">
+                                <UserMoreMenu
+                                  id_proof={row[0]}
+                                  proof={row[2]}
+                                  allow_approve={row?.at(2)?.length > 0}
+                                />
+                              </TableCell>
+                            </TableRow>
+                            {isExpanded === row[0] && (
+                              <TableRow>
+                                <TableCell colSpan={6}>
+                                  <Collapse isOpened={isExpanded === row[0]}>
+                                    <ProofDetail tp={row[1]?.travel_plan} proof={row[2]} />
+                                  </Collapse>
+                                </TableCell>
+                              </TableRow>
+                            )}
+                          </React.Fragment>
                         );
                       })}
                     {emptyRows > 0 && (
@@ -270,3 +327,68 @@ export default function User() {
     </Page>
   );
 }
+
+const ProofDetail = ({ tp, proof }) => {
+  const [img] = useGetFile(proof[0]?.proof?.img_key[0]);
+  const { activities, join_type, specific_date, timeEnd, timeStart, days, public_mode } = tp;
+  const { activities: acts, join_type: join_type_static } = useSelector(
+    state => state.static.travelplan
+  );
+  return (
+    <Box>
+      {!!proof?.at(0) ? (
+        <Stack flexDirection="row">
+          <Box
+            component="img"
+            objectFit="contain"
+            sx={{
+              maxHeight: 350,
+              maxWidth: 400
+            }}
+            src={img?.image}
+          />
+          <Box px={3}>
+            <Typography>
+              <b>Approval status</b>:{" "}
+              <Label color={switchColorApproveStatus(proof[0].status)}>
+                {switchLabelApproveStatus(proof[0].status)}
+              </Label>
+            </Typography>
+            <Typography>
+              <b>User principal</b>: {proof[0].uid + ""}
+            </Typography>
+            <Typography sx={{ flex: 1 }}>
+              <b>Categories</b>: {acts?.filter((_, inact) => activities[0][inact]).join(",")}
+            </Typography>
+            {specific_date[0] ? (
+              <>
+                <Typography>
+                  <b> Start date</b>: {moment.unix(timeStart).format("LL").toString()}
+                </Typography>
+                <Typography>
+                  <b>End date</b>: {moment.unix(timeEnd).format("LL").toString()}
+                </Typography>
+              </>
+            ) : (
+              <Typography>
+                <b>Number of days</b>: {days + ""} days
+              </Typography>
+            )}
+            <Typography>
+              <b>Travelplan type</b>: {join_type_static[join_type - 1]}
+            </Typography>
+            <Typography>
+              <b>Public</b>: {public_mode[0] + ""}
+            </Typography>
+            <Typography>
+              <b>Created at</b>:{" "}
+              {moment.unix(parseInt(proof[0].created_at / BigInt(1e9))).format("LL")}
+            </Typography>
+          </Box>
+        </Stack>
+      ) : (
+        <Typography align="center">This haven't proof of travelplan</Typography>
+      )}
+    </Box>
+  );
+};

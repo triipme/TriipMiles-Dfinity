@@ -104,7 +104,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
           toast.success("Success !.");
           setCreatedStatus("HP");
           if ("Ok" in result_transfer)
-            toast("You received 0.00001 ICP. Please check your wallet.🥳", { duration: 10000 });
+            toast("You received 0.000001 ICP. Please check your wallet.🥳", { duration: 10000 });
           else throw result_transfer?.Err;
           // handleIsOpenParent(false);
         } else {

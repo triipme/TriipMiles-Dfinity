@@ -28,6 +28,23 @@ export default function Button(theme) {
             fontWeight: "bold",
             backgroundColor: "#FAB84B"
           }
+        },
+        {
+          props: { variant: "outline" },
+          style: {
+            padding: "8px 20px",
+            color: theme.palette.primary.main,
+            borderRadius: 12,
+            bordeColor: theme.palette.primary.main,
+            bordeWidth: 2,
+            boxShadow: "none",
+            fontWeight: "bold",
+            backgroundColor: "transparent",
+            "&:hover": {
+              backgroundColor: "#FAB84B",
+              color: theme.palette.white.main
+            }
+          }
         }
       ],
       styleOverrides: {

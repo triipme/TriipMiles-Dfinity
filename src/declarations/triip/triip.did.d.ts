@@ -14,7 +14,7 @@ export type Error = { 'AlreadyExisting' : null } |
 export interface Profile { 'user' : User, 'wallets' : [] | [Array<string>] }
 export interface ProofTP {
   'uid' : Principal,
-  'status' : boolean,
+  'status' : string,
   'created_at' : bigint,
   'proof' : ProofTP__1,
 }
@@ -34,6 +34,8 @@ export type Result_5 = { 'ok' : Array<[string, TravelPlan, [] | [ProofTP]]> } |
 export type Result_6 = { 'ok' : string } |
   { 'err' : Error };
 export type Result_7 = { 'ok' : [] | [string] } |
+  { 'err' : Error };
+export type Result_8 = { 'ok' : [] | [Array<string>] } |
   { 'err' : Error };
 export interface TravelPlan {
   'uid' : Principal,
@@ -60,7 +62,9 @@ export interface TravelPlanUpdate {
 export interface User { 'username' : [] | [string] }
 export interface _SERVICE {
   'addWallet' : (arg_0: string) => Promise<Result_4>,
-  'approveHP_admin' : (arg_0: string, arg_1: ProofTP) => Promise<Result>,
+  'approveHP_admin' : (arg_0: string, arg_1: string, arg_2: ProofTP) => Promise<
+      Result_8
+    >,
   'create' : (arg_0: Profile) => Promise<Result>,
   'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_7>,
   'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_6>,

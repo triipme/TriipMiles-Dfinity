@@ -6,11 +6,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import App from "./App";
 import staticReducer from "./slice/static/staticSlice";
 import userReducer from "./slice/user/userSlice";
+import adminReducer from "./slice/admin/adminSlice";
 
 const store = configureStore({
   reducer: {
     static: staticReducer,
-    user: userReducer
+    user: userReducer,
+    admin: adminReducer
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: getDefaultMiddleware =>

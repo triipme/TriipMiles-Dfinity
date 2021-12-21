@@ -19,9 +19,13 @@ export const idlFactory = ({ IDL }) => {
   const ProofTP__1 = IDL.Record({ 'img_key' : IDL.Opt(IDL.Text) });
   const ProofTP = IDL.Record({
     'uid' : IDL.Principal,
-    'status' : IDL.Bool,
+    'status' : IDL.Text,
     'created_at' : IDL.Int,
     'proof' : ProofTP__1,
+  });
+  const Result_8 = IDL.Variant({
+    'ok' : IDL.Opt(IDL.Vec(IDL.Text)),
+    'err' : Error,
   });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
   const Result_7 = IDL.Variant({ 'ok' : IDL.Opt(IDL.Text), 'err' : Error });
@@ -66,7 +70,7 @@ export const idlFactory = ({ IDL }) => {
   const Result_2 = IDL.Variant({ 'ok' : ProofTP, 'err' : Error });
   return IDL.Service({
     'addWallet' : IDL.Func([IDL.Text], [Result_4], []),
-    'approveHP_admin' : IDL.Func([IDL.Text, ProofTP], [Result], []),
+    'approveHP_admin' : IDL.Func([IDL.Text, IDL.Text, ProofTP], [Result_8], []),
     'create' : IDL.Func([Profile], [Result], []),
     'createProofTP' : IDL.Func([IDL.Text, ProofTP__1], [Result_7], []),
     'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result_6], []),

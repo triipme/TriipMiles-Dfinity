@@ -39,7 +39,7 @@ module Types{
     public type ProofTP = {
         proof: ProofTP.ProofTP;
         uid: Principal;
-        status: Bool;
+        status: Text;
         created_at: Int;
     };
     /* ------------------------- Error --------------------------- */
