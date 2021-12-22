@@ -55,6 +55,8 @@ export default function UserMoreMenu({ id_proof, proof, allow_approve }) {
     } catch (error) {
       console.log(error);
       toast.error("Failed");
+    } finally {
+      setIsOpen(false);
     }
   };
   const handleReject = data => {
@@ -64,7 +66,7 @@ export default function UserMoreMenu({ id_proof, proof, allow_approve }) {
           console.log(id_proof, "rejected", proof[0]);
           const aid = await actor?.approveHP_admin(
             id_proof,
-            `rejected ${data.reject_reason}`,
+            `rejected ||${data.reject_reason}`,
             proof[0]
           );
           if ("ok" in aid) {
@@ -77,6 +79,7 @@ export default function UserMoreMenu({ id_proof, proof, allow_approve }) {
       } catch (error) {
         console.log(error);
       } finally {
+        setIsOpen(false);
         setIsReject(!isReject);
       }
     })();
@@ -87,7 +90,7 @@ export default function UserMoreMenu({ id_proof, proof, allow_approve }) {
         <Icon icon={moreVerticalFill} width={20} height={20} />
       </IconButton>
 
-      {allow_approve && (
+      {allow_approve && proof[0].status === "waitting" && (
         <Menu
           open={isOpen}
           anchorEl={ref.current}

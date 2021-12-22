@@ -9,10 +9,33 @@ import { HP } from "../../../Home/containers";
 import { ContentModalStyled } from "../../../Home/Home.style";
 import SimpleBarReact from "simplebar-react";
 
+function switchContentStatusApprove(status) {
+  switch (status) {
+    case "approved":
+      return "Congratulations! Your proof is approved. Thanks for your contribution to sustainable travel.";
+    case "waitting":
+      return "Your proof upload is completed. Our approvers are working hard for the verification process. Thanks for your patience.";
+    default:
+      return `Your proof is rejected. Reason: ${status?.split("||")[1]}`;
+  }
+}
+
+function switchIconStatusApprove(status) {
+  switch (status) {
+    case "approved":
+      return "ep:success-filled";
+    case "waitting":
+      return "bi:clock-fill";
+    default:
+      return "ci:off-close";
+  }
+}
+
 const TravelPlanDetail = forwardRef(({ travelplan }, ref) => {
   const theme = useTheme();
   const [idtp, setIdtp] = useState("");
   const [proofImg, setProofImg] = useGetFile();
+  const [proofData, setProofData] = useState();
   const { actor } = useSelector(state => state.user);
   const { activities, join_type, destination } = useSelector(state => state.static.travelplan);
   useLayoutEffect(() => {
@@ -20,7 +43,7 @@ const TravelPlanDetail = forwardRef(({ travelplan }, ref) => {
       if (!!actor?.readProofOfTP) {
         const proof = await actor?.readProofOfTP(travelplan[0] ?? "");
         if ("ok" in proof) {
-          console.log(proof?.ok?.proof?.img_key[0]);
+          setProofData(proof?.ok);
           setProofImg(proof?.ok?.proof?.img_key[0]);
         } else {
           console.log(proof?.err);
@@ -31,7 +54,6 @@ const TravelPlanDetail = forwardRef(({ travelplan }, ref) => {
       setIdtp();
     };
   }, [travelplan[0]]);
-  console.log(travelplan[1]?.travel_plan?.specific_date[0]);
   return (
     <TPDContainer ref={ref}>
       <SimpleBarReact style={{ maxHeight: "100vh" }}>
@@ -80,18 +102,31 @@ const TravelPlanDetail = forwardRef(({ travelplan }, ref) => {
           <Typography variant="body2">Your fight detail, booking information, etc...</Typography>
           <HappyProof>
             {proofImg ? (
-              <HPImg
-                src={proofImg?.image ?? "https://source.unsplash.com/random"}
-                alt="proof image"
-              />
+              <Box position="relative" mr={2}>
+                <HPImg
+                  src={proofImg?.image ?? "https://source.unsplash.com/random"}
+                  alt="proof image"
+                />
+                <Icon
+                  icon={switchIconStatusApprove(proofData?.status)}
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)"
+                  }}
+                  color={theme.palette.secondary.main}
+                />
+              </Box>
             ) : (
               <HPUploadProof onClick={() => setIdtp(travelplan[0])}>
                 <Icon icon="bi:image-fill" color={theme.palette.secondary.main} />
               </HPUploadProof>
             )}
-            <Typography variant="body2">
-              Submit your Proof-Of-Travel before your last day, and earn 0.000033 ICP when your
-              proof get approved.
+            <Typography variant="body2" sx={{ flex: 1 }}>
+              {proofImg
+                ? switchContentStatusApprove(proofData?.status)
+                : "Submit your Proof-Of-Travel before your last day, and earn 0.000033 ICP when your proof get approved."}
             </Typography>
           </HappyProof>
         </TPDBody>
@@ -118,8 +153,8 @@ const HPUploadProof = styled(Box)(({ theme }) => ({
 
 const HPImg = styled("img")`
   min-width: 60px;
+  max-width: 60px;
   height: 60px;
-  margin-right: 20px;
   object-fit: cover;
   border-radius: 10px;
 `;
@@ -128,6 +163,7 @@ const HappyProof = styled(Box)`
   margin-top: 20px;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 `;
 const TPDContainer = styled(Box)(({ theme }) => ({
   [theme.breakpoints.up("sm")]: {

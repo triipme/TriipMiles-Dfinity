@@ -245,7 +245,11 @@ export default function User() {
                                   }>
                                   <Stack direction="row" alignItems="center" spacing={2}>
                                     <Avatar alt={row[0]} src={tp?.travel_plan?.img[0]} />
-                                    <Typography variant="subtitle2" noWrap>
+                                    <Typography
+                                      variant="subtitle2"
+                                      noWrap
+                                      width={120}
+                                      textOverflow="ellipsis">
                                       {row[0]}
                                     </Typography>
                                   </Stack>
