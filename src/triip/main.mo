@@ -17,6 +17,7 @@ import AId "mo:principal/blob/AccountIdentifier";
 import Types "Types";
 import State "State";
 import ProofTP "model/ProofTP";
+import Env ".env"
 
 actor {
     /*------------------------ App state--------------------------- */
@@ -71,7 +72,7 @@ actor {
         return findAdmin;
     };
     private func isSecretKey(key : Text) : Bool{
-        return Text.hash(key)==Text.hash("55315361-b26f-4536-942b-2293133fea20");
+        return Text.hash(key)==Text.hash(Env.secret_key_admin);
     };
     public shared({caller}) func loginAdmin() : async Result.Result<Types.Admin,Types.Error>{
         await require_permission(caller);

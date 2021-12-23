@@ -287,7 +287,7 @@ export default function User() {
                             </TableRow>
                             {isExpanded === row[0] && (
                               <TableRow>
-                                <TableCell colSpan={6}>
+                                <TableCell colSpan={8}>
                                   <Collapse isOpened={isExpanded === row[0]}>
                                     <ProofDetail tp={row[1]?.travel_plan} proof={row[2]} />
                                   </Collapse>

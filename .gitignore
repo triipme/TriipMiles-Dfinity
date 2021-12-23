@@ -17,3 +17,5 @@ canister_ids.json
 .vessel/
 
 .env
+
+src/triip/.env.mo
