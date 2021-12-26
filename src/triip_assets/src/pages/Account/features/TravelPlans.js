@@ -32,10 +32,10 @@ const TravelPlans = () => {
       }
     })();
   }, [actor]);
-
   const handleTPItem = idtp => {
-    setTpDetail(idtp);
+    setTpDetail(tps.find(tp => tp[0] === idtp));
   };
+
   return (
     <>
       <Grid container spacing={3} justifyContent={{ xs: "center", sm: "flex-start" }}>
@@ -47,7 +47,8 @@ const TravelPlans = () => {
               key={intp}
               idtp={tp[0]}
               tp={tp[1]?.travel_plan}
-              onClick={() => handleTPItem(tp)}
+              pStatus={tp?.at(2)?.at(0)?.status}
+              onClick={() => handleTPItem(tp[0])}
             />
           ))
         ) : (
@@ -65,8 +66,17 @@ const TravelPlans = () => {
     </>
   );
 };
-
-const TravelPlanItem = ({ idtp, tp, onClick }) => {
+function switchStatusProof(STATUS) {
+  switch (STATUS) {
+    case "approved":
+      return "Approved";
+    case "waitting":
+      return "New";
+    default:
+      return "Reject";
+  }
+}
+const TravelPlanItem = ({ idtp, tp, pStatus, onClick }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   return (
@@ -95,7 +105,7 @@ const TravelPlanItem = ({ idtp, tp, onClick }) => {
             {moment.unix(tp?.timeEnd).format("DD-MM-YYYY").toString()}
           </Typography>
           <Typography fontWeight="bold" variant="body2">
-            Proof of travel - New
+            Proof of travel - {pStatus ? switchStatusProof(pStatus) : "No Submit"}
           </Typography>
         </TPBody>
       </Box>

@@ -329,9 +329,9 @@ actor {
         }
     };
 
-    public shared(msg) func readAllTPUser() : async Result.Result<[(Text,Types.TravelPlan)],Types.Error>{
+    public shared(msg) func readAllTPUser() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP)],Types.Error>{
         let uid = msg.caller;
-        var tps : [(Text,Types.TravelPlan)] = [];
+        var tps : [(Text,Types.TravelPlan,?Types.ProofTP)] = [];
 
         await require_permission(uid);
         // Debug.print(debug_show(Array.filter(Iter.toArray(state.travelplans.entries()),func (key:Text,val : Types.TravelPlan) : Bool {
@@ -340,7 +340,8 @@ actor {
         // )));
         for((K,V) in state.travelplans.entries()){
             if(Principal.toText(V.uid) == Principal.toText(uid)){
-                tps := Array.append<(Text,Types.TravelPlan)>([(K,V)],tps);
+                let p = state.proofs.get(K);
+                tps := Array.append<(Text,Types.TravelPlan,?Types.ProofTP)>([(K,V,p)],tps);
             }
         };
         #ok((tps));

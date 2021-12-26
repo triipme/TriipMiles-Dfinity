@@ -42,9 +42,9 @@ const TABLE_HEAD = [
   { id: "tpid", label: "Id", alignRight: false },
   { id: "destination", label: "Destination", alignRight: false },
   { id: "created_at", label: "Created At", alignRight: false },
-  { id: "is_received", label: "Received", alignRight: false },
+  // { id: "is_received", label: "Received", alignRight: false },
   { id: "have_proof", label: "Proof", alignRight: false },
-  { id: "status_approve", label: "Approve status", alignRight: false }
+  { id: "status_approve", label: "Approval status", alignRight: false }
   // { id: "status", label: "Status", alignRight: false },
   // { id: "" }
 ];
@@ -183,18 +183,18 @@ export default function User() {
 
   const isUserNotFound = filteredUsers.length === 0;
   return (
-    <Page title="User | Minimal-UI">
+    <Page title="Travel Plan | Minimal-UI">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Travel Plan
           </Typography>
           <Button
             variant="contained"
             component={RouterLink}
             to="#"
             startIcon={<Icon icon={plusFill} />}>
-            New User
+            New Travel Plan
           </Button>
         </Stack>
 
@@ -233,10 +233,10 @@ export default function User() {
                               selected={isItemSelected}
                               aria-checked={isItemSelected}>
                               <TableCell padding="checkbox">
-                                <Checkbox
+                                {/* <Checkbox
                                   checked={isItemSelected}
                                   onChange={event => handleClick(event, row[0])}
-                                />
+                                /> */}
                               </TableCell>
                               <TableCell component="th" scope="row" padding="none">
                                 <Box
@@ -259,7 +259,7 @@ export default function User() {
                               <TableCell align="left">
                                 {moment.unix(parseInt(created_at / BigInt(1e9))).format("L")}
                               </TableCell>
-                              <TableCell align="left">{is_received ? "Yes" : "No"}</TableCell>
+                              {/* <TableCell align="left">{is_received ? "Yes" : "No"}</TableCell> */}
                               <TableCell align="left">
                                 <Label
                                   variant="ghost"
@@ -391,7 +391,7 @@ const ProofDetail = ({ tp, proof }) => {
           </Box>
         </Stack>
       ) : (
-        <Typography align="center">This haven't proof of travelplan</Typography>
+        <Typography align="center">This don't have proof of travel</Typography>
       )}
     </Box>
   );

@@ -34,26 +34,9 @@ function switchIconStatusApprove(status) {
 const TravelPlanDetail = forwardRef(({ travelplan }, ref) => {
   const theme = useTheme();
   const [idtp, setIdtp] = useState("");
-  const [proofImg, setProofImg] = useGetFile();
-  const [proofData, setProofData] = useState();
-  const { actor } = useSelector(state => state.user);
+  const [proofImg] = useGetFile(travelplan?.at(2)?.at(0)?.proof?.img_key[0]);
+  const [proofData] = useState(travelplan?.at(2)?.at(0));
   const { activities, join_type, destination } = useSelector(state => state.static.travelplan);
-  useLayoutEffect(() => {
-    (async () => {
-      if (!!actor?.readProofOfTP) {
-        const proof = await actor?.readProofOfTP(travelplan[0] ?? "");
-        if ("ok" in proof) {
-          setProofData(proof?.ok);
-          setProofImg(proof?.ok?.proof?.img_key[0]);
-        } else {
-          console.log(proof?.err);
-        }
-      }
-    })();
-    return () => {
-      setIdtp();
-    };
-  }, [travelplan[0]]);
   return (
     <TPDContainer ref={ref}>
       <SimpleBarReact style={{ maxHeight: "100vh" }}>

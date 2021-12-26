@@ -19,7 +19,7 @@ const sidebarConfig = [
     icon: getIcon(pieChart2Fill)
   },
   {
-    title: "user",
+    title: "travel plan",
     path: "/triip-admin/dashboard/user",
     icon: getIcon(peopleFill)
   },
