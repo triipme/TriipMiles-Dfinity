@@ -625,6 +625,17 @@
     "@aws-sdk/types" "3.40.0"
     tslib "^2.3.0"
 
+"@aws-sdk/s3-presigned-post@^3.45.0":
+  version "3.45.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-presigned-post/-/s3-presigned-post-3.45.0.tgz#a355dc72850abb300333d491955ca4e6ff37679f"
+  integrity sha512-Z0OI3PPDRH5aqD2lpxdbPxZJZDofMhOof8x0JL9kjXNZrcRpHKtixyetjEFmHjX4B4/lATaiaLHWaAVdJpMfLA==
+  dependencies:
+    "@aws-sdk/signature-v4" "3.45.0"
+    "@aws-sdk/types" "3.40.0"
+    "@aws-sdk/util-format-url" "3.40.0"
+    "@aws-sdk/util-hex-encoding" "3.37.0"
+    tslib "^2.3.0"
+
 "@aws-sdk/service-error-classification@3.40.0":
   version "3.40.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/service-error-classification/-/service-error-classification-3.40.0.tgz#c98cbb781bd50e5d90649742ff954d754201c44d"
@@ -641,6 +652,17 @@
   version "3.40.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4/-/signature-v4-3.40.0.tgz#9de1b4e1130f68394df3232882805896c2d20e45"
   integrity sha512-Q1GNZJRCS3W2qsRtDsX/b6EOSfMXfr6TW46N3LnLTGYZ3KAN2SOSJ1DsW59AuGpEZyRmOhJ9L/Q5U403+bZMXQ==
+  dependencies:
+    "@aws-sdk/is-array-buffer" "3.37.0"
+    "@aws-sdk/types" "3.40.0"
+    "@aws-sdk/util-hex-encoding" "3.37.0"
+    "@aws-sdk/util-uri-escape" "3.37.0"
+    tslib "^2.3.0"
+
+"@aws-sdk/signature-v4@3.45.0":
+  version "3.45.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4/-/signature-v4-3.45.0.tgz#1852f3ad0447c9788f2454a7cfec2182b30eadac"
+  integrity sha512-73dwNe4R4Ytgn82gV8B99tE6UqrWjHE1JIAXpEZeXsBPJtg+8wpgd9sujs6JH9JW2cvnSnIsCXs1gQGD9+bZ0A==
   dependencies:
     "@aws-sdk/is-array-buffer" "3.37.0"
     "@aws-sdk/types" "3.40.0"
@@ -728,6 +750,15 @@
   integrity sha512-zcLhSZDKgBLhUjSU5HoQpuQiP3v8oE86NmV/tiZVPEaO6YVULEAB2Cfj1hpM/b/JXWzjSHfT06KXT7QUODKS+A==
   dependencies:
     "@aws-sdk/shared-ini-file-loader" "3.37.0"
+    tslib "^2.3.0"
+
+"@aws-sdk/util-format-url@3.40.0":
+  version "3.40.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/util-format-url/-/util-format-url-3.40.0.tgz#95be9d8bc792f3311dd5c8268a3fe0e9fb369c40"
+  integrity sha512-eOKeYwAvsCQjTSCAW1LVhnjmTyyGK6lZjGTa9wXxxjVE6Fhc66+cCykS8u/u8Vj7BCS+ixiLetXtH1/qd+Bl+g==
+  dependencies:
+    "@aws-sdk/querystring-builder" "3.40.0"
+    "@aws-sdk/types" "3.40.0"
     tslib "^2.3.0"
 
 "@aws-sdk/util-hex-encoding@3.37.0":
