@@ -22,32 +22,32 @@ const sidebarConfig = [
     title: "travel plan",
     path: "/triip-admin/dashboard/user",
     icon: getIcon(peopleFill)
-  },
-  {
-    title: "product",
-    path: "/triip-admin/dashboard/products",
-    icon: getIcon(shoppingBagFill)
-  },
-  {
-    title: "blog",
-    path: "/triip-admin/dashboard/blog",
-    icon: getIcon(fileTextFill)
-  },
-  {
-    title: "login",
-    path: "/triip-admin/dashboard/login",
-    icon: getIcon(lockFill)
-  },
-  {
-    title: "register",
-    path: "/triip-admin/dashboard/register",
-    icon: getIcon(personAddFill)
-  },
-  {
-    title: "Not found",
-    path: "/404",
-    icon: getIcon(alertTriangleFill)
   }
+  // {
+  //   title: "product",
+  //   path: "/triip-admin/dashboard/products",
+  //   icon: getIcon(shoppingBagFill)
+  // },
+  // {
+  //   title: "blog",
+  //   path: "/triip-admin/dashboard/blog",
+  //   icon: getIcon(fileTextFill)
+  // },
+  // {
+  //   title: "login",
+  //   path: "/triip-admin/dashboard/login",
+  //   icon: getIcon(lockFill)
+  // },
+  // {
+  //   title: "register",
+  //   path: "/triip-admin/dashboard/register",
+  //   icon: getIcon(personAddFill)
+  // },
+  // {
+  //   title: "Not found",
+  //   path: "/404",
+  //   icon: getIcon(alertTriangleFill)
+  // }
 ];
 
 export default sidebarConfig;

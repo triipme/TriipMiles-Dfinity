@@ -30,3 +30,5 @@ const Index = () => {
 };
 
 render(<Index />, document.getElementById("app"));
+
+export default store;

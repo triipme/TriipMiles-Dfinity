@@ -72,7 +72,7 @@ function applySortFilter(array, comparator, query) {
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
-    return a[1] - b[1];
+    return parseInt(b[0][1].created_at) - parseInt(a[0][1].created_at);
   });
   if (query) {
     return filter(array, _tp => _tp.tpid.toLowerCase().indexOf(query.toLowerCase()) !== -1);
@@ -107,9 +107,9 @@ function switchLabelApproveStatus(value) {
 
 export default function User() {
   const [page, setPage] = useState(0);
-  const [order, setOrder] = useState("asc");
+  const [order, setOrder] = useState("desc");
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState("tpid");
+  const [orderBy, setOrderBy] = useState("created_at");
   const [filterName, setFilterName] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -117,7 +117,6 @@ export default function User() {
   const { actor } = useSelector(state => state.user);
   const { toasts: t } = useToaster();
   useEffect(() => {
-    console.log("èf");
     (async () => {
       try {
         const rs = await actor?.getAllTP_admin();
@@ -189,13 +188,13 @@ export default function User() {
           <Typography variant="h4" gutterBottom>
             Travel Plan
           </Typography>
-          <Button
+          {/* <Button
             variant="contained"
             component={RouterLink}
             to="#"
             startIcon={<Icon icon={plusFill} />}>
             New Travel Plan
-          </Button>
+          </Button> */}
         </Stack>
 
         <Card>
@@ -289,7 +288,12 @@ export default function User() {
                               <TableRow>
                                 <TableCell colSpan={8}>
                                   <Collapse isOpened={isExpanded === row[0]}>
-                                    <ProofDetail tp={row[1]?.travel_plan} proof={row[2]} />
+                                    <ProofDetail
+                                      tp={row[1]?.travel_plan}
+                                      proof={row[2]}
+                                      vetted={row[3]}
+                                      staff={row[4]}
+                                    />
                                   </Collapse>
                                 </TableCell>
                               </TableRow>
@@ -332,7 +336,7 @@ export default function User() {
   );
 }
 
-const ProofDetail = ({ tp, proof }) => {
+const ProofDetail = ({ tp, proof, vetted, staff }) => {
   const [img] = useGetFile(proof[0]?.proof?.img_key[0]);
   const { activities, join_type, specific_date, timeEnd, timeStart, days, public_mode } = tp;
   const { activities: acts, join_type: join_type_static } = useSelector(
@@ -352,42 +356,50 @@ const ProofDetail = ({ tp, proof }) => {
             src={img?.image}
           />
           <Box px={3}>
-            <Typography>
+            <Typography mb={1}>
               <b>Approval status</b>:{" "}
               <Label color={switchColorApproveStatus(proof[0].status)}>
                 {switchLabelApproveStatus(proof[0].status)}
               </Label>
             </Typography>
-            <Typography>
+            <Typography mb={1}>
+              <b>Vetted staff</b>: {staff[0] ?? "Admin"}
+            </Typography>
+            <Typography mb={1}>
               <b>User principal</b>: {proof[0].uid + ""}
             </Typography>
-            <Typography sx={{ flex: 1 }}>
+            <Typography mb={1} sx={{ flex: 1 }}>
               <b>Categories</b>: {acts?.filter((_, inact) => activities[0][inact]).join(",")}
             </Typography>
             {specific_date[0] ? (
               <>
-                <Typography>
+                <Typography mb={1}>
                   <b> Start date</b>: {moment.unix(timeStart).format("LL").toString()}
                 </Typography>
-                <Typography>
+                <Typography mb={1}>
                   <b>End date</b>: {moment.unix(timeEnd).format("LL").toString()}
                 </Typography>
               </>
             ) : (
-              <Typography>
+              <Typography mb={1}>
                 <b>Number of days</b>: {days + ""} days
               </Typography>
             )}
-            <Typography>
+            <Typography mb={1}>
               <b>Travelplan type</b>: {join_type_static[join_type - 1]}
             </Typography>
-            <Typography>
+            <Typography mb={1}>
               <b>Public</b>: {public_mode[0] + ""}
             </Typography>
-            <Typography>
+            <Typography mb={1}>
               <b>Created at</b>:{" "}
               {moment.unix(parseInt(proof[0].created_at / BigInt(1e9))).format("LL")}
             </Typography>
+            {vetted?.at(0)?.updated_at && (
+              <Typography mb={1}>
+                <b>Updated at</b>: {moment.unix(parseInt(vetted?.at(0)?.updated_at)).format("LL")}
+              </Typography>
+            )}
           </Box>
         </Stack>
       ) : (

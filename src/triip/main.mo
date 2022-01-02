@@ -2,6 +2,7 @@ import Trie "mo:base/Trie";
 import Debug "mo:base/Debug";
 import Hash "mo:base/Hash";
 import Nat "mo:base/Nat";
+import Nat32 "mo:base/Nat32";
 import Text "mo:base/Text";
 import Array "mo:base/Array";
 import Result "mo:base/Result";
@@ -34,6 +35,7 @@ actor {
     private stable var travelplans : [(Text,Types.TravelPlan)] = [];
     private stable var proofs : [(Text,Types.ProofTP)] = [];
     private stable var admin : [(Principal,Types.Admin)] = [];
+    private stable var vetted : [(Text,Types.Vetted)] = [];
 
     system func preupgrade() {
         Debug.print("Begin preupgrade");
@@ -41,6 +43,7 @@ actor {
         travelplans := Iter.toArray(state.travelplans.entries());
         proofs := Iter.toArray(state.proofs.entries());
         admin := Iter.toArray(state.admin.entries());
+        vetted := Iter.toArray(state.vetted.entries());
         Debug.print("End preupgrade");
     };
 
@@ -58,6 +61,9 @@ actor {
         for((k,v) in Iter.fromArray(proofs)) {
             state.proofs.put(k,v);
         };
+        for((k,v) in Iter.fromArray(vetted)) {
+            state.vetted.put(k,v);
+        };
         Debug.print("End postupgrade");
     };
     func require_permission(p : Principal) : async () {
@@ -65,7 +71,6 @@ actor {
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
     };
-
     //Admin
     private func isAdmin(key : Principal) : ?Types.Admin{
         let findAdmin = state.admin.get(key);
@@ -105,23 +110,47 @@ actor {
         // };
         return proof;
     };
-    public shared({caller}) func getAllTP_admin() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP)],Types.Error>{
-        var allTP : [(Text,Types.TravelPlan,?Types.ProofTP)] = [];
+    private func getInfoStaff_admin(key : Principal) : async Text{
+        let staff = state.admin.get(key);
+         switch(staff){
+            case(null) return "Not Found Info Staff";
+            case(? v) return Text.concat(Option.get(v.admin.first_name,"")," "#Option.get(v.admin.last_name,""));
+        };
+    };
+    private func getStaff_admin(key : Text) : async ?Types.Vetted{
+        let staff = state.vetted.get(key);
+        return staff;
+    };
+    public shared({caller}) func getAllTP_admin() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)],Types.Error>{
+        var allTP : [(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)] = [];
         await require_permission(caller);
         for((K,V) in state.travelplans.entries()){
-            let p = await getHPofTP_admin(K);
-            switch(p){
+            switch(await getStaff_admin(K)){
                 case(null){
-                    allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP)>([(K,V,null)],allTP);
+                    switch(await getHPofTP_admin(K)){
+                        case(null){
+                            allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)>([(K,V,null,null,null)],allTP);
+                        };
+                        case(? v){
+                            allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)>(allTP,[(K,V,?v,null,null)]);
+                        }
+                    }
                 };
-                case(? v){
-                    allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP)>(allTP,[(K,V,?v)]);
+                case(? vetted){
+                    let vetted_staff = await getInfoStaff_admin(vetted.staff);
+                    switch(await getHPofTP_admin(K)){
+                        case(null){
+                            allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)>([(K,V,null,?vetted,?vetted_staff)],allTP);
+                        };
+                        case(? v){
+                            allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)>(allTP,[(K,V,?v,?vetted,?vetted_staff)]);
+                        }
+                    }
                 }
             }
         };
         #ok(allTP);
     };
-    
     public shared({caller}) func approveHP_admin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Result.Result<?[(Text)],Types.Error>{
         await require_permission(caller);
         let proof_update : Types.ProofTP = {
@@ -130,7 +159,12 @@ actor {
             status = status;
             created_at = proof.created_at;
         };
+        let vetted_data : Types.Vetted = {
+            staff  = caller;
+            updated_at = Time.now() / 10**9;
+        };
         let proof_replace = state.proofs.replace(id_proof,proof_update);
+        let vetted = state.vetted.put(id_proof,vetted_data);
         if(Text.equal(status,"approved")){
             let wallet_id = state.profiles.get(proof.uid);
             switch(wallet_id){

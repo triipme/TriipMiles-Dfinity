@@ -2,10 +2,10 @@
 
 import { Images } from "../../../theme";
 
-const account = {
-  displayName: "Jaydon Frankie",
-  email: "demo@minimals.cc",
+const account = info => ({
+  displayName: `${info?.first_name ?? ""} ${info?.last_name ?? ""}`,
+  email: info?.email,
   photoURL: Images.admin.mock.avatar.default
-};
+});
 
 export default account;

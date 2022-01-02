@@ -1,13 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  travelplans: []
+  travelplans: [],
+  info: ""
 };
 
 export const adminSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    info: (state, action) => {
+      return {
+        ...state,
+        info: action.payload
+      };
+    },
     getAllTP: (state, action) => {
       return {
         ...state,
@@ -17,5 +24,5 @@ export const adminSlice = createSlice({
   }
 });
 
-export const { getAllTP } = adminSlice.actions;
+export const { getAllTP, info } = adminSlice.actions;
 export default adminSlice.reducer;

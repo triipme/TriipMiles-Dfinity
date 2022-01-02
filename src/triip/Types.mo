@@ -2,6 +2,7 @@ import User "model/User";
 import Admin "model/Admin";
 import TravelPlan "model/TravelPlan";
 import ProofTP "model/ProofTP";
+import Vetted "model/Vetted";
 import Principal "mo:base/Principal";
 
 
@@ -15,6 +16,7 @@ module Types{
         admin : Admin.Admin;
         // role : Role;
     };
+    public type Vetted = Vetted.Vetted;
     
     /* ------------------------- User --------------------------- */
     public type Profile = {

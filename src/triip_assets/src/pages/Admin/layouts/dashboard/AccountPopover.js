@@ -11,6 +11,7 @@ import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from "
 import MenuPopover from "../../components/MenuPopover";
 //
 import account from "../../_mocks_/account";
+import { useSelector } from "react-redux";
 
 // ----------------------------------------------------------------------
 
@@ -37,6 +38,7 @@ const MENU_OPTIONS = [
 export default function AccountPopover() {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const { admin: info } = useSelector(state => state.admin.info);
 
   const handleOpen = () => {
     setOpen(true);
@@ -66,7 +68,7 @@ export default function AccountPopover() {
             }
           })
         }}>
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={account(info).photoURL} alt="photoURL" />
       </IconButton>
 
       <MenuPopover
@@ -76,10 +78,10 @@ export default function AccountPopover() {
         sx={{ width: 220 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {account.displayName}
+            {account(info).displayName}
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>
-            {account.email}
+            {account(info).email}
           </Typography>
         </Box>
 
