@@ -66,12 +66,28 @@ actor {
         };
         Debug.print("End postupgrade");
     };
-    func require_permission(p : Principal) : async () {
-        if(Principal.toText(p)=="2vxsx-fae"){
+    // func require_permission(p : Principal) : () {
+    //     if(Principal.toText(p)=="2vxsx-fae"){
+    //         throw Error.reject("NotAuthorized");//isNotAuthorized
+    //     };
+    // };
+    //Admin
+    public shared query({caller}) func analysis() : async Result.Result<Text,Types.Error>{
+        if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
+        Debug.print(debug_show(state.profiles.size()));
+        Debug.print(debug_show(state.travelplans.size()));
+        Debug.print(debug_show(state.proofs.size()));
+        var proofs_approved : Nat = 0;
+        var proofs_rejected : Nat = 0;
+        let analysis = {
+            profiles = state.profiles.size();
+            travelplans = state.travelplans.size();
+            proofs = state.proofs.size();
+        };
+        #ok(("hmm"));
     };
-    //Admin
     private func isAdmin(key : Principal) : ?Types.Admin{
         let findAdmin = state.admin.get(key);
         return findAdmin;
@@ -79,9 +95,10 @@ actor {
     private func isSecretKey(key : Text) : Bool{
         return Text.hash(key)==Text.hash(Env.secret_key_admin);
     };
-    public shared({caller}) func loginAdmin() : async Result.Result<Types.Admin,Types.Error>{
-        await require_permission(caller);
-        let is_admin = isAdmin(caller);
+    public shared query({caller}) func loginAdmin() : async Result.Result<Types.Admin,Types.Error>{
+        if(Principal.toText(caller)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        let is_admin = isAdmin(caller);
         Debug.print(debug_show(is_admin));
         switch(is_admin){
             case(null) #err(#NotFound);
@@ -89,8 +106,9 @@ actor {
         }
     };
     public shared({caller}) func registerAdmin(key : Text,info : Types.Admin) : async Result.Result<Types.Admin,Types.Error>{
-        await require_permission(caller);
-        let isKey = isSecretKey(key);
+        if(Principal.toText(caller)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        let isKey = isSecretKey(key);
         if(isKey){
             state.admin.put(caller,info);
             let rs = isAdmin(caller);
@@ -102,7 +120,7 @@ actor {
             #err(#Failed);
         }
     };
-    private func getHPofTP_admin(key : Text) : async ?Types.ProofTP{
+    private func getHPofTP_admin(key : Text) : ?Types.ProofTP{
         let proof = state.proofs.get(key);
         // switch(proof){
         //     case(null) #err(#NotFound);
@@ -110,24 +128,26 @@ actor {
         // };
         return proof;
     };
-    private func getInfoStaff_admin(key : Principal) : async Text{
+    private func getInfoStaff_admin(key : Principal) : Text{
         let staff = state.admin.get(key);
          switch(staff){
             case(null) return "Not Found Info Staff";
             case(? v) return Text.concat(Option.get(v.admin.first_name,"")," "#Option.get(v.admin.last_name,""));
         };
     };
-    private func getStaff_admin(key : Text) : async ?Types.Vetted{
+    private func getStaff_admin(key : Text) : ?Types.Vetted{
         let staff = state.vetted.get(key);
         return staff;
     };
-    public shared({caller}) func getAllTP_admin() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)],Types.Error>{
+    public shared query({caller}) func getAllTP_admin() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)],Types.Error>{
         var allTP : [(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)] = [];
-        await require_permission(caller);
+        if(Principal.toText(caller)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        
         for((K,V) in state.travelplans.entries()){
-            switch(await getStaff_admin(K)){
+            switch(getStaff_admin(K)){
                 case(null){
-                    switch(await getHPofTP_admin(K)){
+                    switch(getHPofTP_admin(K)){
                         case(null){
                             allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)>([(K,V,null,null,null)],allTP);
                         };
@@ -137,8 +157,8 @@ actor {
                     }
                 };
                 case(? vetted){
-                    let vetted_staff = await getInfoStaff_admin(vetted.staff);
-                    switch(await getHPofTP_admin(K)){
+                    let vetted_staff = getInfoStaff_admin(vetted.staff);
+                    switch(getHPofTP_admin(K)){
                         case(null){
                             allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)>([(K,V,null,?vetted,?vetted_staff)],allTP);
                         };
@@ -152,8 +172,9 @@ actor {
         #ok(allTP);
     };
     public shared({caller}) func approveHP_admin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Result.Result<?[(Text)],Types.Error>{
-        await require_permission(caller);
-        let proof_update : Types.ProofTP = {
+        if(Principal.toText(caller)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        let proof_update : Types.ProofTP = {
             proof = proof.proof;
             uid = proof.uid;
             status = status;
@@ -184,8 +205,9 @@ actor {
     public shared(msg) func create(profile: Types.Profile) : async Result.Result<(),Types.Error> {
         let uid = msg.caller;
 
-        await require_permission(uid);
-
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };
         // let profile_update : Types.Profile = {
         //     user = profile.user;
         //     wallets = ?[AId.toText(AId.fromPrincipal(uid,null))];
@@ -204,11 +226,12 @@ actor {
             };
         }
     };
-    public shared(msg) func read() : async Result.Result<(Types.Profile,Text),Types.Error>{
+    public shared query(msg) func read() : async Result.Result<(Types.Profile,Text),Types.Error>{
         let uid = msg.caller;
 
-        await require_permission(uid);
-        let rsReadUser = state.profiles.get(uid);
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        let rsReadUser = state.profiles.get(uid);
 
         switch(rsReadUser){
             case null{
@@ -319,8 +342,9 @@ actor {
     public shared(msg) func updateTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(),Types.Error>{
         let uid = msg.caller;
 
-        await require_permission(uid);
-        let rsReadTP = state.travelplans.get(travel_plan.idtp);
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        let rsReadTP = state.travelplans.get(travel_plan.idtp);
 
 
         switch(rsReadTP){
@@ -363,12 +387,13 @@ actor {
         }
     };
 
-    public shared(msg) func readAllTPUser() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP)],Types.Error>{
+    public shared query(msg) func readAllTPUser() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP)],Types.Error>{
         let uid = msg.caller;
         var tps : [(Text,Types.TravelPlan,?Types.ProofTP)] = [];
 
-        await require_permission(uid);
-        // Debug.print(debug_show(Array.filter(Iter.toArray(state.travelplans.entries()),func (key:Text,val : Types.TravelPlan) : Bool {
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        // Debug.print(debug_show(Array.filter(Iter.toArray(state.travelplans.entries()),func (key:Text,val : Types.TravelPlan) : Bool {
         //         Principal.toText(val.uid) == Principal.toText(uid);
         //     }
         // )));
@@ -383,8 +408,9 @@ actor {
 
     public shared(msg) func createProofTP(idptp: Text,prooftp:ProofTP.ProofTP) : async Result.Result<?Text,Types.Error>{
         let uid = msg.caller;
-        await require_permission(uid);
-        // kiem tra proof cua tp da co hay chua
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        // kiem tra proof cua tp da co hay chua
         // neu co thi tra exist
         // neu chua thi tiep tuc
             // kiem tra co specific_date hay khong
@@ -431,8 +457,9 @@ actor {
 
     public shared(msg) func readProofOfTP(idtp:Text) : async Result.Result<Types.ProofTP,Types.Error>{
         let uid = msg.caller;
-        await require_permission(uid);
-        
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        
         let proof = state.proofs.get(idtp);
         return Result.fromOption(proof,#NotFound);
     };

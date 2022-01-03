@@ -16,6 +16,7 @@ export const idlFactory = ({ IDL }) => {
     'ok' : IDL.Tuple(Profile, IDL.Text),
     'err' : Error,
   });
+  const Result_6 = IDL.Variant({ 'ok' : IDL.Text, 'err' : Error });
   const ProofTP__1 = IDL.Record({ 'img_key' : IDL.Opt(IDL.Text) });
   const ProofTP = IDL.Record({
     'uid' : IDL.Principal,
@@ -45,7 +46,6 @@ export const idlFactory = ({ IDL }) => {
     'idtp' : IDL.Text,
     'travel_plan' : TravelPlanInformation,
   });
-  const Result_6 = IDL.Variant({ 'ok' : IDL.Text, 'err' : Error });
   const TravelPlan = IDL.Record({
     'uid' : IDL.Principal,
     'is_received' : IDL.Bool,
@@ -82,15 +82,16 @@ export const idlFactory = ({ IDL }) => {
   const Result_2 = IDL.Variant({ 'ok' : ProofTP, 'err' : Error });
   return IDL.Service({
     'addWallet' : IDL.Func([IDL.Text], [Result_4], []),
+    'analysis' : IDL.Func([], [Result_6], ['query']),
     'approveHP_admin' : IDL.Func([IDL.Text, IDL.Text, ProofTP], [Result_8], []),
     'create' : IDL.Func([Profile], [Result], []),
     'createProofTP' : IDL.Func([IDL.Text, ProofTP__1], [Result_7], []),
     'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result_6], []),
-    'getAllTP_admin' : IDL.Func([], [Result_5], []),
-    'loginAdmin' : IDL.Func([], [Result_1], []),
-    'read' : IDL.Func([], [Result_4], []),
+    'getAllTP_admin' : IDL.Func([], [Result_5], ['query']),
+    'loginAdmin' : IDL.Func([], [Result_1], ['query']),
+    'read' : IDL.Func([], [Result_4], ['query']),
     'readAllProof' : IDL.Func([], [Result], []),
-    'readAllTPUser' : IDL.Func([], [Result_3], []),
+    'readAllTPUser' : IDL.Func([], [Result_3], ['query']),
     'readProofOfTP' : IDL.Func([IDL.Text], [Result_2], []),
     'registerAdmin' : IDL.Func([IDL.Text, Admin], [Result_1], []),
     'setStatusReceivedICP' : IDL.Func([IDL.Bool, IDL.Text], [Result], []),

@@ -118,15 +118,16 @@ type Admin__1 =
 type Admin = record {admin: Admin__1;};
 service : {
   addWallet: (text) -> (Result_4);
+  analysis: () -> (Result_6) query;
   approveHP_admin: (text, text, ProofTP) -> (Result_8);
   create: (Profile) -> (Result);
   createProofTP: (text, ProofTP__1) -> (Result_7);
   createTravelPlan: (TravelPlanUpdate) -> (Result_6);
-  getAllTP_admin: () -> (Result_5);
-  loginAdmin: () -> (Result_1);
-  read: () -> (Result_4);
+  getAllTP_admin: () -> (Result_5) query;
+  loginAdmin: () -> (Result_1) query;
+  read: () -> (Result_4) query;
   readAllProof: () -> (Result);
-  readAllTPUser: () -> (Result_3);
+  readAllTPUser: () -> (Result_3) query;
   readProofOfTP: (text) -> (Result_2);
   registerAdmin: (text, Admin) -> (Result_1);
   setStatusReceivedICP: (bool, text) -> (Result);

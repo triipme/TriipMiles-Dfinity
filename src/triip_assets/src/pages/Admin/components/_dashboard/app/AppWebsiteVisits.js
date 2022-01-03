@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { merge } from "lodash";
 import ReactApexChart from "react-apexcharts";
 // material
 import { Card, CardHeader, Box } from "@mui/material";
 //
 import { BaseOptionChart } from "../../charts";
+import RosettaApi from "../../../../../services/rosetta";
+import { async } from "q";
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +27,7 @@ const CHART_DATA = [
     data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39]
   }
 ];
+const rosetta = new RosettaApi();
 
 export default function AppWebsiteVisits() {
   const chartOptions = merge(BaseOptionChart(), {
@@ -58,7 +61,18 @@ export default function AppWebsiteVisits() {
       }
     }
   });
-
+  useEffect(() => {
+    (async () => {
+      try {
+        const rs = await rosetta.getTransactionsByAccount(
+          "18BF03AC2177B8B03CCC27BBC7B26C5EE01D96246977351804BB2BCBD23DE1FA"
+        );
+        console.log(rs);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
   return (
     <Card>
       <CardHeader title="Website Visits" subheader="(+43%) than last year" />

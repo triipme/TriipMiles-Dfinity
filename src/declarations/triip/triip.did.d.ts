@@ -67,6 +67,7 @@ export interface User { 'username' : [] | [string] }
 export interface Vetted { 'updated_at' : bigint, 'staff' : Principal }
 export interface _SERVICE {
   'addWallet' : (arg_0: string) => Promise<Result_4>,
+  'analysis' : () => Promise<Result_6>,
   'approveHP_admin' : (arg_0: string, arg_1: string, arg_2: ProofTP) => Promise<
       Result_8
     >,

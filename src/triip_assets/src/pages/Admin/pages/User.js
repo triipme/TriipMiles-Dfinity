@@ -362,9 +362,11 @@ const ProofDetail = ({ tp, proof, vetted, staff }) => {
                 {switchLabelApproveStatus(proof[0].status)}
               </Label>
             </Typography>
-            <Typography mb={1}>
-              <b>Vetted staff</b>: {staff[0] ?? "Admin"}
-            </Typography>
+            {vetted?.at(0)?.updated_at && (
+              <Typography mb={1}>
+                <b>Vetted staff</b>: {staff[0] ?? "Admin"}
+              </Typography>
+            )}
             <Typography mb={1}>
               <b>User principal</b>: {proof[0].uid + ""}
             </Typography>
