@@ -12,7 +12,7 @@ import Ledger "Ledger";
 shared({caller = owner}) actor class ICP() = this {
     private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
-    public func accountId() : async Text {
+    public query func accountId() : async Text {
         AId.toText(aId());
     };
 

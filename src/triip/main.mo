@@ -5,6 +5,7 @@ import Nat "mo:base/Nat";
 import Nat32 "mo:base/Nat32";
 import Text "mo:base/Text";
 import Array "mo:base/Array";
+import Buffer "mo:base/Buffer";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
 import Option "mo:base/Option";
@@ -72,21 +73,38 @@ actor {
     //     };
     // };
     //Admin
-    public shared query({caller}) func analysis() : async Result.Result<Text,Types.Error>{
+    type Analysis = {
+        profiles : Nat;
+        travelplans : Nat;
+        proofs_approved : Nat;
+        proofs_rejected : Nat;
+    };
+    public query({caller}) func analysis() : async Result.Result<(Analysis,[Text]),Types.Error>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
-        Debug.print(debug_show(state.profiles.size()));
-        Debug.print(debug_show(state.travelplans.size()));
-        Debug.print(debug_show(state.proofs.size()));
-        var proofs_approved : Nat = 0;
-        var proofs_rejected : Nat = 0;
-        let analysis = {
-            profiles = state.profiles.size();
-            travelplans = state.travelplans.size();
-            proofs = state.proofs.size();
+        var p : Nat = state.profiles.size();
+        var t : Nat = state.travelplans.size();
+        var pf_approved : Nat = 0;
+        var pf_rejected : Nat = 0;
+        for((K,proof)in state.proofs.entries()){
+            if(proof.status=="approved"){
+                pf_approved+=1;
+            } else {
+                if(proof.status!="waitting"){
+                    pf_rejected+=1;
+                }
+            }
         };
-        #ok(("hmm"));
+        let destination = Iter.map(state.travelplans.vals(),
+            func (t : Types.TravelPlan) : Text { Option.get(t.travel_plan.destination,"") });
+        let analysis = {
+            profiles = p;
+            travelplans = t;
+            proofs_approved = pf_approved;
+            proofs_rejected = pf_rejected;
+        };
+        #ok((analysis,Iter.toArray(destination)));
     };
     private func isAdmin(key : Principal) : ?Types.Admin{
         let findAdmin = state.admin.get(key);

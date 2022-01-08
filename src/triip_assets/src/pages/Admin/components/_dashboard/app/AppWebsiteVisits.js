@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { merge } from "lodash";
 import ReactApexChart from "react-apexcharts";
 // material
@@ -7,20 +7,21 @@ import { Card, CardHeader, Box } from "@mui/material";
 import { BaseOptionChart } from "../../charts";
 import RosettaApi from "../../../../../services/rosetta";
 import { async } from "q";
+import moment from "moment";
 
 // ----------------------------------------------------------------------
 
 const CHART_DATA = [
-  {
-    name: "Team A",
-    type: "column",
-    data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
-  },
-  {
-    name: "Team B",
-    type: "area",
-    data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
-  },
+  // {
+  //   name: "Team A",
+  //   type: "column",
+  //   data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
+  // },
+  // {
+  //   name: "Team B",
+  //   type: "area",
+  //   data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
+  // },
   {
     name: "Team C",
     type: "line",
@@ -28,56 +29,69 @@ const CHART_DATA = [
   }
 ];
 const rosetta = new RosettaApi();
-
+const ADDRESS_ADMIN =
+  "18BF03AC2177B8B03CCC27BBC7B26C5EE01D96246977351804BB2BCBD23DE1FA".toLocaleLowerCase();
 export default function AppWebsiteVisits() {
+  const [data, setData] = useState();
+  useEffect(() => {
+    (async () => {
+      try {
+        const rs = await rosetta.getTransactionsByAccount(ADDRESS_ADMIN);
+        setData(rs);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
   const chartOptions = merge(BaseOptionChart(), {
-    stroke: { width: [0, 2, 3] },
+    stroke: { width: [1, 2] },
     plotOptions: { bar: { columnWidth: "11%", borderRadius: 4 } },
-    fill: { type: ["solid", "gradient", "solid"] },
-    labels: [
-      "01/01/2003",
-      "02/01/2003",
-      "03/01/2003",
-      "04/01/2003",
-      "05/01/2003",
-      "06/01/2003",
-      "07/01/2003",
-      "08/01/2003",
-      "09/01/2003",
-      "10/01/2003",
-      "11/01/2003"
-    ],
-    xaxis: { type: "datetime" },
+    fill: { type: ["solid", "gradient"] },
+    labels: data?.map(t => moment(t?.timestamp).format("YYYY-MM-DDTHH:mm")).filter(Boolean),
+    xaxis: {
+      type: "datetime"
+    },
     tooltip: {
       shared: true,
       intersect: false,
       y: {
         formatter: y => {
           if (typeof y !== "undefined") {
-            return `${y.toFixed(0)} visits`;
+            return `${y.toFixed(8)} visits`;
           }
           return y;
         }
       }
     }
   });
-  useEffect(() => {
-    (async () => {
-      try {
-        const rs = await rosetta.getTransactionsByAccount(
-          "18BF03AC2177B8B03CCC27BBC7B26C5EE01D96246977351804BB2BCBD23DE1FA"
-        );
-        console.log(rs);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
+  const Ysend = useMemo(() => {
+    return data?.map(t => (t.account1Address === ADDRESS_ADMIN ? Number(t.amount) / 1e8 : 0));
+  }, [data]);
+  const Yreceive = useMemo(() => {
+    return data?.map(t => (t.account2Address === ADDRESS_ADMIN ? Number(t.amount) / 1e8 : 0));
+  }, [data]);
   return (
     <Card>
       <CardHeader title="Website Visits" subheader="(+43%) than last year" />
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-        <ReactApexChart type="line" series={CHART_DATA} options={chartOptions} height={364} />
+        <ReactApexChart
+          type="line"
+          series={[
+            {
+              name: "Send",
+              type: "line",
+              data: Ysend
+            },
+            {
+              name: "Receive",
+              type: "area",
+              data: Yreceive
+            }
+          ]}
+          options={chartOptions}
+          height={364}
+        />
       </Box>
     </Card>
   );

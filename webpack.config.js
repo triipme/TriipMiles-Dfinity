@@ -149,6 +149,7 @@ module.exports = {
       NODE_ENV: "development",
       TRIIP_CANISTER_ID: canisters["triip"],
       TRIIP_ICP_CANISTER_ID: canisters["triip_icp"],
+      TRIIP_TOKEN_CANISTER_ID: canisters["triip_token"],
       II_URL: isDevelopment
         ? "http://localhost:8000?canisterId=rno2w-sqaaa-aaaaa-aaacq-cai#authorize"
         : "https://identity.ic0.app/#authorize"
@@ -215,7 +216,7 @@ module.exports = {
           ecma: undefined,
           parse: {},
           compress: {
-            drop_console: true
+            // drop_console: true
           },
           mangle: true, // Note `mangle.properties` is `false` by default.
           module: false,

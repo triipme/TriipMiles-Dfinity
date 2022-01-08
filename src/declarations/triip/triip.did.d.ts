@@ -5,6 +5,12 @@ export interface Admin__1 {
   'first_name' : [] | [string],
   'last_name' : [] | [string],
 }
+export interface Analysis {
+  'proofs_approved' : bigint,
+  'proofs_rejected' : bigint,
+  'travelplans' : bigint,
+  'profiles' : bigint,
+}
 export type Error = { 'AlreadyExisting' : null } |
   { 'Failed' : null } |
   { 'Enough' : null } |
@@ -41,6 +47,8 @@ export type Result_7 = { 'ok' : [] | [string] } |
   { 'err' : Error };
 export type Result_8 = { 'ok' : [] | [Array<string>] } |
   { 'err' : Error };
+export type Result_9 = { 'ok' : [Analysis, Array<string>] } |
+  { 'err' : Error };
 export interface TravelPlan {
   'uid' : Principal,
   'is_received' : boolean,
@@ -67,7 +75,7 @@ export interface User { 'username' : [] | [string] }
 export interface Vetted { 'updated_at' : bigint, 'staff' : Principal }
 export interface _SERVICE {
   'addWallet' : (arg_0: string) => Promise<Result_4>,
-  'analysis' : () => Promise<Result_6>,
+  'analysis' : () => Promise<Result_9>,
   'approveHP_admin' : (arg_0: string, arg_1: string, arg_2: ProofTP) => Promise<
       Result_8
     >,

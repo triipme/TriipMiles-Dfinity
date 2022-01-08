@@ -8,6 +8,10 @@
       "main": "src/triip_icp/main.mo",
       "type": "motoko"
     },
+    "triip_token":{
+      "main": "src/triip_token/token.mo",
+      "type": "motoko"
+    },
     "triip_assets": {
       "dependencies": [
         "triip"

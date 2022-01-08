@@ -13,7 +13,7 @@ export const idlFactory = ({ IDL }) => {
     'Err' : TransferError,
   });
   const ICP = IDL.Service({
-    'accountId' : IDL.Func([], [IDL.Text], []),
+    'accountId' : IDL.Func([], [IDL.Text], ['query']),
     'accountIdP' : IDL.Func([], [IDL.Text], []),
     'balance' : IDL.Func([], [ICP__1], []),
     'balanceShared' : IDL.Func([], [ICP__1], []),

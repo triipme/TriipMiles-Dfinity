@@ -29,6 +29,14 @@ type TravelPlan =
    travel_plan: TravelPlanInformation;
    uid: principal;
  };
+type Result_9 = 
+ variant {
+   err: Error;
+   ok: record {
+         Analysis;
+         vec text;
+       };
+ };
 type Result_8 = 
  variant {
    err: Error;
@@ -109,6 +117,13 @@ type Error =
    NotFound;
    SomethingWrong;
  };
+type Analysis = 
+ record {
+   profiles: nat;
+   proofs_approved: nat;
+   proofs_rejected: nat;
+   travelplans: nat;
+ };
 type Admin__1 = 
  record {
    email: opt text;
@@ -118,7 +133,7 @@ type Admin__1 =
 type Admin = record {admin: Admin__1;};
 service : {
   addWallet: (text) -> (Result_4);
-  analysis: () -> (Result_6) query;
+  analysis: () -> (Result_9) query;
   approveHP_admin: (text, text, ProofTP) -> (Result_8);
   create: (Profile) -> (Result);
   createProofTP: (text, ProofTP__1) -> (Result_7);

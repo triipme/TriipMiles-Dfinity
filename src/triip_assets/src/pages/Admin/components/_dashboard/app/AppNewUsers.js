@@ -35,9 +35,7 @@ const IconWrapperStyle = styled("div")(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-const TOTAL = 1352831;
-
-export default function AppNewUsers() {
+export default function AppNewUsers({ total: TOTAL }) {
   return (
     <RootStyle>
       <IconWrapperStyle>
