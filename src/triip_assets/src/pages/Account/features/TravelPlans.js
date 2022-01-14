@@ -2,40 +2,28 @@ import { Grid, Modal, Slide, Stack, Typography } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router";
 import TravelPlanDetail from "../container/TravelPlan/TravelPlan";
 import { Empty, Loading } from "../../../components";
+import { tranvelplans } from "../../../slice/user/userSlice";
+import { tranvelPlansAPI } from "../../../slice/user/thunk";
 
 const TravelPlans = () => {
   const { actor } = useSelector(state => state.user);
-  const [tps, setTps] = useState([]);
   const [tpDetail, setTpDetail] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { tranvelplans: tps } = useSelector(state => state.user);
   useEffect(() => {
     setIsLoading(true);
-    (async () => {
-      try {
-        if (!!actor?.readAllTPUser) {
-          const rs = await actor?.readAllTPUser();
-          if ("ok" in rs) {
-            setTps(rs.ok);
-          } else {
-            throw rs?.err;
-          }
-        }
-      } catch (error) {
-        log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [actor]);
+    dispatch(tranvelPlansAPI());
+    setIsLoading(false);
+  }, []);
   const handleTPItem = idtp => {
     setTpDetail(tps.find(tp => tp[0] === idtp));
   };
-
   return (
     <>
       <Grid container spacing={3} justifyContent={{ xs: "center", sm: "flex-start" }}>

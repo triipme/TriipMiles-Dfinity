@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { resizeImg } from "../../../functions";
 import { customAlphabet } from "nanoid";
 import { useUploadFile } from "../../../hooks";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import toast from "react-hot-toast";
 import { styled, useTheme } from "@mui/system";
 import { Icon } from "@iconify/react";
+import { tranvelPlansAPI } from "../../../slice/user/thunk";
 
 const HP = ({ idtp }) => {
   const theme = useTheme();
@@ -20,6 +21,7 @@ const HP = ({ idtp }) => {
   const [status, setStatus] = useState(false);
   const [image, progress, setFile] = useUploadFile();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleUpFileHP = async e => {
     try {
       setIsLoading(true);
@@ -54,6 +56,7 @@ const HP = ({ idtp }) => {
       setIsError(Object.keys(error)[0]);
     } finally {
       setIsLoading(false);
+      dispatch(tranvelPlansAPI());
     }
   };
   console.log(isError);

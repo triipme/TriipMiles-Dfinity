@@ -70,7 +70,7 @@ export default function AppCurrentVisits({ data }) {
 
   return (
     <Card>
-      <CardHeader title="Current Visits" />
+      <CardHeader title="Destination" />
       <ChartWrapperStyle dir="ltr">
         <ReactApexChart
           type="pie"

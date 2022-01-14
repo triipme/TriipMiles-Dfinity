@@ -40,13 +40,14 @@ export default function AppConversionRates({ data }) {
 
   return (
     <Card>
-      <CardHeader title="Conversion Rates" subheader="(+43%) than last year" />
+      {/* <CardHeader title="Top Destination" subheader="(+43%) than last year" /> */}
+      <CardHeader title="Top Destination" />
       <Box sx={{ mx: 3 }} dir="ltr">
         <ReactApexChart
           type="bar"
           series={[{ data: Object.values(data_chart) }]}
           options={chartOptions}
-          height={364}
+          height={394}
         />
       </Box>
     </Card>

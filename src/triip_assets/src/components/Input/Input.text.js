@@ -64,7 +64,7 @@ const InputText = ({
 const TextFieldStyled = styled(TextField)`
   width: 100%;
   margin-top: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 `;
 
 export default InputText;

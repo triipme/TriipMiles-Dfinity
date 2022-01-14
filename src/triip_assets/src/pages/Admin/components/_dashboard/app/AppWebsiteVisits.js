@@ -58,7 +58,7 @@ export default function AppWebsiteVisits() {
       y: {
         formatter: y => {
           if (typeof y !== "undefined") {
-            return `${y.toFixed(8)} visits`;
+            return `${y.toFixed(8)} ICP`;
           }
           return y;
         }
@@ -73,7 +73,8 @@ export default function AppWebsiteVisits() {
   }, [data]);
   return (
     <Card>
-      <CardHeader title="Website Visits" subheader="(+43%) than last year" />
+      <CardHeader title="Triip ICP" />
+      {/* <CardHeader title="Triip ICP" subheader="(+43%) than last year" /> */}
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
         <ReactApexChart
           type="line"

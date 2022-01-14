@@ -1,0 +1,1 @@
+export { FormKYC } from "./KYC";

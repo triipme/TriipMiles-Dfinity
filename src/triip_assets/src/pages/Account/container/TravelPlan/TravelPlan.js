@@ -2,12 +2,13 @@ import { styled, useTheme } from "@mui/system";
 import { Box, Divider, Stack, Typography, Modal } from "@mui/material";
 import React, { forwardRef, useEffect, useLayoutEffect, useState } from "react";
 import moment from "moment";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
 import { useGetFile } from "../../../../hooks";
 import { HP } from "../../../Home/containers";
 import { ContentModalStyled } from "../../../Home/Home.style";
 import SimpleBarReact from "simplebar-react";
+import { tranvelPlansAPI } from "../../../../slice/user/thunk";
 
 function switchContentStatusApprove(status) {
   switch (status) {
@@ -37,6 +38,7 @@ const TravelPlanDetail = forwardRef(({ travelplan }, ref) => {
   const [proofImg] = useGetFile(travelplan?.at(2)?.at(0)?.proof?.img_key[0]);
   const [proofData] = useState(travelplan?.at(2)?.at(0));
   const { activities, join_type, destination } = useSelector(state => state.static.travelplan);
+
   return (
     <TPDContainer ref={ref}>
       <SimpleBarReact style={{ maxHeight: "100vh" }}>

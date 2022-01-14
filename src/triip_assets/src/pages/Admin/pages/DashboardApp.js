@@ -19,8 +19,9 @@ import {
 } from "../components/_dashboard/app";
 import { useSelector } from "react-redux";
 import Label from "../components/Label";
+import RosettaApi from "../../../services/rosetta";
 // ----------------------------------------------------------------------
-
+const rossetaApi = new RosettaApi();
 export default function DashboardApp() {
   const { actor, actor_transfer } = useSelector(state => state.user);
   const [analysis, setAnalysis] = useState(null);
@@ -44,8 +45,9 @@ export default function DashboardApp() {
       try {
         if (!!actor_transfer?.balance) {
           const aid = await actor_transfer?.accountId();
-          const balance = await actor_transfer?.balance();
-          setWallet(parseInt(balance?.e8s) / 1e8);
+          const balance = await rossetaApi.accountBalanceByAddress(aid);
+          console.log(balance);
+          setWallet(Number(balance?.balances[0].value) / 1e8);
           setAId(aid);
         }
       } catch (error) {
@@ -91,20 +93,20 @@ export default function DashboardApp() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
-            <AppWebsiteVisits />
+            <AppConversionRates data={analysis?.at(1)} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits data={analysis?.at(1)} />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
-            <AppConversionRates data={analysis?.at(1)} />
+          <Grid item xs={12}>
+            <AppWebsiteVisits />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
+          {/* <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject />
-          </Grid>
+          </Grid> */}
 
           {/* <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate />
