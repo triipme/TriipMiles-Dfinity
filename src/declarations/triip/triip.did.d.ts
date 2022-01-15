@@ -27,27 +27,29 @@ export interface ProofTP {
 export interface ProofTP__1 { 'img_key' : [] | [string] }
 export type Result = { 'ok' : null } |
   { 'err' : Error };
-export type Result_1 = { 'ok' : Admin } |
+export type Result_1 = { 'ok' : [string, string, string, string] } |
   { 'err' : Error };
-export type Result_2 = { 'ok' : ProofTP } |
+export type Result_10 = { 'ok' : [Analysis, Array<string>] } |
   { 'err' : Error };
-export type Result_3 = { 'ok' : Array<[string, TravelPlan, [] | [ProofTP]]> } |
+export type Result_2 = { 'ok' : Admin } |
   { 'err' : Error };
-export type Result_4 = { 'ok' : [Profile, string] } |
+export type Result_3 = { 'ok' : ProofTP } |
   { 'err' : Error };
-export type Result_5 = {
+export type Result_4 = { 'ok' : Array<[string, TravelPlan, [] | [ProofTP]]> } |
+  { 'err' : Error };
+export type Result_5 = { 'ok' : [Profile, string] } |
+  { 'err' : Error };
+export type Result_6 = {
     'ok' : Array<
       [string, TravelPlan, [] | [ProofTP], [] | [Vetted], [] | [string]]
     >
   } |
   { 'err' : Error };
-export type Result_6 = { 'ok' : string } |
+export type Result_7 = { 'ok' : string } |
   { 'err' : Error };
-export type Result_7 = { 'ok' : [] | [string] } |
+export type Result_8 = { 'ok' : [] | [string] } |
   { 'err' : Error };
-export type Result_8 = { 'ok' : [] | [Array<string>] } |
-  { 'err' : Error };
-export type Result_9 = { 'ok' : [Analysis, Array<string>] } |
+export type Result_9 = { 'ok' : [] | [Array<string>] } |
   { 'err' : Error };
 export interface TravelPlan {
   'uid' : Principal,
@@ -74,21 +76,22 @@ export interface TravelPlanUpdate {
 export interface User { 'username' : [] | [string] }
 export interface Vetted { 'updated_at' : bigint, 'staff' : Principal }
 export interface _SERVICE {
-  'addWallet' : (arg_0: string) => Promise<Result_4>,
-  'analysis' : () => Promise<Result_9>,
+  'addWallet' : (arg_0: string) => Promise<Result_5>,
+  'analysis' : () => Promise<Result_10>,
   'approveHP_admin' : (arg_0: string, arg_1: string, arg_2: ProofTP) => Promise<
-      Result_8
+      Result_9
     >,
   'create' : (arg_0: Profile) => Promise<Result>,
-  'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_7>,
-  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_6>,
-  'getAllTP_admin' : () => Promise<Result_5>,
-  'loginAdmin' : () => Promise<Result_1>,
-  'read' : () => Promise<Result_4>,
+  'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_8>,
+  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_7>,
+  'getAllTP_admin' : () => Promise<Result_6>,
+  'loginAdmin' : () => Promise<Result_2>,
+  'read' : () => Promise<Result_5>,
   'readAllProof' : () => Promise<Result>,
-  'readAllTPUser' : () => Promise<Result_3>,
-  'readProofOfTP' : (arg_0: string) => Promise<Result_2>,
-  'registerAdmin' : (arg_0: string, arg_1: Admin) => Promise<Result_1>,
+  'readAllTPUser' : () => Promise<Result_4>,
+  'readProofOfTP' : (arg_0: string) => Promise<Result_3>,
+  'registerAdmin' : (arg_0: string, arg_1: Admin) => Promise<Result_2>,
   'setStatusReceivedICP' : (arg_0: boolean, arg_1: string) => Promise<Result>,
+  'storage' : () => Promise<Result_1>,
   'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }

@@ -32,27 +32,19 @@ type TravelPlan =
 type Result_9 = 
  variant {
    err: Error;
-   ok: record {
-         Analysis;
-         vec text;
-       };
+   ok: opt vec text;
  };
 type Result_8 = 
  variant {
    err: Error;
-   ok: opt vec text;
+   ok: opt text;
  };
 type Result_7 = 
  variant {
    err: Error;
-   ok: opt text;
- };
-type Result_6 = 
- variant {
-   err: Error;
    ok: text;
  };
-type Result_5 = 
+type Result_6 = 
  variant {
    err: Error;
    ok: vec record {
@@ -63,7 +55,7 @@ type Result_5 =
              opt text;
            };
  };
-type Result_4 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: record {
@@ -71,7 +63,7 @@ type Result_4 =
          text;
        };
  };
-type Result_3 = 
+type Result_4 = 
  variant {
    err: Error;
    ok: vec record {
@@ -80,15 +72,33 @@ type Result_3 =
              opt ProofTP;
            };
  };
-type Result_2 = 
+type Result_3 = 
  variant {
    err: Error;
    ok: ProofTP;
  };
-type Result_1 = 
+type Result_2 = 
  variant {
    err: Error;
    ok: Admin;
+ };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: record {
+         Analysis;
+         vec text;
+       };
+ };
+type Result_1 = 
+ variant {
+   err: Error;
+   ok: record {
+         text;
+         text;
+         text;
+         text;
+       };
  };
 type Result = 
  variant {
@@ -132,19 +142,20 @@ type Admin__1 =
  };
 type Admin = record {admin: Admin__1;};
 service : {
-  addWallet: (text) -> (Result_4);
-  analysis: () -> (Result_9) query;
-  approveHP_admin: (text, text, ProofTP) -> (Result_8);
+  addWallet: (text) -> (Result_5);
+  analysis: () -> (Result_10) query;
+  approveHP_admin: (text, text, ProofTP) -> (Result_9);
   create: (Profile) -> (Result);
-  createProofTP: (text, ProofTP__1) -> (Result_7);
-  createTravelPlan: (TravelPlanUpdate) -> (Result_6);
-  getAllTP_admin: () -> (Result_5) query;
-  loginAdmin: () -> (Result_1) query;
-  read: () -> (Result_4) query;
+  createProofTP: (text, ProofTP__1) -> (Result_8);
+  createTravelPlan: (TravelPlanUpdate) -> (Result_7);
+  getAllTP_admin: () -> (Result_6) query;
+  loginAdmin: () -> (Result_2) query;
+  read: () -> (Result_5) query;
   readAllProof: () -> (Result);
-  readAllTPUser: () -> (Result_3) query;
-  readProofOfTP: (text) -> (Result_2);
-  registerAdmin: (text, Admin) -> (Result_1);
+  readAllTPUser: () -> (Result_4) query;
+  readProofOfTP: (text) -> (Result_3);
+  registerAdmin: (text, Admin) -> (Result_2);
   setStatusReceivedICP: (bool, text) -> (Result);
+  storage: () -> (Result_1) query;
   updateTravelPlan: (TravelPlanUpdate) -> (Result);
 }

@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { tranvelPlansAPI } from "./thunk";
+import { storageAPI, tranvelPlansAPI } from "./thunk";
 const initialState = {
   isLogin: false,
   actor: {},
   actor_transfer: {},
   profile: {},
-  tranvelplans: {}
+  tranvelplans: {},
+  storage: {}
 };
 
 export const userSlice = createSlice({
@@ -35,23 +36,24 @@ export const userSlice = createSlice({
         ...state,
         actor_transfer: action.payload
       };
-    },
-    tranvelplans: (state, action) => {
-      return {
-        ...state,
-        tranvelplans: action.payload
-      };
     }
   },
   extraReducers: builder => {
-    builder.addCase(tranvelPlansAPI.fulfilled, (state, action) => {
-      return {
-        ...state,
-        tranvelplans: action.payload
-      };
-    });
+    builder
+      .addCase(tranvelPlansAPI.fulfilled, (state, action) => {
+        return {
+          ...state,
+          tranvelplans: action.payload
+        };
+      })
+      .addCase(storageAPI.fulfilled, (state, action) => {
+        return {
+          ...state,
+          storage: action.payload
+        };
+      });
   }
 });
 
-export const { login, actorMain, profile, actorTransfer, tranvelplans } = userSlice.actions;
+export const { login, actorMain, profile, actorTransfer } = userSlice.actions;
 export default userSlice.reducer;

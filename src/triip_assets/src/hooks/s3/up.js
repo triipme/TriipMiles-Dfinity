@@ -2,23 +2,25 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import S3 from "aws-sdk/clients/s3";
+import { useSelector } from "react-redux";
 
 const useUploadFile = () => {
   const [fileState, setFileState] = useState({});
   const [result, setResult] = useState();
   const [progress, setProgress] = useState(0);
+  const { storage } = useSelector(state => state.user);
   const creds = {
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_KEY
+    accessKeyId: storage[1],
+    secretAccessKey: storage[2]
   };
-  const s3 = new S3({ region: process.env.S3_REGION, credentials: creds });
+  const s3 = new S3({ region: storage[3], credentials: creds });
   useEffect(() => {
     (async () => {
       try {
         if (!!fileState?.file) {
           console.log(fileState);
           const target = {
-            Bucket: process.env.S3_BUCKET,
+            Bucket: storage[0],
             Key: fileState?.name
           };
           const parallelUpload = new Upload({

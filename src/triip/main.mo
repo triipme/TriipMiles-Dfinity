@@ -220,6 +220,12 @@ actor {
     /* ------------------------------------------------------------------------------------------------------- */
     // User
     // Create
+    public query({caller}) func storage() : async Result.Result<(Text,Text,Text,Text),Types.Error>{
+        if(Principal.toText(caller)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };
+        #ok((Env.S3_BUCKET,Env.S3_ACCESS_KEY,Env.S3_SECRET_KEY,Env.S3_REGION))
+    };
     public shared(msg) func create(profile: Types.Profile) : async Result.Result<(),Types.Error> {
         let uid = msg.caller;
 

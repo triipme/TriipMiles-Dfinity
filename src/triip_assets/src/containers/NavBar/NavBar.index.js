@@ -24,6 +24,7 @@ import { Divider } from "@mui/material";
 import { Icon } from "@iconify/react";
 import menu2Outline from "@iconify/icons-eva/menu-2-outline";
 import { useNavigate } from "react-router";
+import { storageAPI } from "../../slice/user/thunk";
 
 const NavBar = () => {
   const theme = useTheme();
@@ -59,6 +60,7 @@ const NavBar = () => {
     });
     dispatch(actorMain(actor_main));
     dispatch(actorTransfer(actor_transfer));
+    dispatch(storageAPI());
   };
 
   useLayoutEffect(() => {
