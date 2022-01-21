@@ -1,7 +1,13 @@
 import React, { lazy } from "react";
 import { Navigate, Redirect } from "react-router-dom";
-import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage } from "../../pages";
+// import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage, GamePage } from "../../pages";
 const NotFound = lazy(() => import("../../pages/Admin/pages/Page404"));
+const HomePage = lazy(() => import("../../pages/Home"));
+const ExperiencePage = lazy(() => import("../../pages/Experience"));
+const SharePage = lazy(() => import("../../pages/Share"));
+const ShopPage = lazy(() => import("../../pages/Shop"));
+const StayPage = lazy(() => import("../../pages/Stay"));
+const GamePage = lazy(() => import("../../pages/Game"));
 
 export const navbar = [
   {
@@ -30,6 +36,11 @@ export const navbar = [
     path: "/shop",
     component: <ShopPage />,
     name: "Shop"
+  },
+  {
+    path: "/game",
+    component: <GamePage />,
+    name: "Game"
   },
   {
     path: "/404",

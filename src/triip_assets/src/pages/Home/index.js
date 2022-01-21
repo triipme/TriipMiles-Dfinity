@@ -49,7 +49,7 @@ const Home = () => {
           p: 0,
           backgroundImage: `url(${Images.home.login})`
         }}>
-        <ReactPlayer width="75%" height="85%" url="https://youtu.be/78hvrYFh26w" />
+        <ReactPlayer width="75%" height="85%" url="https://www.youtube.com/embed/78hvrYFh26w" />
       </Banner>
       <Container maxWidth="lg" sx={{ textAlign: "center", my: 10 }}>
         <Typography sx={{ my: 2 }} variant="h4">

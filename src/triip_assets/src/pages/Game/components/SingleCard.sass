@@ -1,0 +1,34 @@
+.card
+    position: relative
+    height: 4em
+    border-radius: 12px
+    @media (min-width:768px)
+        height: 6em
+    img
+        margin: auto
+        width: 100%
+        display: block
+        object-fit: contain
+        height: 100%
+    .front
+        transform: rotateY(90deg)
+        transition: all ease-in .2s
+        position: absolute
+    .back
+        transition: all ease-in .2s
+        transition-delay: .2s
+        width: 50%
+.flipped
+    display: flex
+    align-items: center
+    height: 100%
+    .front
+        transform: rotateY(0deg)
+        transition-delay: .2s
+    .back
+        transform: rotateY(90deg)
+        transition-delay: 0s
+.default
+    display: flex
+    height: 100%
+    align-items: center

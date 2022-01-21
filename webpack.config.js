@@ -32,8 +32,9 @@ function initCanisterIds() {
 }
 initCanisterIds();
 
+const frontendDirectory = "triip_assets";
 const isDevelopment = process.env.NODE_ENV !== "production";
-const asset_entry = path.join("src", "triip_assets", "src", "index.html");
+const asset_entry = path.join("src", frontendDirectory, "src", "index.html");
 
 module.exports = {
   target: "web",
@@ -59,7 +60,7 @@ module.exports = {
   output: {
     // filename: "index.js",
     filename: "[name].[chunkhash].index.js",
-    path: path.join(__dirname, "dist", "triip_assets")
+    path: path.join(__dirname, "dist", frontendDirectory)
   },
 
   // Depending in the language or framework you are using for
@@ -106,7 +107,11 @@ module.exports = {
       //   include: path.resolve(__dirname, "assets"),
       //   type: "asset/resource"
       // }
-      { test: /\.(css|scss|sass)$/, use: ["style-loader", "css-loader"], exclude: /node_modules/ }
+      {
+        test: /\.(css|scss|sass)$/,
+        use: ["style-loader", "css-loader", "sass-loader"],
+        exclude: /node_modules/
+      }
     ]
   },
   plugins: [
@@ -139,8 +144,8 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: path.join(__dirname, "src", "triip_assets", "assets"),
-          to: path.join(__dirname, "dist", "triip_assets")
+          from: path.join(__dirname, "src", frontendDirectory, "assets"),
+          to: path.join(__dirname, "dist", frontendDirectory)
         }
       ]
     }),
@@ -177,9 +182,11 @@ module.exports = {
       }
     },
     hot: true,
-    contentBase: path.resolve(__dirname, "./src/triip_assets"),
-    watchContentBase: true,
+    watchFiles: [path.resolve(__dirname, "src", frontendDirectory)],
+    // contentBase: path.resolve(__dirname, "./src/triip_assets"),
+    // watchContentBase: true,
     port: 3000,
+    liveReload: true,
     historyApiFallback: true
   },
   performance: {
@@ -190,30 +197,58 @@ module.exports = {
     }
   },
   optimization: {
-    // usedExports: true,
+    moduleIds: "deterministic",
+    usedExports: true,
     splitChunks: {
+      chunks: "async",
+      minSize: 20000,
+      minRemainingSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 30,
+      maxInitialRequests: 30,
+      enforceSizeThreshold: 50000,
       cacheGroups: {
         vendors: {
           test: /node_modules\/(?!@mui\/).*/,
           name: "vendors",
+          reuseExistingChunk: true,
           chunks: "all"
         },
         // This can be your own design library.
         mui: {
           test: /node_modules\/(@mui\/).*/,
           name: "mui",
+          reuseExistingChunk: true,
           chunks: "all"
+        },
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          filename: "[name].bundle.js",
+          reuseExistingChunk: true,
+          chunks: "all"
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
         }
       }
     },
+    // runtimeChunk: {
+    //   name: "manifest"
+    // },
     runtimeChunk: {
-      name: "manifest"
+      name: entrypoint => `runtimechunk~${entrypoint.name}`
     },
     minimize: !isDevelopment,
     minimizer: [
       new TerserPlugin({
         terserOptions: {
           ecma: undefined,
+          format: {
+            comments: false
+          },
           parse: {},
           compress: {
             drop_console: true
@@ -222,7 +257,6 @@ module.exports = {
           module: false,
           // Deprecated
           output: null,
-          format: null,
           toplevel: false,
           nameCache: null,
           ie8: false,
