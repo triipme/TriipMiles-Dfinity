@@ -1,0 +1,43 @@
+{
+  "canisters": {
+    "triip": {
+      "main": "src/triip/main.mo",
+      "type": "motoko"
+    },
+    "triip_icp":{
+      "main": "src/triip_icp/main.mo",
+      "type": "motoko"
+    },
+    "triip_token":{
+      "main": "src/triip_token/token.mo",
+      "type": "motoko"
+    },
+    "triip_assets": {
+      "dependencies": [
+        "triip"
+      ],
+      "frontend": {
+        "entrypoint": "src/triip_assets/src/index.html"
+      },
+      "source": [
+        "src/triip_assets/assets",
+        "dist/triip_assets/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": "vessel sources"
+    }
+  },
+  "dfx": "0.8.4",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}
