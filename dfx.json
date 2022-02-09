@@ -4,11 +4,11 @@
       "main": "src/triip/main.mo",
       "type": "motoko"
     },
-    "triip_icp":{
+    "triip_icp": {
       "main": "src/triip_icp/main.mo",
       "type": "motoko"
     },
-    "triip_token":{
+    "triip_token": {
       "main": "src/triip_token/token.mo",
       "type": "motoko"
     },

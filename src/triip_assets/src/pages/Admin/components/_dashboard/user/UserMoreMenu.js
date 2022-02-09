@@ -43,11 +43,12 @@ export default function UserMoreMenu({ id_proof, proof, allow_approve }) {
         console.log(id_proof, "approved", proof[0]);
         const aid = await actor?.approveHP_admin(id_proof, "approved", proof[0]);
         if ("ok" in aid) {
-          console.log(aid?.ok[0]);
-          const result_transfer = await actor_transfer?.transfer(["ptp_approve"], aid?.ok[0][0]);
+          // console.log(aid?.ok[0]);
+          // const result_transfer = await actor_transfer?.transfer(["ptp_approve"], aid?.ok[0][0]);
           toast.success("Approved");
-          if ("Ok" in result_transfer) toast.success("Send 0.000033 ICP", { duration: 10000 });
-          else throw result_transfer?.Err;
+          // if ("Ok" in result_transfer)
+          toast.success("Send 0.000033 ICP", { duration: 10000 });
+          // else throw result_transfer?.Err;
         } else {
           throw aid?.err;
         }

@@ -19,6 +19,7 @@ type ICP =
    balance: () -> (ICP__1);
    balanceShared: () -> (ICP__1);
    transfer: (opt text, text) -> (TransferResult);
+   transferAll: (nat64, text) -> (TransferResult);
  };
 type BlockIndex = nat64;
 service : () -> ICP

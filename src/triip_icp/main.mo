@@ -72,4 +72,26 @@ shared({caller = owner}) actor class ICP() = this {
             created_at_time = null;
         });
     };
+    public func transferAll(amountAgr : Nat64,to : Text) : async Ledger.TransferResult {
+        // Debug.print(debug_show(caller,owner));
+        // assert(caller == owner); //this check principal owner vs caller is Admin
+        let toAId : AId.AccountIdentifier = switch(AId.fromText(to)) {
+            case (#err(_)) {
+                assert(false);
+                loop {};
+            };
+            case (#ok(a)) a;
+        };
+        
+        var amount : Ledger.ICP = {e8s=amountAgr};
+
+        await ledger.transfer({
+            memo            = 1;
+            amount          = amount;
+            fee             = { e8s = 10_000 };
+            from_subaccount = null;
+            to              = toAId;
+            created_at_time = null;
+        });
+    };
 };

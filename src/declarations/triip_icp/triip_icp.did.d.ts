@@ -6,6 +6,7 @@ export interface ICP {
   'balance' : () => Promise<ICP__1>,
   'balanceShared' : () => Promise<ICP__1>,
   'transfer' : (arg_0: [] | [string], arg_1: string) => Promise<TransferResult>,
+  'transferAll' : (arg_0: bigint, arg_1: string) => Promise<TransferResult>,
 }
 export interface ICP__1 { 'e8s' : bigint }
 export type TransferError = {
