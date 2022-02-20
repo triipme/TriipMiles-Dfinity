@@ -23,7 +23,7 @@ import RosettaApi from "../../../services/rosetta";
 // ----------------------------------------------------------------------
 const rossetaApi = new RosettaApi();
 export default function DashboardApp() {
-  const { actor, actor_transfer } = useSelector(state => state.user);
+  const { actor } = useSelector(state => state.user);
   const [analysis, setAnalysis] = useState(null);
   const [wallet, setWallet] = useState(null);
   const aId = "1258F4461440E1149DD1B42A9D566B82EA46014BEF1FBCD2D67124B7496FA477";

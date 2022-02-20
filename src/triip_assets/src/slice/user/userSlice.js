@@ -3,7 +3,6 @@ import { storageAPI, tranvelPlansAPI } from "./thunk";
 const initialState = {
   isLogin: false,
   actor: {},
-  actor_transfer: {},
   profile: {},
   tranvelplans: {},
   storage: {}
@@ -30,12 +29,6 @@ export const userSlice = createSlice({
         ...state,
         actor: action.payload
       };
-    },
-    actorTransfer: (state, action) => {
-      return {
-        ...state,
-        actor_transfer: action.payload
-      };
     }
   },
   extraReducers: builder => {
@@ -55,5 +48,5 @@ export const userSlice = createSlice({
   }
 });
 
-export const { login, actorMain, profile, actorTransfer } = userSlice.actions;
+export const { login, actorMain, profile } = userSlice.actions;
 export default userSlice.reducer;

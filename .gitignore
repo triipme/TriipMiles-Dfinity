@@ -15,9 +15,9 @@ node_modules/
 dist/
 canister_ids.json
 .vessel/
+/target
 
 .env
-
 src/triip/.env.mo
 # Logs
 logs

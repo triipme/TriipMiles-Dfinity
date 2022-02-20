@@ -12,7 +12,7 @@ export const idlFactory = ({ IDL }) => {
     'NotAuthorized' : IDL.Null,
     'SomethingWrong' : IDL.Null,
   });
-  const Result_5 = IDL.Variant({
+  const Result_6 = IDL.Variant({
     'ok' : IDL.Tuple(Profile, IDL.Text),
     'err' : Error,
   });
@@ -52,7 +52,7 @@ export const idlFactory = ({ IDL }) => {
     'idtp' : IDL.Text,
     'travel_plan' : TravelPlanInformation,
   });
-  const Result_7 = IDL.Variant({ 'ok' : IDL.Text, 'err' : Error });
+  const Result_1 = IDL.Variant({ 'ok' : IDL.Text, 'err' : Error });
   const TravelPlan = IDL.Record({
     'uid' : IDL.Principal,
     'is_received' : IDL.Bool,
@@ -63,7 +63,7 @@ export const idlFactory = ({ IDL }) => {
     'updated_at' : IDL.Int,
     'staff' : IDL.Principal,
   });
-  const Result_6 = IDL.Variant({
+  const Result_7 = IDL.Variant({
     'ok' : IDL.Vec(
       IDL.Tuple(
         IDL.Text,
@@ -81,35 +81,51 @@ export const idlFactory = ({ IDL }) => {
     'last_name' : IDL.Opt(IDL.Text),
   });
   const Admin = IDL.Record({ 'admin' : Admin__1 });
-  const Result_2 = IDL.Variant({ 'ok' : Admin, 'err' : Error });
-  const Result_4 = IDL.Variant({
+  const Result_3 = IDL.Variant({ 'ok' : Admin, 'err' : Error });
+  const Result_5 = IDL.Variant({
     'ok' : IDL.Vec(IDL.Tuple(IDL.Text, TravelPlan, IDL.Opt(ProofTP))),
     'err' : Error,
   });
-  const Result_3 = IDL.Variant({ 'ok' : ProofTP, 'err' : Error });
-  const Result_1 = IDL.Variant({
+  const Result_4 = IDL.Variant({ 'ok' : ProofTP, 'err' : Error });
+  const Result_2 = IDL.Variant({
     'ok' : IDL.Tuple(IDL.Text, IDL.Text, IDL.Text, IDL.Text),
     'err' : Error,
   });
+  const BlockIndex = IDL.Nat64;
+  const TransferError = IDL.Variant({
+    'TxTooOld' : IDL.Record({ 'allowed_window_nanos' : IDL.Nat64 }),
+    'BadFee' : IDL.Record({ 'expected_fee' : ICP }),
+    'TxDuplicate' : IDL.Record({ 'duplicate_of' : BlockIndex }),
+    'TxCreatedInFuture' : IDL.Null,
+    'InsufficientFunds' : IDL.Record({ 'balance' : ICP }),
+  });
+  const TransferResult = IDL.Variant({
+    'Ok' : BlockIndex,
+    'Err' : TransferError,
+  });
   const Triip = IDL.Service({
     'accountId' : IDL.Func([], [IDL.Text], ['query']),
-    'addWallet' : IDL.Func([IDL.Text], [Result_5], []),
+    'accountIdP' : IDL.Func([IDL.Principal], [IDL.Text], []),
+    'addWallet' : IDL.Func([IDL.Text], [Result_6], []),
     'analysis' : IDL.Func([], [Result_9], ['query']),
     'approveHP_admin' : IDL.Func([IDL.Text, IDL.Text, ProofTP], [Result], []),
     'balance' : IDL.Func([], [ICP], []),
     'balanceShared' : IDL.Func([], [ICP], []),
+    'balanceShared_test' : IDL.Func([IDL.Principal], [ICP], []),
     'create' : IDL.Func([Profile], [Result], []),
     'createProofTP' : IDL.Func([IDL.Text, ProofTP__1], [Result_8], []),
-    'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result_7], []),
-    'getAllTP_admin' : IDL.Func([], [Result_6], ['query']),
-    'loginAdmin' : IDL.Func([], [Result_2], ['query']),
-    'read' : IDL.Func([], [Result_5], ['query']),
+    'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result_1], []),
+    'getAllTP_admin' : IDL.Func([], [Result_7], ['query']),
+    'loginAdmin' : IDL.Func([], [Result_3], ['query']),
+    'read' : IDL.Func([], [Result_6], ['query']),
     'readAllProof' : IDL.Func([], [Result], []),
-    'readAllTPUser' : IDL.Func([], [Result_4], ['query']),
-    'readProofOfTP' : IDL.Func([IDL.Text], [Result_3], []),
-    'registerAdmin' : IDL.Func([IDL.Text, Admin], [Result_2], []),
+    'readAllTPUser' : IDL.Func([], [Result_5], ['query']),
+    'readProofOfTP' : IDL.Func([IDL.Text], [Result_4], []),
+    'registerAdmin' : IDL.Func([IDL.Text, Admin], [Result_3], []),
     'setStatusReceivedICP' : IDL.Func([IDL.Bool, IDL.Text], [Result], []),
-    'storage' : IDL.Func([], [Result_1], ['query']),
+    'storage' : IDL.Func([], [Result_2], ['query']),
+    'test' : IDL.Func([IDL.Principal], [Result_1], []),
+    'transfer_test' : IDL.Func([IDL.Text], [TransferResult], []),
     'updateTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
   });
   return Triip;

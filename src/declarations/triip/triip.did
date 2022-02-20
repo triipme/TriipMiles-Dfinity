@@ -7,23 +7,27 @@ type User = record {username: opt text;};
 type Triip = 
  service {
    accountId: () -> (text) query;
-   addWallet: (text) -> (Result_5);
+   accountIdP: (principal) -> (text);
+   addWallet: (text) -> (Result_6);
    analysis: () -> (Result_9) query;
    approveHP_admin: (text, text, ProofTP) -> (Result);
    balance: () -> (ICP);
    balanceShared: () -> (ICP);
+   balanceShared_test: (principal) -> (ICP);
    create: (Profile) -> (Result);
    createProofTP: (text, ProofTP__1) -> (Result_8);
-   createTravelPlan: (TravelPlanUpdate) -> (Result_7);
-   getAllTP_admin: () -> (Result_6) query;
-   loginAdmin: () -> (Result_2) query;
-   read: () -> (Result_5) query;
+   createTravelPlan: (TravelPlanUpdate) -> (Result_1);
+   getAllTP_admin: () -> (Result_7) query;
+   loginAdmin: () -> (Result_3) query;
+   read: () -> (Result_6) query;
    readAllProof: () -> (Result);
-   readAllTPUser: () -> (Result_4) query;
-   readProofOfTP: (text) -> (Result_3);
-   registerAdmin: (text, Admin) -> (Result_2);
+   readAllTPUser: () -> (Result_5) query;
+   readProofOfTP: (text) -> (Result_4);
+   registerAdmin: (text, Admin) -> (Result_3);
    setStatusReceivedICP: (bool, text) -> (Result);
-   storage: () -> (Result_1) query;
+   storage: () -> (Result_2) query;
+   test: (principal) -> (Result_1);
+   transfer_test: (text) -> (TransferResult);
    updateTravelPlan: (TravelPlanUpdate) -> (Result);
  };
 type TravelPlanUpdate = 
@@ -51,6 +55,19 @@ type TravelPlan =
    travel_plan: TravelPlanInformation;
    uid: principal;
  };
+type TransferResult = 
+ variant {
+   Err: TransferError;
+   Ok: BlockIndex;
+ };
+type TransferError = 
+ variant {
+   BadFee: record {expected_fee: ICP;};
+   InsufficientFunds: record {balance: ICP;};
+   TxCreatedInFuture;
+   TxDuplicate: record {duplicate_of: BlockIndex;};
+   TxTooOld: record {allowed_window_nanos: nat64;};
+ };
 type Result_9 = 
  variant {
    err: Error;
@@ -67,11 +84,6 @@ type Result_8 =
 type Result_7 = 
  variant {
    err: Error;
-   ok: text;
- };
-type Result_6 = 
- variant {
-   err: Error;
    ok: vec record {
              text;
              TravelPlan;
@@ -80,7 +92,7 @@ type Result_6 =
              opt text;
            };
  };
-type Result_5 = 
+type Result_6 = 
  variant {
    err: Error;
    ok: record {
@@ -88,7 +100,7 @@ type Result_5 =
          text;
        };
  };
-type Result_4 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: vec record {
@@ -97,17 +109,17 @@ type Result_4 =
              opt ProofTP;
            };
  };
-type Result_3 = 
+type Result_4 = 
  variant {
    err: Error;
    ok: ProofTP;
  };
-type Result_2 = 
+type Result_3 = 
  variant {
    err: Error;
    ok: Admin;
  };
-type Result_1 = 
+type Result_2 = 
  variant {
    err: Error;
    ok: record {
@@ -116,6 +128,11 @@ type Result_1 =
          text;
          text;
        };
+ };
+type Result_1 = 
+ variant {
+   err: Error;
+   ok: text;
  };
 type Result = 
  variant {
@@ -145,6 +162,7 @@ type Error =
    NotFound;
    SomethingWrong;
  };
+type BlockIndex = nat64;
 type Analysis = 
  record {
    profiles: nat;

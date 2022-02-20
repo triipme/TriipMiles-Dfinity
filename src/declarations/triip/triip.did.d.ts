@@ -11,6 +11,7 @@ export interface Analysis {
   'travelplans' : bigint,
   'profiles' : bigint,
 }
+export type BlockIndex = bigint;
 export type Error = { 'AlreadyExisting' : null } |
   { 'Failed' : null } |
   { 'Enough' : null } |
@@ -28,28 +29,37 @@ export interface ProofTP {
 export interface ProofTP__1 { 'img_key' : [] | [string] }
 export type Result = { 'ok' : null } |
   { 'err' : Error };
-export type Result_1 = { 'ok' : [string, string, string, string] } |
+export type Result_1 = { 'ok' : string } |
   { 'err' : Error };
-export type Result_2 = { 'ok' : Admin } |
+export type Result_2 = { 'ok' : [string, string, string, string] } |
   { 'err' : Error };
-export type Result_3 = { 'ok' : ProofTP } |
+export type Result_3 = { 'ok' : Admin } |
   { 'err' : Error };
-export type Result_4 = { 'ok' : Array<[string, TravelPlan, [] | [ProofTP]]> } |
+export type Result_4 = { 'ok' : ProofTP } |
   { 'err' : Error };
-export type Result_5 = { 'ok' : [Profile, string] } |
+export type Result_5 = { 'ok' : Array<[string, TravelPlan, [] | [ProofTP]]> } |
   { 'err' : Error };
-export type Result_6 = {
+export type Result_6 = { 'ok' : [Profile, string] } |
+  { 'err' : Error };
+export type Result_7 = {
     'ok' : Array<
       [string, TravelPlan, [] | [ProofTP], [] | [Vetted], [] | [string]]
     >
   } |
   { 'err' : Error };
-export type Result_7 = { 'ok' : string } |
-  { 'err' : Error };
 export type Result_8 = { 'ok' : [] | [string] } |
   { 'err' : Error };
 export type Result_9 = { 'ok' : [Analysis, Array<string>] } |
   { 'err' : Error };
+export type TransferError = {
+    'TxTooOld' : { 'allowed_window_nanos' : bigint }
+  } |
+  { 'BadFee' : { 'expected_fee' : ICP } } |
+  { 'TxDuplicate' : { 'duplicate_of' : BlockIndex } } |
+  { 'TxCreatedInFuture' : null } |
+  { 'InsufficientFunds' : { 'balance' : ICP } };
+export type TransferResult = { 'Ok' : BlockIndex } |
+  { 'Err' : TransferError };
 export interface TravelPlan {
   'uid' : Principal,
   'is_received' : boolean,
@@ -74,25 +84,29 @@ export interface TravelPlanUpdate {
 }
 export interface Triip {
   'accountId' : () => Promise<string>,
-  'addWallet' : (arg_0: string) => Promise<Result_5>,
+  'accountIdP' : (arg_0: Principal) => Promise<string>,
+  'addWallet' : (arg_0: string) => Promise<Result_6>,
   'analysis' : () => Promise<Result_9>,
   'approveHP_admin' : (arg_0: string, arg_1: string, arg_2: ProofTP) => Promise<
       Result
     >,
   'balance' : () => Promise<ICP>,
   'balanceShared' : () => Promise<ICP>,
+  'balanceShared_test' : (arg_0: Principal) => Promise<ICP>,
   'create' : (arg_0: Profile) => Promise<Result>,
   'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_8>,
-  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_7>,
-  'getAllTP_admin' : () => Promise<Result_6>,
-  'loginAdmin' : () => Promise<Result_2>,
-  'read' : () => Promise<Result_5>,
+  'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_1>,
+  'getAllTP_admin' : () => Promise<Result_7>,
+  'loginAdmin' : () => Promise<Result_3>,
+  'read' : () => Promise<Result_6>,
   'readAllProof' : () => Promise<Result>,
-  'readAllTPUser' : () => Promise<Result_4>,
-  'readProofOfTP' : (arg_0: string) => Promise<Result_3>,
-  'registerAdmin' : (arg_0: string, arg_1: Admin) => Promise<Result_2>,
+  'readAllTPUser' : () => Promise<Result_5>,
+  'readProofOfTP' : (arg_0: string) => Promise<Result_4>,
+  'registerAdmin' : (arg_0: string, arg_1: Admin) => Promise<Result_3>,
   'setStatusReceivedICP' : (arg_0: boolean, arg_1: string) => Promise<Result>,
-  'storage' : () => Promise<Result_1>,
+  'storage' : () => Promise<Result_2>,
+  'test' : (arg_0: Principal) => Promise<Result_1>,
+  'transfer_test' : (arg_0: string) => Promise<TransferResult>,
   'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }
 export interface User { 'username' : [] | [string] }

@@ -7,7 +7,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import { Principal } from "@dfinity/principal";
 import { useLocation } from "react-router-dom";
 
-import { actorMain, actorTransfer, login, profile } from "../../slice/user/userSlice";
+import { actorMain, login, profile } from "../../slice/user/userSlice";
 import { ContainerStyled, FormStyled } from "./NavBar.style";
 import { canisterId, createActor } from "../../../../declarations/triip";
 import {
@@ -53,13 +53,7 @@ const NavBar = () => {
         identity: authClient?.getIdentity()
       }
     });
-    const actor_transfer = createActorTransfer(canisterIdTransfer, {
-      agentOptions: {
-        identity: authClient?.getIdentity()
-      }
-    });
     dispatch(actorMain(actor_main));
-    dispatch(actorTransfer(actor_transfer));
     dispatch(storageAPI());
   };
 
@@ -101,7 +95,6 @@ const NavBar = () => {
     dispatch(login(false));
     dispatch(profile({}));
     dispatch(actorMain({}));
-    dispatch(actorTransfer({}));
     navigate("/");
     // setPrincipal(await authClient.getIdentity());
   };

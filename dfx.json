@@ -2,11 +2,16 @@
   "canisters": {
     "triip": {
       "main": "src/triip/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "dependencies": [
+        "triip_rust"
+      ]
     },
-    "triip_icp": {
-      "main": "src/triip_icp/main.mo",
-      "type": "motoko"
+    "triip_rust": {
+      "type": "custom",
+      "candid": "src/triip_rust/src/triip_rust.did",
+      "build": "sh ./build.sh",
+      "wasm": "target/wasm32-unknown-unknown/release/triip_rust-opt.wasm"
     },
     "triip_token": {
       "main": "src/triip_token/token.mo",
@@ -28,7 +33,6 @@
   },
   "defaults": {
     "build": {
-      "args": "",
       "packtool": "vessel sources"
     }
   },

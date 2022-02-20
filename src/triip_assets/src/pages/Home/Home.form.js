@@ -33,7 +33,7 @@ const HomeForm = ({ handleIsOpenParent }) => {
     destination: destinationStatic
   } = useSelector(state => state.static.travelplan);
   const [nntp] = useState(customAlphabet(process.env.NANOID_ALPHABET_TP, 24)());
-  const { actor, actor_transfer, profile } = useSelector(state => state.user);
+  const { actor, profile } = useSelector(state => state.user);
   const [days, setDays] = useState(1);
   const [idtp, setIdtp] = useState("");
   const {
@@ -96,16 +96,9 @@ const HomeForm = ({ handleIsOpenParent }) => {
         const result = await actor?.createTravelPlan(body());
         if ("ok" in result) {
           setIdtp(result.ok);
-          // const result_transfer = await actor_transfer?.transfer(
-          //   ["tp"],
-          //   profile?.wallets?.at(0)[0]
-          // );
-          // await actor?.setStatusReceivedICP("Ok" in result_transfer, result.ok);
           toast.success("Success !.");
           setCreatedStatus("HP");
-          // if ("Ok" in result_transfer)
           toast("You received 0.000001 ICP. Please check your wallet.🥳", { duration: 10000 });
-          // else throw result_transfer?.Err;
           //- handleIsOpenParent(false);
         } else {
           throw result?.err;

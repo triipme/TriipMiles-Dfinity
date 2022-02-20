@@ -22,8 +22,9 @@ import Types "Types";
 import State "State";
 import Ledger "model/Ledger";
 import ProofTP "model/ProofTP";
-import Env ".env"
+import Env ".env";
 
+import T "canister:triip_rust";
 shared({caller = owner}) actor class Triip() = this{
     /*------------------------ App state--------------------------- */
     var state : State.State = State.empty();
@@ -82,7 +83,7 @@ shared({caller = owner}) actor class Triip() = this{
         AId.toText(aId());
     };
 
-    func accountIdP(principal : Principal) : async Text {
+    public func accountIdP(principal : Principal) : async Text {
         AId.toText(principalToAid(principal));
     };
 
@@ -129,7 +130,6 @@ shared({caller = owner}) actor class Triip() = this{
             created_at_time = null;
         });
     };
-
     //Admin
     type Analysis = {
         profiles : Nat;
