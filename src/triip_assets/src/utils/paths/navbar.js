@@ -8,6 +8,7 @@ const SharePage = lazy(() => import("../../pages/Share"));
 const ShopPage = lazy(() => import("../../pages/Shop"));
 const StayPage = lazy(() => import("../../pages/Stay"));
 const GamePage = lazy(() => import("../../pages/Game"));
+const ARPage = lazy(() => import("../../pages/AR"));
 
 export const navbar = [
   {
@@ -41,6 +42,11 @@ export const navbar = [
     path: "/game",
     component: <GamePage />,
     name: "Game"
+  },
+  {
+    path: "/ar",
+    component: <ARPage />,
+    name: "AR"
   },
   {
     path: "/404",

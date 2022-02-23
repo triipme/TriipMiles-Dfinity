@@ -148,6 +148,9 @@ const NavBar = () => {
                 <NavLinkStyled key={navbar[5].path} to={navbar[5].path}>
                   Game
                 </NavLinkStyled>
+                {/* <NavLinkStyled key={navbar[6].path} to={navbar[6].path}>
+                  AR (Test)
+                </NavLinkStyled> */}
               </div>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 {!!profileData?.user ? (
@@ -238,9 +241,24 @@ const NavBar = () => {
                     href="https://shopping.triip.me/">
                     Shop
                   </LinkStyled>
-                  <NavLinkStyled key={navbar[5].path} to={navbar[5].path}>
+                  <NavLinkStyled
+                    onClick={() => setIsOpenMenu(false)}
+                    sx={{
+                      my: 1
+                    }}
+                    key={navbar[5].path}
+                    to={navbar[5].path}>
                     Game
                   </NavLinkStyled>
+                  {/* <NavLinkStyled
+                    onClick={() => setIsOpenMenu(false)}
+                    sx={{
+                      my: 1
+                    }}
+                    key={navbar[6].path}
+                    to={navbar[6].path}>
+                    AR (Test)
+                  </NavLinkStyled> */}
                   <Divider sx={{ my: 3 }} />
                   {!!profileData?.user ? (
                     <>
