@@ -84,11 +84,11 @@ module.exports = {
         use: ["babel-loader"]
       },
       {
-        test: /\.(png|jpe?g|gif)$/i,
-        loader: "file-loader",
-        options: {
-          name: "images/[name].[ext]"
-        }
+        test: /\.(png|jpe?g|gif|dat|patt)$/i,
+        loader: "file-loader"
+        // options: {
+        //   name: "images/[name].[ext]"
+        // }
       },
       {
         test: /\.url.(png|jpg|gif)$/i,
@@ -146,7 +146,7 @@ module.exports = {
         {
           from: path.join(__dirname, "src", frontendDirectory, "assets"),
           to: path.join(__dirname, "dist", frontendDirectory)
-        }
+        },
       ]
     }),
     new webpack.EnvironmentPlugin({

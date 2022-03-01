@@ -12,7 +12,7 @@ const Admin = lazy(() => import("../pages/Admin/index"));
 const DashboardLayout = lazy(() => import("../pages/Admin/layouts/dashboard"));
 const DashboardApp = lazy(() => import("../pages/Admin/pages/DashboardApp"));
 const User = lazy(() => import("../pages/Admin/pages/User"));
-const Products = lazy(() => import("../pages/Admin/pages/Products"));
+const KYCs = lazy(() => import("../pages/Admin/pages/KYCs"));
 const Blog = lazy(() => import("../pages/Admin/pages/Blog"));
 const Login = lazy(() => import("../pages/Admin/pages/Login"));
 const Register = lazy(() => import("../pages/Admin/pages/Register"));
@@ -68,10 +68,10 @@ const Main = () => {
                 }
               />
               <Route
-                path="products"
+                path="kycs"
                 element={
                   <AdminRequiredAuth>
-                    <Products />
+                    <KYCs />
                   </AdminRequiredAuth>
                 }
               />

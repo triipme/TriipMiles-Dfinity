@@ -22,6 +22,11 @@ const sidebarConfig = [
     title: "travel plan",
     path: "/triip-admin/dashboard/user",
     icon: getIcon("clarity:map-solid")
+  },
+  {
+    title: "KYCs",
+    path: "/triip-admin/dashboard/kycs",
+    icon: getIcon("clarity:map-solid")
   }
   // {
   //   title: "product",

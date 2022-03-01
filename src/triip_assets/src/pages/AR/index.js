@@ -1,60 +1,43 @@
-import React from "react";
-// import "aframe";
-// import "aframe-particle-system-component";
-// import "@ar-js-org/ar.js/aframe/build/aframe-ar-location-only.js";
-// import "@ar-js-org/ar.js/aframe/build/aframe-ar-nft.js";
-import { Entity, Scene } from "aframe-react";
+import React, { Suspense } from "react";
+import { ARCanvas, ARMarker } from "@artcom/react-three-arjs";
+import { useLoader, Canvas } from "@react-three/fiber";
+import { Environment, OrbitControls } from "@react-three/drei";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { sRGBEncoding } from "three";
+const Model = () => {
+  const gltf = useLoader(GLTFLoader, "data/Bee.glb");
+  return (
+    <>
+      <primitive object={gltf.scene} scale={0.4} />
+    </>
+  );
+};
 const AR = () => {
   return (
-    <div style={{ margin: 0, overflow: "hidden" }}>
-      <Scene
-        vr-mode-ui="enabled: false"
-        loading-screen="enabled: false;"
-        arjs="sourceType: webcam; debugUIEnabled: false;"
-        id="scene"
-        embedded
-        gesture-detector>
-        <Entity primitive="a-assets">
-          <video
-            id="vid"
-            src="./asset.mp4"
-            preload="auto"
-            response-type="arraybuffer"
-            loop
-            crossOrigin="true"
-            webkit-playsinline="true"
-            autoPlay
-            muted
-            playsInline></video>
-        </Entity>
-        <Entity
-          primitive="a-marker"
-          type="pattern"
-          preset="custom"
-          url="./marker.patt"
-          videohandler
-          smooth={true}
-          smoothCount={10}
-          smoothTolerance={0.01}
-          smoothThreshold={5}
-          raycaster={{ objects: ".clickable" }}
-          emitevents={true}
-          cursor={{ fuse: false, rayOrigin: "mouse" }}
-          id="markerA">
-          <Entity
-            primitive="a-video"
-            src="#vid"
-            scale="1 1 1"
-            position={{ x: 0, y: 0.1, z: 0 }}
-            rotation="-90 0 0"
-            class="clickable"
-            gesture-handler
-          />
-        </Entity>
-
-        <Entity primitive="a-camera" camera width="1000" height="1000"></Entity>
-      </Scene>
-    </div>
+    <ARCanvas
+      gl={{ antialias: false, powerPreference: "default" }}
+      dpr={window.devicePixelRatio}
+      onCameraStreamReady={() => console.log("Camera stream ready")}
+      onCameraStreamError={() => console.error("Camera stream error")}
+      onCreated={({ gl }) => {
+        gl.outputEncoding = sRGBEncoding;
+        gl.physicallyCorrectLights = true;
+        gl.setSize(window.innerWidth, window.innerHeight);
+      }}>
+      <ARMarker
+        type={"pattern"}
+        patternUrl={"data/marker.patt"}
+        onMarkerFound={() => {
+          console.log("Marker Found");
+        }}
+        onMarkerLost={() => console.log("marker lost")}>
+        <Suspense fallback={null}>
+          <Model />
+          <OrbitControls />
+          {/* <Environment preset="sunset" background /> */}
+        </Suspense>
+      </ARMarker>
+    </ARCanvas>
   );
 };
 export default AR;
