@@ -84,14 +84,18 @@ module.exports = {
         use: ["babel-loader"]
       },
       {
-        test: /\.(png|jpe?g|gif|dat|patt)$/i,
-        loader: "file-loader"
-        // options: {
-        //   name: "images/[name].[ext]"
-        // }
+        test: /\.(png|jpe?g|gif|dat|patt|glb|gltf)$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              esModule: false
+            }
+          }
+        ]
       },
       {
-        test: /\.url.(png|jpg|gif)$/i,
+        test: /\.(png|jpe?g|gif|dat|patt|glb|gltf)$/i,
         use: [
           {
             loader: "url-loader"
@@ -146,7 +150,7 @@ module.exports = {
         {
           from: path.join(__dirname, "src", frontendDirectory, "assets"),
           to: path.join(__dirname, "dist", frontendDirectory)
-        },
+        }
       ]
     }),
     new webpack.EnvironmentPlugin({
@@ -207,12 +211,6 @@ module.exports = {
       maxInitialRequests: 30,
       enforceSizeThreshold: 50000,
       cacheGroups: {
-        vendors: {
-          test: /node_modules\/(?!@mui\/).*/,
-          name: "vendors",
-          reuseExistingChunk: true,
-          chunks: "all"
-        },
         // This can be your own design library.
         mui: {
           test: /node_modules\/(@mui\/).*/,

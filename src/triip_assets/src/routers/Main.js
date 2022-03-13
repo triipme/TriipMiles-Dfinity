@@ -26,7 +26,11 @@ const Main = () => {
       <Suspense fallback={<Loading />}>
         <Routes>
           {navbar.map((item, _) => (
-            <Route key={item.path} path={item.path} exact={item?.exact} element={item.component} />
+            <Route key={item.path} path={item.path} exact={item?.exact} element={item.component}>
+              {item?.children?.map(child => (
+                <Route key={child?.path} path={child?.path} element={child?.component} />
+              ))}
+            </Route>
           ))}
           <Route path="404" element={<NotFound />} />
           {/* <Route path="*" element={<Navigate to="/404" />} /> */}

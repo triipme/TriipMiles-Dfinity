@@ -29,6 +29,15 @@
         "dist/triip_assets/"
       ],
       "type": "assets"
+    },
+    "triip_ar": {
+      "frontend": {
+        "entrypoint": "src/triip_ar/index.html"
+      },
+      "source": [
+        "src/triip_ar"
+      ],
+      "type": "assets"
     }
   },
   "defaults": {
