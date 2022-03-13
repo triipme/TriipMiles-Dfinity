@@ -13,6 +13,7 @@ module{
     travelplans : Map<Text,Types.TravelPlan>;
     proofs : Map<Text,Types.ProofTP>;
     vetted : Map<Text,Types.Vetted>;
+    kycs : Map<Principal,Types.KYCs>;
   };
   // public type StateShared = {
   //   profiles : MapShared<Principal,Types.Profile>;
@@ -25,6 +26,7 @@ module{
       travelplans = TrieMap.TrieMap<Text,Types.TravelPlan>(Text.equal,Text.hash);
       proofs = TrieMap.TrieMap<Text,Types.ProofTP>(Text.equal,Text.hash);
       vetted = TrieMap.TrieMap<Text,Types.Vetted>(Text.equal,Text.hash);
+      kycs = TrieMap.TrieMap<Principal,Types.KYCs>(Principal.equal, Principal.hash);
     };
   };
   // public func share(state : State) : StateShared {

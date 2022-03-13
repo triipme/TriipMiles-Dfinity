@@ -24,7 +24,7 @@ import Ledger "model/Ledger";
 import ProofTP "model/ProofTP";
 import Env ".env";
 
-import T "canister:triip_rust";
+// import T "canister:triip_rust";
 shared({caller = owner}) actor class Triip() = this{
     /*------------------------ App state--------------------------- */
     var state : State.State = State.empty();
@@ -41,6 +41,7 @@ shared({caller = owner}) actor class Triip() = this{
     private stable var proofs : [(Text,Types.ProofTP)] = [];
     private stable var admin : [(Principal,Types.Admin)] = [];
     private stable var vetted : [(Text,Types.Vetted)] = [];
+    private stable var kycs : [(Principal,Types.KYCs)] = [];
     private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
     system func preupgrade() {
@@ -50,6 +51,7 @@ shared({caller = owner}) actor class Triip() = this{
         proofs := Iter.toArray(state.proofs.entries());
         admin := Iter.toArray(state.admin.entries());
         vetted := Iter.toArray(state.vetted.entries());
+        kycs := Iter.toArray(state.kycs.entries());
         Debug.print("End preupgrade");
     };
 
@@ -69,6 +71,9 @@ shared({caller = owner}) actor class Triip() = this{
         };
         for((k,v) in Iter.fromArray(vetted)) {
             state.vetted.put(k,v);
+        };
+        for((k,v) in Iter.fromArray(kycs)) {
+            state.kycs.put(k,v);
         };
         Debug.print("End postupgrade");
     };
