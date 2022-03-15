@@ -1,7 +1,16 @@
 import React, { lazy } from "react";
 import { Navigate, Redirect } from "react-router-dom";
-import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage } from "../../pages";
+// import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage, GamePage } from "../../pages";
 const NotFound = lazy(() => import("../../pages/Admin/pages/Page404"));
+const HomePage = lazy(() => import("../../pages/Home"));
+const ExperiencePage = lazy(() => import("../../pages/Experience"));
+const SharePage = lazy(() => import("../../pages/Share"));
+const ShopPage = lazy(() => import("../../pages/Shop"));
+const StayPage = lazy(() => import("../../pages/Stay"));
+const GamePage = lazy(() => import("../../pages/Game"));
+const ARPage = lazy(() => import("../../pages/AR"));
+const Geolocation = lazy(() => import("../../pages/AR/Geolocation"));
+const Marker = lazy(() => import("../../pages/AR/Marker"));
 
 export const navbar = [
   {
@@ -30,6 +39,28 @@ export const navbar = [
     path: "/shop",
     component: <ShopPage />,
     name: "Shop"
+  },
+  {
+    path: "/game",
+    component: <GamePage />,
+    name: "Game"
+  },
+  {
+    path: "/ar",
+    component: <ARPage />,
+    name: "AR",
+    children: [
+      {
+        path: "/ar/geolocation",
+        component: <Geolocation />,
+        name: "AR"
+      },
+      {
+        path: "/ar/marker",
+        component: <Marker />,
+        name: "AR"
+      }
+    ]
   },
   {
     path: "/404",

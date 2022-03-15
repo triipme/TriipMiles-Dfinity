@@ -38,13 +38,13 @@ export const account = [
         //     component: <TravelPlanContainer />
         //   }
         // ]
+      },
+      {
+        path: "/account/kyc",
+        name: "Verify Account (KYC)",
+        component: <KYCFeature />,
+        children: [{ path: "/account/kyc/verify", name: "verify", component: <Verify /> }]
       }
-      // {
-      //   path: "/account/kyc",
-      //   name: "Verify Account (KYC)",
-      //   component: <KYCFeature />,
-      //   children: [{ path: "/account/kyc/verify", name: "verify", component: <Verify /> }]
-      // }
       // {
       //   path: "/account/notifications",
       //   name: "Notifications",

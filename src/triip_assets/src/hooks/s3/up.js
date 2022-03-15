@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Upload } from "@aws-sdk/lib-storage";
-import { S3Client } from "@aws-sdk/client-s3";
-import S3 from "aws-sdk/clients/s3";
 import { useSelector } from "react-redux";
+
+import AWS from "aws-sdk";
 
 const useUploadFile = () => {
   const [fileState, setFileState] = useState({});
@@ -13,26 +12,34 @@ const useUploadFile = () => {
     accessKeyId: storage[1],
     secretAccessKey: storage[2]
   };
-  const s3 = new S3({ region: storage[3], credentials: creds });
+  AWS.config.update(creds);
+  const s3 = new AWS.S3({
+    params: { Bucket: storage[0] },
+    region: storage[3]
+  });
   useEffect(() => {
     (async () => {
       try {
         if (!!fileState?.file) {
-          console.log(fileState);
+          const params = {
+            ACL: "public-read",
+            Body: fileState?.file,
+            Bucket: storage[0],
+            Key: fileState?.name
+          };
           const target = {
             Bucket: storage[0],
             Key: fileState?.name
           };
-          const parallelUpload = new Upload({
-            client: new S3Client({ region: process.env.S3_REGION, credentials: creds }),
-            leavePartsOnError: false,
-            params: { ...target, Body: fileState?.file }
-          });
-          parallelUpload.on("httpUploadProgress", evt => {
-            setProgress(Math.round((evt.loaded / evt.total) * 100));
-          });
-          await parallelUpload.done();
-          s3.getObject(target, (err, data) => {
+          await s3
+            .putObject(params)
+            .on("httpUploadProgress", evt => {
+              setProgress(Math.round((evt.loaded / evt.total) * 100));
+            })
+            .send(err => {
+              if (err) console.log(err);
+            });
+          await s3.getObject(target, (err, data) => {
             console.log("err", err);
             if (err != null) {
               console.log("Failed to retrieve an object", err);

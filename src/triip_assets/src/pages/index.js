@@ -1,6 +1,8 @@
-export { default as HomePage } from "./Home/Home.index";
-export { default as StayPage } from "./Stay/Stay.index";
-export { default as ExperiencePage } from "./Experience/Experience.index";
-export { default as SharePage } from "./Share/Share.index";
-export { default as ShopPage } from "./Shop/Shop.index";
-export { default as AccountPage } from "./Account/Account.index";
+export { default as HomePage } from "./Home";
+export { default as StayPage } from "./Stay";
+export { default as ExperiencePage } from "./Experience";
+export { default as SharePage } from "./Share";
+export { default as ShopPage } from "./Shop";
+export { default as AccountPage } from "./Account";
+export { default as GamePage } from "./Game";
+export { default as ARPage } from "./AR";

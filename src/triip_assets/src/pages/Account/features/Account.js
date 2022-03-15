@@ -184,7 +184,6 @@ const FormNewTransaction = ({ source }) => {
     setError,
     formState: { errors, isSubmitting }
   } = useForm();
-  const { actor_transfer } = useSelector(state => state.user);
   const handleAddress = async data => {
     try {
       const checkAddress = await rosettaApi.getAccountBalance(data["address"]);
@@ -201,17 +200,7 @@ const FormNewTransaction = ({ source }) => {
       console.error(error);
     }
   };
-  const handleTransfer = async data => {
-    // if (!!actor_transfer?.transfer) {
-    //   try {
-    //     const rs = await actor_transfer?.transfer({ e8s: data["amount"] * 1e8 }, data["address"]);
-    //     console.log(rs);
-    //     toast.success(`${rs}`);
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // }
-  };
+  const handleTransfer = async data => {};
   return (
     <>
       {statusAddressTo ? (
