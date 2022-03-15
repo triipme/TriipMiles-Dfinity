@@ -123,3 +123,4 @@ dist
 
 # TernJS port file
 .tern-port
+s/src/pages/AR/style

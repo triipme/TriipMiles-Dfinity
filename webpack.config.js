@@ -103,19 +103,19 @@ module.exports = {
         ]
       },
       {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"]
-      },
+        test: /\.(css|scss|sass)$/i,
+        use: ["style-loader", "css-loader", "sass-loader"]
+      }
       // {
       //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
       //   include: path.resolve(__dirname, "assets"),
       //   type: "asset/resource"
       // }
-      {
-        test: /\.(css|scss|sass)$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
-        exclude: /node_modules/
-      }
+      // {
+      //   test: /\.(css|scss|sass)$/,
+      //   use: ["style-loader", "css-loader", "sass-loader"],
+      //   exclude: /node_modules/
+      // }
     ]
   },
   plugins: [

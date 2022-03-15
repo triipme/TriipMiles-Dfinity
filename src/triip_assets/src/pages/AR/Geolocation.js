@@ -1,5 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
-import { AFrameRenderer, Marker } from "react-web-ar";
+import AFrameRenderer from "./AFrameRenderer.ar";
+import Marker from "./Marker.ar";
 import { useGeolocation } from "react-use";
 // import { ARCanvas, ARMarker } from "@artcom/react-three-arjs";
 // import { useLoader, Canvas } from "@react-three/fiber";
