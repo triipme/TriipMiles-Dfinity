@@ -3,6 +3,7 @@ import React, { createContext, lazy, Suspense, useState } from "react";
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import { Loading, Notification } from "../components";
 import { AdminRequiredAuth, NavBar, NormalRequiredAuth } from "../containers";
+import Kyc from "../pages/Admin/pages/Kyc";
 
 import { navbar, account } from "../utils/paths";
 
@@ -84,6 +85,14 @@ const Main = () => {
                 element={
                   <AdminRequiredAuth>
                     <Blog />
+                  </AdminRequiredAuth>
+                }
+              />
+              <Route
+                path="kyc"
+                element={
+                  <AdminRequiredAuth>
+                    <Kyc />
                   </AdminRequiredAuth>
                 }
               />
