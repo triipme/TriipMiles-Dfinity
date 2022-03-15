@@ -1,22 +1,7 @@
 import React, { Suspense, useEffect, useState } from "react";
-import AFrameRenderer from "./AFrameRenderer.ar";
-import Marker from "./Marker.ar";
+import { AFrameRenderer, Marker } from "react-web-ar";
 import { useGeolocation } from "react-use";
-// import { ARCanvas, ARMarker } from "@artcom/react-three-arjs";
-// import { useLoader, Canvas } from "@react-three/fiber";
-// import { Entity, Scene } from "aframe-react";
-
-// import { Environment, OrbitControls } from "@react-three/drei";
-// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-// import { sRGBEncoding } from "three";
-// const Model = () => {
-//   const gltf = useLoader(GLTFLoader, "data/Bee.glb");
-//   return (
-//     <>
-//       <primitive object={gltf.scene} scale={0.4} />
-//     </>
-//   );
-// };
+import { Entity } from "react-aframe-ar";
 const Geolocation = () => {
   const [position, setPosition] = useState({ lat: 0, long: 0 });
   const l = useGeolocation();
@@ -31,24 +16,108 @@ const Geolocation = () => {
       x.innerHTML = "Geolocation is not supported by this browser.";
     }
   });
-  console.log("position", position);
   return (
-    <div style={{ position: "relative" }}>
-      {/* Geolocation */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          zIndex: 999,
-          backgroundColor: "#fff"
-        }}>{`latitude: ${position.lat}; longitude: ${position.long}`}</div>
-      <AFrameRenderer inherent={true}>
-        <a-text
-          value="This content will always face you."
+    <div style={{ margin: 0, overflow: "hidden" }}>
+      <AFrameRenderer
+        renderer="logarithmicDepthBuffer: true"
+        embedded
+        loading-screen="enabled: false;"
+        arToolKit={{ sourceType: "webcam", debugUIEnabled: false }}
+        vr-mode-ui="enabled: false">
+        <a-assets>
+          <a-asset-item
+            id="animated-asset"
+            src="https://raw.githubusercontent.com/FutureEyes/FutureEyes.github.io/main/arlocation/assets/asset.gltf"></a-asset-item>
+          <img
+            id="reflection"
+            src="https://raw.githubusercontent.com/mrdoob/three.js/r82/examples/textures/2294472375_24a3b8ef46_o.jpg"
+          />
+          <img
+            id="sky"
+            src="https://raw.githubusercontent.com/mrdoob/three.js/r82/examples/textures/2294472375_24a3b8ef46_o.jpg"
+          />
+        </a-assets>
+        <a-entity id="'ambientlight" light="type: ambient; intensity: 0.4;"></a-entity>
+        <a-light
+          type="directional"
+          position="0 0 0"
+          rotation="0 0 0"
+          target="#directionaltarget"></a-light>
+        <a-entity id="directionaltarget" position="0 0 -1"></a-entity>
+        <Entity
           look-at="[gps-camera]"
-          scale="120 120 120"
-          gps-entity-place={`latitude: ${position.lat}; longitude: ${position.long};`}></a-text>
+          animation-mixer="loop: repeat"
+          gltf-model="#animated-asset"
+          light="type: ambient; intensity: 0.4;"
+          // light="type: directional;
+          //                            castShadow: true;
+          //                            intensity: 0.35;
+          //                            shadowCameraVisible: true;"
+          scale="1.2184615980777895 1.2184615980777895 1.2184615980777895"
+          gps-entity-place="latitude:10.80145366733753; longitude:106.70475971303551;"></Entity>
+
+        {/* <!--Duy house--> */}
+        <Entity
+          look-at="[gps-camera]"
+          animation-mixer="loop: repeat"
+          gltf-model="#animated-asset"
+          light="type: ambient; intensity: 0.4;"
+          // light="type: directional;
+          //                        castShadow: true;
+          //                        intensity: 0.35;
+          //                        shadowCameraVisible: true;"
+          scale="1.2184615980777895 1.2184615980777895 1.2184615980777895"
+          gps-entity-place="latitude:10.755488; longitude:106.709189;"></Entity>
+        {/* <!--- Quan house --> */}
+        <Entity
+          look-at="[gps-camera]"
+          animation-mixer="loop: repeat"
+          gltf-model="#animated-asset"
+          light="type: ambient; intensity: 0.4;"
+          // light="type: directional;
+          //                        castShadow: true;
+          //                        intensity: 0.35;
+          //                        shadowCameraVisible: true;"
+          reflection="directionalLight:a-light#dirlight;"
+          scale="1.2184615980777895 1.2184615980777895 1.2184615980777895"
+          gps-entity-place="latitude:16.067469; longitude:108.197031;"></Entity>
+        {/* <!--Turkey --> */}
+        <Entity
+          look-at="[gps-camera]"
+          animation-mixer="loop: repeat"
+          gltf-model="#animated-asset"
+          light="type: ambient; intensity: 0.4;"
+          // light="type: directional;
+          //                       castShadow: true;
+          //                       intensity: 0.35;
+          //                       shadowCameraVisible: true;"
+          scale="1.2184615980777895 1.2184615980777895 1.2184615980777895"
+          gps-entity-place="latitude:39.89610; longitude:32.81643;"></Entity>
+        {/* <!--- Phong house --> */}
+        <Entity
+          look-at="[gps-camera]"
+          animation-mixer="loop: repeat"
+          gltf-model="#animated-asset"
+          reflection="directionalLight:a-light#dirlight;"
+          light="type: ambient; intensity: 0.4;"
+          // light="type: directional;
+          //                 castShadow: true;
+          //                 intensity: 0.35;
+          //                 shadowCameraVisible: true;"
+          scale="1.2184615980777895 1.2184615980777895 1.2184615980777895"
+          gps-entity-place="latitude:10.70098968174121; longitude:106.7300813642215;"></Entity>
+        {/* <!--new input --> */}
+        <Entity
+          look-at="[gps-camera]"
+          animation-mixer="loop: repeat"
+          gltf-model="#animated-asset"
+          light="type: ambient; intensity: 0.4;"
+          // light="type: directional;
+          //                       castShadow: true;
+          //                       intensity: 0.35;
+          //                       shadowCameraVisible: true;"
+          scale="1.2184615980777895 1.2184615980777895 1.2184615980777895"
+          gps-entity-place="latitude:41.09667; longitude:28.88152;"></Entity>
         <a-camera gps-camera rotation-reader></a-camera>
       </AFrameRenderer>
     </div>
