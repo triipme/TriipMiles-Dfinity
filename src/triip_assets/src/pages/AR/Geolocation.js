@@ -13,9 +13,9 @@ const Geolocation = () => {
         alert(`latitude: ${p.coords.latitude}; longitude: ${p.coords.longitude}`);
       });
     } else {
-      x.innerHTML = "Geolocation is not supported by this browser.";
+      alert("Geolocation is not supported by this browser.");
     }
-  });
+  }, []);
   return (
     <div style={{ margin: 0, overflow: "hidden" }}>
       <AFrameRenderer
@@ -118,6 +118,17 @@ const Geolocation = () => {
           //                       shadowCameraVisible: true;"
           scale="1.2184615980777895 1.2184615980777895 1.2184615980777895"
           gps-entity-place="latitude:41.09667; longitude:28.88152;"></Entity>
+        <Entity
+          look-at="[gps-camera]"
+          animation-mixer="loop: repeat"
+          gltf-model="#animated-asset"
+          light="type: ambient; intensity: 0.4;"
+          // light="type: directional;
+          //                       castShadow: true;
+          //                       intensity: 0.35;
+          //                       shadowCameraVisible: true;"
+          scale="1.2184615980777895 1.2184615980777895 1.2184615980777895"
+          gps-entity-place={`latitude:${position.lat}; longitude:${position.long};`}></Entity>
         <a-camera gps-camera rotation-reader></a-camera>
       </AFrameRenderer>
     </div>
