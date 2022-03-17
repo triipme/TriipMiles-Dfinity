@@ -43,7 +43,7 @@ const Geolocation = () => {
           </script>
           <body style="margin: 0; overflow: hidden;">
             <a-scene renderer="logarithmicDepthBuffer: true;" loading-screen="enabled: false;"
-              arjs="sourceType: webcam; debugUIEnabled: false;" raycaster="objects: [gps-projected-entity-place];"
+              arjs="sourceType: webcam; debugUIEnabled: false;" raycaster="objects: [gps-entity-place];"
               vr-mode-ui="enabled: false">
               <a-assets>
                 <a-asset-item id="animated-asset"
