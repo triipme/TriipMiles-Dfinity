@@ -11,6 +11,8 @@ const GamePage = lazy(() => import("../../pages/Game"));
 const ARPage = lazy(() => import("../../pages/AR"));
 const Geolocation = lazy(() => import("../../pages/AR/Geolocation"));
 const Marker = lazy(() => import("../../pages/AR/Marker"));
+const MarkerEmbed = lazy(() => import("../../pages/AR/embed/Marker"));
+const GeoLocationEmbed = lazy(() => import("../../pages/AR/embed/GeoLocation"));
 
 export const navbar = [
   {
@@ -58,6 +60,16 @@ export const navbar = [
       {
         path: "/ar/marker",
         component: <Marker />,
+        name: "AR"
+      },
+      {
+        path: "/ar/embed/marker",
+        component: <MarkerEmbed />,
+        name: "AR"
+      },
+      {
+        path: "/ar/embed/geolocation",
+        component: <GeoLocationEmbed />,
         name: "AR"
       }
     ]
