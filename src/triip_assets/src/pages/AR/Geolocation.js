@@ -1,52 +1,70 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { AFrameRenderer } from "react-web-ar";
 import { Entity, Camera, Light, Scene } from "react-aframe-ar";
+import { useLocation, useNavigate } from "react-router";
 const Geolocation = () => {
-  const [position, setPosition] = useState({ lat: 0, long: 0 });
+  // const [position, setPosition] = useState({ lat: 0, long: 0 });
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(p => {
-        setPosition({ lat: p.coords.latitude, long: p.coords.longitude });
-        alert(`latitude: ${p.coords.latitude}; longitude: ${p.coords.longitude}`);
-      });
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
+    // if (navigator.geolocation) {
+    //   navigator.geolocation.getCurrentPosition(p => {
+    //     setPosition({ lat: p.coords.latitude, long: p.coords.longitude });
+    //     alert(`latitude: ${p.coords.latitude}; longitude: ${p.coords.longitude}`);
+    //   });
+    // } else {
+    //   alert("Geolocation is not supported by this browser.");
+    // }
   }, []);
   return (
     <div style={{ margin: 0, overflow: "hidden" }}>
       <div
         dangerouslySetInnerHTML={{
-          __html: `
-            <a-scene
-              renderer="logarithmicDepthBuffer: true;"
-              loading-screen="enabled: false;"
-              arjs="sourceType: webcam; debugUIEnabled: false;"
-              raycaster="objects: [gps-projected-entity-place];"
+          __html: `<iframe
+          style="width: 100vw; height:99vh"
+          allow="camera;geolocation;"
+          srcdoc='<!doctype html>
+          <html>
+          <head>
+            <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+            <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+            <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+            <script
+              src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
+            <script
+              src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
+          </head>
+          <script>
+            const entityModel = document.getElementById("entity-model")
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(p=>{
+                alert("latitude:"+ p.coords.latitude+";longitude:"+p.coords.longitude+";");
+                entityModel.setAttribute("gps-entity-place","latitude:"+ p.coords.latitude+";longitude:"+p.coords.longitude+";")
+              })
+            }
+          </script>
+          <body style="margin: 0; overflow: hidden;">
+            <a-scene renderer="logarithmicDepthBuffer: true;" loading-screen="enabled: false;"
+              arjs="sourceType: webcam; debugUIEnabled: false;" raycaster="objects: [gps-projected-entity-place];"
               vr-mode-ui="enabled: false">
               <a-assets>
-                <a-asset-item
-                    id="animated-asset"
-                    src="https://raw.githubusercontent.com/FutureEyes/FutureEyes.github.io/main/arlocation/assets/asset.gltf"
-                ></a-asset-item>
-                <img id="reflection" src="https://raw.githubusercontent.com/mrdoob/three.js/r82/examples/textures/2294472375_24a3b8ef46_o.jpg"/>
-                <img id="sky" src="https://raw.githubusercontent.com/mrdoob/three.js/r82/examples/textures/2294472375_24a3b8ef46_o.jpg"/>
+                <a-asset-item id="animated-asset"
+                  src="https://raw.githubusercontent.com/FutureEyes/FutureEyes.github.io/main/arlocation/assets/asset.gltf">
+                </a-asset-item>
+                <img id="reflection"
+                  src="https://raw.githubusercontent.com/mrdoob/three.js/r82/examples/textures/2294472375_24a3b8ef46_o.jpg" />
+                <img id="sky"
+                  src="https://raw.githubusercontent.com/mrdoob/three.js/r82/examples/textures/2294472375_24a3b8ef46_o.jpg" />
               </a-assets>
-              <a-entity id="'ambientlight"  light="type: ambient; intensity: 0.4;"></a-entity>          
+              <a-entity id="ambientlight" light="type: ambient; intensity: 0.4;"></a-entity>
               <a-light type="directional" position="0 0 0" rotation="0 0 0" target="#directionaltarget">
-              <a-entity id="directionaltarget" position="0 0 -1">
-                <a-entity
-                look-at="[gps-camera]"
-                animation-mixer="loop: repeat"
-                gltf-model="#animated-asset"
-                light="type: ambient; intensity: 0.4;"
-                scale="0.5 0.5 0.5"
-                gps-entity-place="latitude:${position.lat}; longitude:${position.long};"
-                ></a-entity>
-              </a-entity>
-              <a-camera gps-camera rotation-reader></a-camera>
+                <a-entity id="directionaltarget" position="0 0 -1">
+                  <a-entity id="entity-model" look-at="[gps-camera]" animation-mixer="loop: repeat" gltf-model="#animated-asset"
+                    light="type: ambient; intensity: 0.4;" scale="0.5 0.5 0.5"></a-entity>
+                </a-entity>
+                <a-camera gps-camera rotation-reader></a-camera>
             </a-scene>
-          `
+          </body>
+          
+          </html>'></iframe>`
         }}
       />
     </div>

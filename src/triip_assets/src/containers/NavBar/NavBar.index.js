@@ -148,9 +148,9 @@ const NavBar = () => {
                 <NavLinkStyled key={navbar[5].path} to={navbar[5].path}>
                   Game
                 </NavLinkStyled>
-                {/* <NavLinkStyled key={navbar[6].path} to={navbar[6].path}>
+                <NavLinkStyled key={navbar[6].path} to={navbar[6].path}>
                   AR (Test)
-                </NavLinkStyled> */}
+                </NavLinkStyled>
               </div>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 {!!profileData?.user ? (
@@ -250,7 +250,7 @@ const NavBar = () => {
                     to={navbar[5].path}>
                     Game
                   </NavLinkStyled>
-                  {/* <NavLinkStyled
+                  <NavLinkStyled
                     onClick={() => setIsOpenMenu(false)}
                     sx={{
                       my: 1
@@ -258,7 +258,7 @@ const NavBar = () => {
                     key={navbar[6].path}
                     to={navbar[6].path}>
                     AR (Test)
-                  </NavLinkStyled> */}
+                  </NavLinkStyled>
                   <Divider sx={{ my: 3 }} />
                   {!!profileData?.user ? (
                     <>
