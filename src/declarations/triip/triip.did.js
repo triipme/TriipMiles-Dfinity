@@ -22,7 +22,7 @@ export const idlFactory = ({ IDL }) => {
     'travelplans' : IDL.Nat,
     'profiles' : IDL.Nat,
   });
-  const Result_9 = IDL.Variant({
+  const Result_10 = IDL.Variant({
     'ok' : IDL.Tuple(Analysis, IDL.Vec(IDL.Text)),
     'err' : Error,
   });
@@ -33,8 +33,11 @@ export const idlFactory = ({ IDL }) => {
     'created_at' : IDL.Int,
     'proof' : ProofTP__1,
   });
+  const Result_9 = IDL.Variant({
+    'ok' : IDL.Opt(IDL.Vec(IDL.Text)),
+    'err' : Error,
+  });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
-  const ICP = IDL.Record({ 'e8s' : IDL.Nat64 });
   const Result_8 = IDL.Variant({ 'ok' : IDL.Opt(IDL.Text), 'err' : Error });
   const TravelPlanInformation = IDL.Record({
     'img' : IDL.Opt(IDL.Text),
@@ -91,14 +94,10 @@ export const idlFactory = ({ IDL }) => {
     'ok' : IDL.Tuple(IDL.Text, IDL.Text, IDL.Text, IDL.Text),
     'err' : Error,
   });
-  const Triip = IDL.Service({
-    'accountId' : IDL.Func([], [IDL.Text], ['query']),
-    'accountIdP' : IDL.Func([IDL.Principal], [IDL.Text], []),
+  return IDL.Service({
     'addWallet' : IDL.Func([IDL.Text], [Result_5], []),
-    'analysis' : IDL.Func([], [Result_9], ['query']),
-    'approveHP_admin' : IDL.Func([IDL.Text, IDL.Text, ProofTP], [Result], []),
-    'balance' : IDL.Func([], [ICP], []),
-    'balanceShared' : IDL.Func([], [ICP], []),
+    'analysis' : IDL.Func([], [Result_10], ['query']),
+    'approveHP_admin' : IDL.Func([IDL.Text, IDL.Text, ProofTP], [Result_9], []),
     'create' : IDL.Func([Profile], [Result], []),
     'createProofTP' : IDL.Func([IDL.Text, ProofTP__1], [Result_8], []),
     'createTravelPlan' : IDL.Func([TravelPlanUpdate], [Result_7], []),
@@ -113,6 +112,5 @@ export const idlFactory = ({ IDL }) => {
     'storage' : IDL.Func([], [Result_1], ['query']),
     'updateTravelPlan' : IDL.Func([TravelPlanUpdate], [Result], []),
   });
-  return Triip;
 };
 export const init = ({ IDL }) => { return []; };

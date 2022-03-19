@@ -4,29 +4,6 @@ type Vetted =
    updated_at: int;
  };
 type User = record {username: opt text;};
-type Triip = 
- service {
-   accountId: () -> (text) query;
-   accountIdP: (principal) -> (text);
-   addWallet: (text) -> (Result_5);
-   analysis: () -> (Result_9) query;
-   approveHP_admin: (text, text, ProofTP) -> (Result);
-   balance: () -> (ICP);
-   balanceShared: () -> (ICP);
-   create: (Profile) -> (Result);
-   createProofTP: (text, ProofTP__1) -> (Result_8);
-   createTravelPlan: (TravelPlanUpdate) -> (Result_7);
-   getAllTP_admin: () -> (Result_6) query;
-   loginAdmin: () -> (Result_2) query;
-   read: () -> (Result_5) query;
-   readAllProof: () -> (Result);
-   readAllTPUser: () -> (Result_4) query;
-   readProofOfTP: (text) -> (Result_3);
-   registerAdmin: (text, Admin) -> (Result_2);
-   setStatusReceivedICP: (bool, text) -> (Result);
-   storage: () -> (Result_1) query;
-   updateTravelPlan: (TravelPlanUpdate) -> (Result);
- };
 type TravelPlanUpdate = 
  record {
    idtp: text;
@@ -55,10 +32,7 @@ type TravelPlan =
 type Result_9 = 
  variant {
    err: Error;
-   ok: record {
-         Analysis;
-         vec text;
-       };
+   ok: opt vec text;
  };
 type Result_8 = 
  variant {
@@ -108,6 +82,14 @@ type Result_2 =
    err: Error;
    ok: Admin;
  };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: record {
+         Analysis;
+         vec text;
+       };
+ };
 type Result_1 = 
  variant {
    err: Error;
@@ -136,7 +118,6 @@ type Profile =
    user: User;
    wallets: opt vec text;
  };
-type ICP = record {e8s: nat64;};
 type Error = 
  variant {
    AlreadyExisting;
@@ -160,4 +141,21 @@ type Admin__1 =
    last_name: opt text;
  };
 type Admin = record {admin: Admin__1;};
-service : () -> Triip
+service : {
+  addWallet: (text) -> (Result_5);
+  analysis: () -> (Result_10) query;
+  approveHP_admin: (text, text, ProofTP) -> (Result_9);
+  create: (Profile) -> (Result);
+  createProofTP: (text, ProofTP__1) -> (Result_8);
+  createTravelPlan: (TravelPlanUpdate) -> (Result_7);
+  getAllTP_admin: () -> (Result_6) query;
+  loginAdmin: () -> (Result_2) query;
+  read: () -> (Result_5) query;
+  readAllProof: () -> (Result);
+  readAllTPUser: () -> (Result_4) query;
+  readProofOfTP: (text) -> (Result_3);
+  registerAdmin: (text, Admin) -> (Result_2);
+  setStatusReceivedICP: (bool, text) -> (Result);
+  storage: () -> (Result_1) query;
+  updateTravelPlan: (TravelPlanUpdate) -> (Result);
+}

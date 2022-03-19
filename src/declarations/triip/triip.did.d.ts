@@ -17,7 +17,6 @@ export type Error = { 'AlreadyExisting' : null } |
   { 'NotFound' : null } |
   { 'NotAuthorized' : null } |
   { 'SomethingWrong' : null };
-export interface ICP { 'e8s' : bigint }
 export interface Profile { 'user' : User, 'wallets' : [] | [Array<string>] }
 export interface ProofTP {
   'uid' : Principal,
@@ -29,6 +28,8 @@ export interface ProofTP__1 { 'img_key' : [] | [string] }
 export type Result = { 'ok' : null } |
   { 'err' : Error };
 export type Result_1 = { 'ok' : [string, string, string, string] } |
+  { 'err' : Error };
+export type Result_10 = { 'ok' : [Analysis, Array<string>] } |
   { 'err' : Error };
 export type Result_2 = { 'ok' : Admin } |
   { 'err' : Error };
@@ -48,7 +49,7 @@ export type Result_7 = { 'ok' : string } |
   { 'err' : Error };
 export type Result_8 = { 'ok' : [] | [string] } |
   { 'err' : Error };
-export type Result_9 = { 'ok' : [Analysis, Array<string>] } |
+export type Result_9 = { 'ok' : [] | [Array<string>] } |
   { 'err' : Error };
 export interface TravelPlan {
   'uid' : Principal,
@@ -72,16 +73,14 @@ export interface TravelPlanUpdate {
   'idtp' : string,
   'travel_plan' : TravelPlanInformation,
 }
-export interface Triip {
-  'accountId' : () => Promise<string>,
-  'accountIdP' : (arg_0: Principal) => Promise<string>,
+export interface User { 'username' : [] | [string] }
+export interface Vetted { 'updated_at' : bigint, 'staff' : Principal }
+export interface _SERVICE {
   'addWallet' : (arg_0: string) => Promise<Result_5>,
-  'analysis' : () => Promise<Result_9>,
+  'analysis' : () => Promise<Result_10>,
   'approveHP_admin' : (arg_0: string, arg_1: string, arg_2: ProofTP) => Promise<
-      Result
+      Result_9
     >,
-  'balance' : () => Promise<ICP>,
-  'balanceShared' : () => Promise<ICP>,
   'create' : (arg_0: Profile) => Promise<Result>,
   'createProofTP' : (arg_0: string, arg_1: ProofTP__1) => Promise<Result_8>,
   'createTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result_7>,
@@ -96,6 +95,3 @@ export interface Triip {
   'storage' : () => Promise<Result_1>,
   'updateTravelPlan' : (arg_0: TravelPlanUpdate) => Promise<Result>,
 }
-export interface User { 'username' : [] | [string] }
-export interface Vetted { 'updated_at' : bigint, 'staff' : Principal }
-export interface _SERVICE extends Triip {}
