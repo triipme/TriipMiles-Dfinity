@@ -12787,6 +12787,11 @@ raw-body@2.4.0:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
+react-aframe-ar@^1.18.0:
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/react-aframe-ar/-/react-aframe-ar-1.18.0.tgz#b17ec37f42e5ec978787939d12be30b003f6d102"
+  integrity sha512-NBHMMIct985ccm8rrOfGi1aBaaiwNJZjzEWiivA+gJ+VPZYJ+/3Epfo/l2Ts5fV0qYGnfstxS63TXaC8+uK3AA==
+
 react-apexcharts@^1.3.9:
   version "1.3.9"
   resolved "https://registry.yarnpkg.com/react-apexcharts/-/react-apexcharts-1.3.9.tgz#d97e53fd513dc6ff73b90c2364c3bdd88d8dad01"
@@ -13047,10 +13052,10 @@ react-use@^17.3.2:
     ts-easing "^0.2.0"
     tslib "^2.1.0"
 
-react-web-ar@1.0.0-beta3:
-  version "1.0.0-beta3"
-  resolved "https://registry.yarnpkg.com/react-web-ar/-/react-web-ar-1.0.0-beta3.tgz#679b14fca081dd847b25c581c06513df8020325a"
-  integrity sha512-w8K+B7ElEXAPUkCD8Llz/lYSnr7yBW6vCS99YDZcoZ6jCRQY/9sIiDaHCrClDwPHKuQjxZ26/6zsEkMC+YQTEQ==
+react-web-ar@1.0.0-beta2:
+  version "1.0.0-beta2"
+  resolved "https://registry.yarnpkg.com/react-web-ar/-/react-web-ar-1.0.0-beta2.tgz#a90317e163ff10c1d14a010d032fa2af6e8c1d2c"
+  integrity sha512-+g4jx0bfmbOn5DbOPNQAKC8m85sS9EUN7rZC8exHpdItieVOxJRubzX4AAM+xdoMzMz/on7/IRViLClC7CoSOQ==
 
 react@^17.0.2:
   version "17.0.2"

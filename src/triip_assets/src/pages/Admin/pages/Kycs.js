@@ -1,3 +1,4 @@
+import React from 'react';
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -52,7 +53,6 @@ function Kycs() {
                 const ApiReasonRejectURL = 'https://www.triip.me/api/v1/kyc_reject_reasons?fbclid=IwAR03d3PZC2bHmsuhDKUuZxHiQjzJC3i64rL1hSweM9KAT70Ami6mTQG-9gQ'
                 const res = await fetch(ApiReasonRejectURL)
                 const resJson = await res.json()
-                console.log(resJson.data)
                 setSelectRejects(resJson.data)
             } catch (error) {
                 console.log("Fail to call api reject reason", error)

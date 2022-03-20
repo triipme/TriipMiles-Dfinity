@@ -3,7 +3,7 @@ import React, { createContext, lazy, Suspense, useState } from "react";
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import { Loading, Notification } from "../components";
 import { AdminRequiredAuth, NavBar, NormalRequiredAuth } from "../containers";
-import Kyc from "../pages/Admin/pages/Kyc";
+import Kyc from "../pages/Admin/pages/Kycs";
 
 import { navbar, account } from "../utils/paths";
 
@@ -13,7 +13,7 @@ const Admin = lazy(() => import("../pages/Admin/index"));
 const DashboardLayout = lazy(() => import("../pages/Admin/layouts/dashboard"));
 const DashboardApp = lazy(() => import("../pages/Admin/pages/DashboardApp"));
 const User = lazy(() => import("../pages/Admin/pages/User"));
-const KYCs = lazy(() => import("../pages/Admin/pages/KYCs"));
+const Kycs = lazy(() => import("../pages/Admin/pages/Kycs"));
 const Blog = lazy(() => import("../pages/Admin/pages/Blog"));
 const Login = lazy(() => import("../pages/Admin/pages/Login"));
 const Register = lazy(() => import("../pages/Admin/pages/Register"));
@@ -73,14 +73,6 @@ const Main = () => {
                 }
               />
               <Route
-                path="kycs"
-                element={
-                  <AdminRequiredAuth>
-                    <KYCs />
-                  </AdminRequiredAuth>
-                }
-              />
-              <Route
                 path="blog"
                 element={
                   <AdminRequiredAuth>
@@ -92,7 +84,7 @@ const Main = () => {
                 path="kyc"
                 element={
                   <AdminRequiredAuth>
-                    <Kyc />
+                    <Kycs />
                   </AdminRequiredAuth>
                 }
               />
