@@ -576,4 +576,138 @@ shared({caller = owner}) actor class Triip() = this{
         Debug.print(debug_show(Iter.toArray(state.proofs.entries())));
         #ok(());
     };
+
+    // KYC
+    public shared(msg) func createKYC(kyc: Types.KYCs) : async Result.Result<(),Types.Error> {
+        let uid = msg.caller;
+
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };
+
+        let read_kyc = state.kycs.get(uid);
+
+        switch(read_kyc){
+            case (? current_kyc){
+                if(current_kyc.status == ?"rejected"){
+                    let kyc_update : Types.KYCs = {
+                        info = kyc.info;
+                        images = kyc.images;
+                        comments = kyc.comments;
+                        status = ?"waiting";
+                        createdAt = current_kyc.createdAt;
+                        updatedAt = ?Time.now();
+                    };
+                    let kyc_updated = state.kycs.replace(uid, kyc_update);
+                    #ok(());
+                }
+                else {#err(#AlreadyExisting)};
+            };
+            case (null){
+                let new_kyc : Types.KYCs = {
+                    info = kyc.info;
+                    images = kyc.images;
+                    comments = kyc.comments;
+                    status : ?Text = Option.get(null,?"new");
+                    createdAt : ?Int = Option.get(null,?Time.now());
+                    updatedAt : ?Int = Option.get(null,?Time.now());
+                };
+                let create_kyc = state.kycs.put(uid, new_kyc);
+                #ok(());
+            };
+        };
+    };
+
+    public shared query(msg) func readKYC() : async Result.Result<(Types.KYCs),Types.Error>{
+        let uid = msg.caller;
+
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };    
+
+        let read_kyc = state.kycs.get(uid);
+
+        return Result.fromOption(read_kyc, #NotFound);
+    };
+
+    public shared query(msg) func get_statusKYC() : async Result.Result<?Text,Types.Error>{
+        let uid = msg.caller;
+
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };    
+
+        let read_kyc = state.kycs.get(uid);
+
+        switch(read_kyc){
+            case null{
+                #err(#NotFound);
+            };
+            case (? current_kyc){
+                let kyc_status = current_kyc.status;
+                #ok(kyc_status);
+            };
+        };
+    };
+
+    public shared(msg) func updateKYC(kyc : Types.KYCs) : async Result.Result<(),Types.Error>{
+        let uid = msg.caller;
+
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        
+        
+        let read_kyc = state.kycs.get(uid);
+
+        switch(read_kyc){
+            case null{
+                #err(#NotFound);
+            };
+            case (? current_kyc){
+                let kyc_update : Types.KYCs = {
+                    info = kyc.info;
+                    images = kyc.images;
+                    comments = kyc.comments;
+                    status : ?Text = Option.get(null,?"waiting");
+                    createdAt = current_kyc.createdAt;
+                    updatedAt = ?Time.now();
+                };
+                let kyc_updated = state.kycs.replace(uid, kyc_update);
+                #ok(());
+            };
+        };
+    };
+
+
+    public shared(msg) func approveKYC(kyc_status: Text) : async Result.Result<(),Types.Error>{
+        let uid = msg.caller;
+
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };        
+        
+        let read_kyc = state.kycs.get(uid);
+
+        switch(read_kyc){
+            case null{
+                #err(#NotFound);
+            };
+            case (? current_kyc){
+                if(current_kyc.status == ?"approved"){
+                    #ok();
+                } else{
+                    let kyc_update : Types.KYCs = {
+                    info = current_kyc.info;
+                    images = current_kyc.images;
+                    comments = current_kyc.comments;
+                    status = ?kyc_status;
+                    createdAt = current_kyc.createdAt;
+                    updatedAt = ?Time.now();
+                    };
+                    let kyc_updated = state.kycs.replace(uid, kyc_update);
+                    #ok(());
+                };
+            };
+        };
+    };
 }
