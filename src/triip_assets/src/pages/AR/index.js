@@ -12,7 +12,7 @@ const AR = () => {
             <Button variant="contained" sx={{ mr: 2 }} onClick={() => navigate("/ar/embed/marker")}>
               Marker
             </Button>
-            <Button variant="contained" onClick={() => navigate("/ar/geolocation")}>
+            <Button variant="contained" onClick={() => navigate("/ar/embed/geolocation")}>
               GeoLocation
             </Button>
           </Box>

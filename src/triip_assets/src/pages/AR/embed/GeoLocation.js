@@ -5,7 +5,7 @@ const GeoLocationEmbed = () => {
     <div
       dangerouslySetInnerHTML={{
         __html:
-          '<iframe src="https://futureeyes.github.io/arlocation/index.html" frameborder="0" style="width: 100vw; height:99vh" allowFullScreen allow="camera;geolocation;"></iframe>'
+          '<iframe src="https://futureeyes.github.io/arlocation/getalllocateScale.html" frameborder="0" style="width: 100vw; height:99vh" allowFullScreen allow="camera;geolocation;"></iframe>'
       }}
     />
   );
