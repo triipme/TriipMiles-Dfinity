@@ -1,17 +1,15 @@
 {
   "canisters": {
+    "triip_models": {
+      "main": "src/triip_models/main.mo",
+      "type": "motoko"
+    },
     "triip": {
       "main": "src/triip/main.mo",
       "type": "motoko",
       "dependencies": [
-        "triip_rust"
+        "triip_models"
       ]
-    },
-    "triip_rust": {
-      "type": "custom",
-      "candid": "src/triip_rust/src/triip_rust.did",
-      "build": "sh ./build.sh",
-      "wasm": "target/wasm32-unknown-unknown/release/triip_rust-opt.wasm"
     },
     "triip_token": {
       "main": "src/triip_token/token.mo",
@@ -27,15 +25,6 @@
       "source": [
         "src/triip_assets/assets",
         "dist/triip_assets/"
-      ],
-      "type": "assets"
-    },
-    "triip_ar": {
-      "frontend": {
-        "entrypoint": "src/triip_ar/index.html"
-      },
-      "source": [
-        "src/triip_ar"
       ],
       "type": "assets"
     }
