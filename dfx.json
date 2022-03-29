@@ -1,14 +1,17 @@
 {
   "canisters": {
+    "triip_models": {
+      "main": "src/triip_models/main.mo",
+      "type": "motoko"
+    },
     "triip": {
       "main": "src/triip/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "dependencies": [
+        "triip_models"
+      ]
     },
-    "triip_icp":{
-      "main": "src/triip_icp/main.mo",
-      "type": "motoko"
-    },
-    "triip_token":{
+    "triip_token": {
       "main": "src/triip_token/token.mo",
       "type": "motoko"
     },
@@ -28,7 +31,6 @@
   },
   "defaults": {
     "build": {
-      "args": "",
       "packtool": "vessel sources"
     }
   },

@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Upload } from "@aws-sdk/lib-storage";
-import { S3Client } from "@aws-sdk/client-s3";
-import S3 from "aws-sdk/clients/s3";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import AWS from "aws-sdk";
 
 const useGetFile = init => {
   const [result, setResult] = useState("");
@@ -12,7 +10,11 @@ const useGetFile = init => {
     accessKeyId: storage[1],
     secretAccessKey: storage[2]
   };
-  const s3 = new S3({ region: storage[3], credentials: creds });
+  AWS.config.update(creds);
+  const s3 = new AWS.S3({
+    params: { Bucket: storage[0] },
+    region: storage[3]
+  });
   useEffect(() => {
     if (!!key) {
       console.log("key", key);

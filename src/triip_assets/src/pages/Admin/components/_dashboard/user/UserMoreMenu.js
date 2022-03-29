@@ -36,18 +36,15 @@ export default function UserMoreMenu({ id_proof, proof, allow_approve }) {
   const theme = useTheme();
   const [isReject, setIsReject] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { actor, actor_transfer } = useSelector(state => state.user);
+  const { actor } = useSelector(state => state.user);
   const handleApprove = async () => {
     try {
       if (!!actor?.approveHP_admin) {
         console.log(id_proof, "approved", proof[0]);
         const aid = await actor?.approveHP_admin(id_proof, "approved", proof[0]);
         if ("ok" in aid) {
-          console.log(aid?.ok[0]);
-          const result_transfer = await actor_transfer?.transfer(["ptp_approve"], aid?.ok[0][0]);
           toast.success("Approved");
-          if ("Ok" in result_transfer) toast.success("Send 0.000033 ICP", { duration: 10000 });
-          else throw result_transfer?.Err;
+          toast.success("Send 0.000033 ICP", { duration: 10000 });
         } else {
           throw aid?.err;
         }

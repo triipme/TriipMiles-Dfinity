@@ -30,7 +30,7 @@ const CHART_DATA = [
 ];
 const rosetta = new RosettaApi();
 const ADDRESS_ADMIN =
-  "18BF03AC2177B8B03CCC27BBC7B26C5EE01D96246977351804BB2BCBD23DE1FA".toLocaleLowerCase();
+  "1258F4461440E1149DD1B42A9D566B82EA46014BEF1FBCD2D67124B7496FA477".toLocaleLowerCase();
 export default function AppWebsiteVisits() {
   const [data, setData] = useState();
   useEffect(() => {

@@ -23,10 +23,10 @@ import RosettaApi from "../../../services/rosetta";
 // ----------------------------------------------------------------------
 const rossetaApi = new RosettaApi();
 export default function DashboardApp() {
-  const { actor, actor_transfer } = useSelector(state => state.user);
+  const { actor } = useSelector(state => state.user);
   const [analysis, setAnalysis] = useState(null);
   const [wallet, setWallet] = useState(null);
-  const [aId, setAId] = useState();
+  const aId = "1258F4461440E1149DD1B42A9D566B82EA46014BEF1FBCD2D67124B7496FA477";
   useEffect(() => {
     (async () => {
       try {
@@ -43,18 +43,14 @@ export default function DashboardApp() {
   useEffect(() => {
     (async () => {
       try {
-        if (!!actor_transfer?.balance) {
-          const aid = await actor_transfer?.accountId();
-          const balance = await rossetaApi.accountBalanceByAddress(aid);
-          console.log(balance);
-          setWallet(Number(balance?.balances[0].value) / 1e8);
-          setAId(aid);
-        }
+        const balance = await rossetaApi.accountBalanceByAddress(aId);
+        console.log(balance);
+        setWallet(Number(balance?.balances[0].value) / 1e8);
       } catch (error) {
         console.log(error);
       }
     })();
-  }, [actor_transfer]);
+  }, []);
   return (
     <Page title="Dashboard | Minimal-UI">
       <Container maxWidth="xl">

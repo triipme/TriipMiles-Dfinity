@@ -13,30 +13,28 @@ import List "mo:base/List";
 import Time "mo:base/Time";
 import Principal "mo:base/Principal";
 import Error "mo:base/Error";
-
+import Binary "mo:encoding/Binary";
+import Blob "mo:base/Blob";
+import CRC32 "mo:hash/CRC32";
 import AId "mo:principal/blob/AccountIdentifier";
 
-import Types "Types";
-import State "State";
-import ProofTP "model/ProofTP";
-import Env ".env"
+import Types "../triip_models/Types";
+import State "../triip_models/State";
+import Ledger "../triip_models/model/Ledger";
+import ProofTP "../triip_models/model/ProofTP";
+import Env ".env";
 
-actor {
+shared({caller = owner}) actor class Triip() = this{
     /*------------------------ App state--------------------------- */
     var state : State.State = State.empty();
 
-    // /*public query*/ func getState() : async State.StateShared {
-    //     State.share(state)
-    // };
-
-    // /*public*/ func setState(st : State.StateShared) : async () {
-    //     state := State.fromShared(st);
-    // };
     private stable var profiles : [(Principal,Types.Profile)] = [];
     private stable var travelplans : [(Text,Types.TravelPlan)] = [];
     private stable var proofs : [(Text,Types.ProofTP)] = [];
     private stable var admin : [(Principal,Types.Admin)] = [];
     private stable var vetted : [(Text,Types.Vetted)] = [];
+    private stable var kycs : [(Principal,Types.KYCs)] = [];
+    private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
     system func preupgrade() {
         Debug.print("Begin preupgrade");
@@ -45,33 +43,84 @@ actor {
         proofs := Iter.toArray(state.proofs.entries());
         admin := Iter.toArray(state.admin.entries());
         vetted := Iter.toArray(state.vetted.entries());
+        kycs := Iter.toArray(state.kycs.entries());
         Debug.print("End preupgrade");
     };
 
     system func postupgrade() {
         Debug.print("Begin postupgrade");
-        for((k,v) in Iter.fromArray(admin)) {
-            state.admin.put(k,v);
+        for ((k, v) in Iter.fromArray(admin)) {
+            state.admin.put(k, v);
         };
-        for((k,v) in Iter.fromArray(profiles)) {
-            state.profiles.put(k,v);
+        for ((k, v) in Iter.fromArray(profiles)) {
+            state.profiles.put(k, v);
         };
-        for((k,v) in Iter.fromArray(travelplans)) {
-            state.travelplans.put(k,v);
+        for ((k, v) in Iter.fromArray(travelplans)) {
+            state.travelplans.put(k, v);
         };
-        for((k,v) in Iter.fromArray(proofs)) {
-            state.proofs.put(k,v);
+        for ((k, v) in Iter.fromArray(proofs)) {
+            state.proofs.put(k, v);
         };
-        for((k,v) in Iter.fromArray(vetted)) {
-            state.vetted.put(k,v);
+        for ((k, v) in Iter.fromArray(vetted)) {
+            state.vetted.put(k, v);
+        };
+        for ((k, v) in Iter.fromArray(kycs)) {
+            state.kycs.put(k, v);
         };
         Debug.print("End postupgrade");
     };
-    // func require_permission(p : Principal) : () {
-    //     if(Principal.toText(p)=="2vxsx-fae"){
-    //         throw Error.reject("NotAuthorized");//isNotAuthorized
-    //     };
-    // };
+
+    public query func accountId() : async Text {
+        AId.toText(aId());
+    };
+
+    public func accountIdP(principal : Principal) : async Text {
+        AId.toText(principalToAid(principal));
+    };
+
+    private func aId() : AId.AccountIdentifier {
+        AId.fromPrincipal(Principal.fromActor(this), null);
+    };
+
+    private func principalToAid(p : Principal) : AId.AccountIdentifier {
+        AId.fromPrincipal(p,null)
+    };
+
+    public func balance() : async Ledger.ICP {
+        await ledger.account_balance({
+            account = aId();
+        });
+    };
+    public shared({caller}) func balanceShared() : async Ledger.ICP {
+        assert(caller == owner);
+        await ledger.account_balance({
+            account = principalToAid(caller);
+        });
+    };
+    func transfer(type_transfer: Text, to : Text) : async Ledger.TransferResult {
+        // Debug.print(debug_show(caller,owner));
+        // assert(caller == owner); //this check principal owner vs caller is Admin
+        let toAId : AId.AccountIdentifier = switch(AId.fromText(to)) {
+            case (#err(_)) {
+                assert(false);
+                loop {};
+            };
+            case (#ok(a)) a;
+        };
+        
+        var amount : Ledger.ICP = {e8s=0};
+        if(type_transfer=="tp") amount := {e8s = 100};
+        if(type_transfer=="ptp_approve") amount := {e8s = 3300};
+
+        await ledger.transfer({
+            memo            = 1;
+            amount          = amount;
+            fee             = { e8s = 10_000 };
+            from_subaccount = null;
+            to              = toAId;
+            created_at_time = null;
+        });
+    };
     //Admin
     type Analysis = {
         profiles : Nat;
@@ -189,7 +238,7 @@ actor {
         };
         #ok(allTP);
     };
-    public shared({caller}) func approveHP_admin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Result.Result<?[(Text)],Types.Error>{
+    public shared({caller}) func approveHP_admin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Result.Result<(),Types.Error>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        let proof_update : Types.ProofTP = {
@@ -209,11 +258,18 @@ actor {
             switch(wallet_id){
                 case(null) #err(#NotFound);
                 case(? v){
-                    #ok((v.wallets));
+                    switch(await transfer("tp",Option.get(v.wallets,[""])[0])){
+                        case (#Err(transfer)){
+                            #err(#NotFound);
+                        };
+                        case (#Ok(transfer)){
+                            #ok(());
+                        };
+                    };
                 }
             };
         }else{
-            #ok((?[]));
+            #ok(());
         }
     };
 
@@ -255,8 +311,8 @@ actor {
 
         if(Principal.toText(uid)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
-        };        let rsReadUser = state.profiles.get(uid);
-
+        };        
+        let rsReadUser = state.profiles.get(uid);
         switch(rsReadUser){
             case null{
                 #err(#NotFound);
@@ -341,12 +397,27 @@ actor {
             let plan : Types.TravelPlan = {
                 uid = caller;
                 travel_plan = travel_plan.travel_plan;
-                is_received = false;
+                is_received = true;
                 created_at = Time.now();
             };
             Debug.print("T");
-            state.travelplans.put(travel_plan.idtp,plan);
-            #ok((travel_plan.idtp));
+            let rsReadUser : ? Types.Profile = state.profiles.get(caller);
+            switch(rsReadUser){
+                case null{
+                    #err(#NotFound);
+                };
+                case (? v){
+                    switch(await transfer("tp",Option.get(v.wallets,[""])[0])){
+                        case (#Err(transfer)){
+                            #err(#NotFound);
+                        };
+                        case (#Ok(transfer)){
+                            state.travelplans.put(travel_plan.idtp,plan);
+                            #ok((travel_plan.idtp));
+                        };
+                    };
+                };
+            };
         } else {
             Debug.print("F");
             #err(#Enough);
@@ -483,7 +554,7 @@ actor {
         let uid = msg.caller;
         if(Principal.toText(uid)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
-        };        
+        };
         let proof = state.proofs.get(idtp);
         return Result.fromOption(proof,#NotFound);
     };
