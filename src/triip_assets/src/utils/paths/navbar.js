@@ -13,6 +13,7 @@ const Geolocation = lazy(() => import("../../pages/AR/Geolocation"));
 const Marker = lazy(() => import("../../pages/AR/Marker"));
 const MarkerEmbed = lazy(() => import("../../pages/AR/embed/Marker"));
 const GeoLocationEmbed = lazy(() => import("../../pages/AR/embed/GeoLocation"));
+const Metaverse = lazy(() => import("../../pages/Metaverse"));
 
 export const navbar = [
   {
@@ -73,6 +74,11 @@ export const navbar = [
         name: "AR"
       }
     ]
+  },
+  {
+    path: "/metaverse",
+    component: <Metaverse />,
+    name: "Metaverse"
   },
   {
     path: "/404",
