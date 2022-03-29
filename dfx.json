@@ -2,10 +2,7 @@
   "canisters": {
     "triip": {
       "main": "src/triip/main.mo",
-      "type": "motoko",
-      "dependencies": [
-        "triip_rust"
-      ]
+      "type": "motoko"
     },
     "triip_rust": {
       "type": "custom",
@@ -27,15 +24,6 @@
       "source": [
         "src/triip_assets/assets",
         "dist/triip_assets/"
-      ],
-      "type": "assets"
-    },
-    "triip_ar": {
-      "frontend": {
-        "entrypoint": "src/triip_ar/index.html"
-      },
-      "source": [
-        "src/triip_ar"
       ],
       "type": "assets"
     }

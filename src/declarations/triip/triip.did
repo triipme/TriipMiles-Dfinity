@@ -4,6 +4,35 @@ type Vetted =
    updated_at: int;
  };
 type User = record {username: opt text;};
+type Triip = 
+ service {
+   accountId: () -> (text) query;
+   accountIdP: (principal) -> (text);
+   addWallet: (text) -> (Result_6);
+   analysis: () -> (Result_11) query;
+   approveHP_admin: (text, text, ProofTP) -> (Result);
+   approveKYC: (text, text) -> (Result);
+   balance: () -> (ICP);
+   balanceShared: () -> (ICP);
+   create: (Profile) -> (Result);
+   createKYC: (KYCsUpdate) -> (Result_10);
+   createProofTP: (text, ProofTP__1) -> (Result_8);
+   createTravelPlan: (TravelPlanUpdate) -> (Result_10);
+   getAllTP_admin: () -> (Result_9) query;
+   get_statusKYC: () -> (Result_8) query;
+   listKYCs: () -> (Result_7) query;
+   loginAdmin: () -> (Result_2) query;
+   read: () -> (Result_6) query;
+   readAllProof: () -> (Result);
+   readAllTPUser: () -> (Result_5) query;
+   readKYC: () -> (Result_4) query;
+   readProofOfTP: (text) -> (Result_3);
+   registerAdmin: (text, Admin) -> (Result_2);
+   setStatusReceivedICP: (bool, text) -> (Result);
+   storage: () -> (Result_1) query;
+   updateKYC: (KYCs) -> (Result);
+   updateTravelPlan: (TravelPlanUpdate) -> (Result);
+ };
 type TravelPlanUpdate = 
  record {
    idtp: text;
@@ -32,7 +61,13 @@ type TravelPlan =
 type Result_9 = 
  variant {
    err: Error;
-   ok: opt vec text;
+   ok: vec record {
+             text;
+             TravelPlan;
+             opt ProofTP;
+             opt Vetted;
+             opt text;
+           };
  };
 type Result_8 = 
  variant {
@@ -42,20 +77,12 @@ type Result_8 =
 type Result_7 = 
  variant {
    err: Error;
-   ok: text;
- };
-type Result_6 = 
- variant {
-   err: Error;
    ok: vec record {
-             text;
-             TravelPlan;
-             opt ProofTP;
-             opt Vetted;
-             opt text;
+             principal;
+             KYCs;
            };
  };
-type Result_5 = 
+type Result_6 = 
  variant {
    err: Error;
    ok: record {
@@ -63,7 +90,7 @@ type Result_5 =
          text;
        };
  };
-type Result_4 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: vec record {
@@ -71,6 +98,11 @@ type Result_4 =
              TravelPlan;
              opt ProofTP;
            };
+ };
+type Result_4 = 
+ variant {
+   err: Error;
+   ok: KYCs;
  };
 type Result_3 = 
  variant {
@@ -82,13 +114,18 @@ type Result_2 =
    err: Error;
    ok: Admin;
  };
-type Result_10 = 
+type Result_11 = 
  variant {
    err: Error;
    ok: record {
          Analysis;
          vec text;
        };
+ };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: text;
  };
 type Result_1 = 
  variant {
@@ -118,6 +155,34 @@ type Profile =
    user: User;
    wallets: opt vec text;
  };
+type KYCsUpdate = 
+ record {
+   comments: opt text;
+   images: vec text;
+   info: Info;
+ };
+type KYCs = 
+ record {
+   approver: opt principal;
+   comments: opt text;
+   createdAt: opt int;
+   images: vec text;
+   info: Info;
+   status: opt text;
+   updatedAt: opt int;
+ };
+type Info = 
+ record {
+   address: text;
+   citizenship: text;
+   country: text;
+   email: text;
+   id_number: text;
+   id_type: text;
+   name: text;
+   phone: text;
+ };
+type ICP = record {e8s: nat64;};
 type Error = 
  variant {
    AlreadyExisting;
@@ -141,21 +206,4 @@ type Admin__1 =
    last_name: opt text;
  };
 type Admin = record {admin: Admin__1;};
-service : {
-  addWallet: (text) -> (Result_5);
-  analysis: () -> (Result_10) query;
-  approveHP_admin: (text, text, ProofTP) -> (Result_9);
-  create: (Profile) -> (Result);
-  createProofTP: (text, ProofTP__1) -> (Result_8);
-  createTravelPlan: (TravelPlanUpdate) -> (Result_7);
-  getAllTP_admin: () -> (Result_6) query;
-  loginAdmin: () -> (Result_2) query;
-  read: () -> (Result_5) query;
-  readAllProof: () -> (Result);
-  readAllTPUser: () -> (Result_4) query;
-  readProofOfTP: (text) -> (Result_3);
-  registerAdmin: (text, Admin) -> (Result_2);
-  setStatusReceivedICP: (bool, text) -> (Result);
-  storage: () -> (Result_1) query;
-  updateTravelPlan: (TravelPlanUpdate) -> (Result);
-}
+service : () -> Triip

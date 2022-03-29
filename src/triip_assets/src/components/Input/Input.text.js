@@ -10,6 +10,7 @@ const InputText = ({
   autocompleteOptions,
   defaultValue = "",
   placeHolder,
+  disabled=false,
   helperTextError,
   helperTextErrorCustom,
   rules
@@ -31,11 +32,13 @@ const InputText = ({
               options={autocompleteOptions ?? []}
               onInputChange={(evt, newValue) => onChange(newValue)}
               inputValue={value}
+              value={value}
               renderInput={params => (
                 <TextFieldStyled
                   {...params}
                   placeholder={placeHolder}
                   name={name}
+                  value={value}
                   label={label}
                   type="text"
                   error={!!error}
@@ -50,6 +53,7 @@ const InputText = ({
               label={label}
               onChange={onChange}
               value={value}
+              disabled={disabled}
               type="text"
               error={!!error}
               helperText={helperTextError[error?.type] ?? helperTextErrorCustom}

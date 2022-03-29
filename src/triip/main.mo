@@ -578,7 +578,7 @@ shared({caller = owner}) actor class Triip() = this{
     };
 
     // KYC
-    public shared(msg) func createKYC(kyc: Types.KYCs) : async Result.Result<(),Types.Error> {
+    public shared(msg) func createKYC(kyc: Types.KYCsUpdate) : async Result.Result<Text,Types.Error> {
         let uid = msg.caller;
 
         if(Principal.toText(uid)=="2vxsx-fae"){
@@ -594,12 +594,13 @@ shared({caller = owner}) actor class Triip() = this{
                         info = kyc.info;
                         images = kyc.images;
                         comments = kyc.comments;
+                        approver: ?Principal= null;
                         status = ?"waiting";
                         createdAt = current_kyc.createdAt;
                         updatedAt = ?Time.now();
                     };
                     let kyc_updated = state.kycs.replace(uid, kyc_update);
-                    #ok(());
+                    #ok(("success"));
                 }
                 else {#err(#AlreadyExisting)};
             };
@@ -607,13 +608,14 @@ shared({caller = owner}) actor class Triip() = this{
                 let new_kyc : Types.KYCs = {
                     info = kyc.info;
                     images = kyc.images;
-                    comments = kyc.comments;
+                    comments : ?Text = Option.get(null,?"");
                     status : ?Text = Option.get(null,?"new");
+                    approver: ?Principal= null;
                     createdAt : ?Int = Option.get(null,?Time.now());
                     updatedAt : ?Int = Option.get(null,?Time.now());
                 };
                 let create_kyc = state.kycs.put(uid, new_kyc);
-                #ok(());
+                #ok(("sucess"));
             };
         };
     };
@@ -628,6 +630,17 @@ shared({caller = owner}) actor class Triip() = this{
         let read_kyc = state.kycs.get(uid);
 
         return Result.fromOption(read_kyc, #NotFound);
+    };
+    public shared query(msg) func listKYCs() : async Result.Result<[(Principal,Types.KYCs)],Types.Error>{
+        let uid = msg.caller;
+        var list : [(Principal,Types.KYCs)] = [];
+        if(Principal.toText(uid)=="2vxsx-fae"){
+            throw Error.reject("NotAuthorized");//isNotAuthorized
+        };    
+        for((K,V) in state.kycs.entries()){
+            list := Array.append<(Principal,Types.KYCs)>(list,[(K,V)]);
+        };
+        #ok((list));
     };
 
     public shared query(msg) func get_statusKYC() : async Result.Result<?Text,Types.Error>{
@@ -668,6 +681,7 @@ shared({caller = owner}) actor class Triip() = this{
                     info = kyc.info;
                     images = kyc.images;
                     comments = kyc.comments;
+                    approver: ?Principal= null;
                     status : ?Text = Option.get(null,?"waiting");
                     createdAt = current_kyc.createdAt;
                     updatedAt = ?Time.now();
@@ -679,9 +693,9 @@ shared({caller = owner}) actor class Triip() = this{
     };
 
 
-    public shared(msg) func approveKYC(kyc_status: Text) : async Result.Result<(),Types.Error>{
+    public shared(msg) func approveKYC(kyc_status: Text,comments:Text) : async Result.Result<(),Types.Error>{
         let uid = msg.caller;
-
+        Debug.print(debug_show(comments));
         if(Principal.toText(uid)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        
@@ -697,12 +711,13 @@ shared({caller = owner}) actor class Triip() = this{
                     #ok();
                 } else{
                     let kyc_update : Types.KYCs = {
-                    info = current_kyc.info;
-                    images = current_kyc.images;
-                    comments = current_kyc.comments;
-                    status = ?kyc_status;
-                    createdAt = current_kyc.createdAt;
-                    updatedAt = ?Time.now();
+                        info = current_kyc.info;
+                        images = current_kyc.images;
+                        comments = ?comments;
+                        status = ?kyc_status;
+                        approver : ?Principal= ?uid;
+                        createdAt = current_kyc.createdAt;
+                        updatedAt = ?Time.now();
                     };
                     let kyc_updated = state.kycs.replace(uid, kyc_update);
                     #ok(());
