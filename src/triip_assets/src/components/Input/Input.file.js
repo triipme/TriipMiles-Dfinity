@@ -2,7 +2,7 @@ import React from "react";
 import { TextField, Autocomplete } from "@mui/material/index";
 import { Controller } from "react-hook-form";
 import { styled } from "@mui/system";
-
+import { resizeImg } from "../../functions";
 const InputFile = ({
   name,
   label,
@@ -17,8 +17,9 @@ const InputFile = ({
   const readFile = (e, onChange) => {
     const reader = new FileReader();
     reader.readAsDataURL(e.target.files[0]);
-    reader.onload = data => {
-      onChange({ file: e.target.files[0], preview: data.target.result });
+    reader.onload = async data => {
+      const img = await resizeImg({ blob: e.target.files[0], asprX: 20, asprY: 20 });
+      onChange({ file: img, preview: data.target.result });
     };
   };
   return (

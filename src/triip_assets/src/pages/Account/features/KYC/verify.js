@@ -20,7 +20,7 @@ const Verify = () => {
     formState: { errors },
     handleSubmit
   } = useForm();
-  const [image, progress, setFile] = useUploadFile();
+  const [image, setFile] = useUploadFile();
   const { actor, profile } = useSelector(state => state.user);
   const [step, setStep] = useState(1);
   const handleS1 = () => {
@@ -28,9 +28,11 @@ const Verify = () => {
   };
   const handleS2 = async data => {
     const { fname, lname, front_photo, back_photo, selfie_photo, ...all } = data;
-    const f = nameBucket({ uid: profile._id, img: front_photo.file });
-    const b = nameBucket({ uid: profile._id, img: back_photo.file });
-    const s = nameBucket({ uid: profile._id, img: selfie_photo.file });
+    const images = [
+      { ...front_photo, name: nameBucket({ uid: profile._id, img: front_photo.file }) },
+      { ...back_photo, name: nameBucket({ uid: profile._id, img: back_photo.file }) },
+      { ...selfie_photo, name: nameBucket({ uid: profile._id, img: selfie_photo.file }) }
+    ];
     try {
       if (!!actor?.createKYC) {
         const rs = await actor.createKYC({
@@ -38,11 +40,18 @@ const Verify = () => {
             ...all,
             name: `${fname} ${lname}`
           },
-          images: [f, b, s],
+          images: images.map(img => img.name),
           comments: []
         });
         if ("ok" in rs) {
           setStep(3);
+          console.time("kyc up");
+          await Promise.all(
+            images.map(async img => {
+              setFile(img);
+            })
+          );
+          console.timeEnd("kyc up");
         } else {
           throw rs.err;
         }
@@ -54,6 +63,7 @@ const Verify = () => {
   const handleS3 = () => {};
   return (
     <Box>
+      {console.count("re-render kyc")}
       <Stack mb={2}>
         <Typography variant="body1" fontWeight="600">
           ID AUTHENTICATION

@@ -145,6 +145,9 @@ const NavBar = () => {
                 <LinkStyled href="https://experience.triip.me/">Experience</LinkStyled>
                 <LinkStyled href="https://share.triip.me/">Share</LinkStyled>
                 <LinkStyled href="https://shopping.triip.me/">Shop</LinkStyled>
+                <NavLinkStyled key={navbar[7].path} to={navbar[7].path}>
+                  {navbar[7].name}
+                </NavLinkStyled>
                 <NavLinkStyled key={navbar[5].path} to={navbar[5].path}>
                   Game
                 </NavLinkStyled>
@@ -241,6 +244,15 @@ const NavBar = () => {
                     href="https://shopping.triip.me/">
                     Shop
                   </LinkStyled>
+                  <NavLinkStyled
+                    onClick={() => setIsOpenMenu(false)}
+                    sx={{
+                      my: 1
+                    }}
+                    key={navbar[7].path}
+                    to={navbar[7].path}>
+                    {navbar[7].name}
+                  </NavLinkStyled>
                   <NavLinkStyled
                     onClick={() => setIsOpenMenu(false)}
                     sx={{

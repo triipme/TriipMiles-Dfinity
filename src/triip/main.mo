@@ -18,24 +18,16 @@ import Blob "mo:base/Blob";
 import CRC32 "mo:hash/CRC32";
 import AId "mo:principal/blob/AccountIdentifier";
 
-import Types "Types";
-import State "State";
-import Ledger "model/Ledger";
-import ProofTP "model/ProofTP";
+import Types "../triip_models/Types";
+import State "../triip_models/State";
+import Ledger "../triip_models/model/Ledger";
+import ProofTP "../triip_models/model/ProofTP";
 import Env ".env";
 
-// import T "canister:triip_rust";
 shared({caller = owner}) actor class Triip() = this{
     /*------------------------ App state--------------------------- */
     var state : State.State = State.empty();
 
-    // /*public query*/ func getState() : async State.StateShared {
-    //     State.share(state)
-    // };
-
-    // /*public*/ func setState(st : State.StateShared) : async () {
-    //     state := State.fromShared(st);
-    // };
     private stable var profiles : [(Principal,Types.Profile)] = [];
     private stable var travelplans : [(Text,Types.TravelPlan)] = [];
     private stable var proofs : [(Text,Types.ProofTP)] = [];
@@ -57,32 +49,26 @@ shared({caller = owner}) actor class Triip() = this{
 
     system func postupgrade() {
         Debug.print("Begin postupgrade");
-        for((k,v) in Iter.fromArray(admin)) {
-            state.admin.put(k,v);
+        for ((k, v) in Iter.fromArray(admin)) {
+            state.admin.put(k, v);
         };
-        for((k,v) in Iter.fromArray(profiles)) {
-            state.profiles.put(k,v);
+        for ((k, v) in Iter.fromArray(profiles)) {
+            state.profiles.put(k, v);
         };
-        for((k,v) in Iter.fromArray(travelplans)) {
-            state.travelplans.put(k,v);
+        for ((k, v) in Iter.fromArray(travelplans)) {
+            state.travelplans.put(k, v);
         };
-        for((k,v) in Iter.fromArray(proofs)) {
-            state.proofs.put(k,v);
+        for ((k, v) in Iter.fromArray(proofs)) {
+            state.proofs.put(k, v);
         };
-        for((k,v) in Iter.fromArray(vetted)) {
-            state.vetted.put(k,v);
+        for ((k, v) in Iter.fromArray(vetted)) {
+            state.vetted.put(k, v);
         };
-        for((k,v) in Iter.fromArray(kycs)) {
-            state.kycs.put(k,v);
+        for ((k, v) in Iter.fromArray(kycs)) {
+            state.kycs.put(k, v);
         };
         Debug.print("End postupgrade");
     };
-    // func require_permission(p : Principal) : () {
-    //     if(Principal.toText(p)=="2vxsx-fae"){
-    //         throw Error.reject("NotAuthorized");//isNotAuthorized
-    //     };
-    // };
-
 
     public query func accountId() : async Text {
         AId.toText(aId());
@@ -568,7 +554,7 @@ shared({caller = owner}) actor class Triip() = this{
         let uid = msg.caller;
         if(Principal.toText(uid)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
-        };        
+        };
         let proof = state.proofs.get(idtp);
         return Result.fromOption(proof,#NotFound);
     };
@@ -643,7 +629,7 @@ shared({caller = owner}) actor class Triip() = this{
         #ok((list));
     };
 
-    public shared query(msg) func get_statusKYC() : async Result.Result<?Text,Types.Error>{
+    public shared query(msg) func get_statusKYC() : async Result.Result<(?Text,?Text),Types.Error>{
         let uid = msg.caller;
 
         if(Principal.toText(uid)=="2vxsx-fae"){
@@ -658,7 +644,7 @@ shared({caller = owner}) actor class Triip() = this{
             };
             case (? current_kyc){
                 let kyc_status = current_kyc.status;
-                #ok(kyc_status);
+                #ok(kyc_status,current_kyc.comments);
             };
         };
     };
@@ -693,14 +679,14 @@ shared({caller = owner}) actor class Triip() = this{
     };
 
 
-    public shared(msg) func approveKYC(kyc_status: Text,comments:Text) : async Result.Result<(),Types.Error>{
+    public shared(msg) func approveKYC(kyc_status: Text,comments:Text,id:Text) : async Result.Result<(),Types.Error>{
         let uid = msg.caller;
-        Debug.print(debug_show(comments));
+        Debug.print(debug_show(id));
         if(Principal.toText(uid)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        
         
-        let read_kyc = state.kycs.get(uid);
+        let read_kyc = state.kycs.get((Principal.fromText(id)));
 
         switch(read_kyc){
             case null{
@@ -719,7 +705,7 @@ shared({caller = owner}) actor class Triip() = this{
                         createdAt = current_kyc.createdAt;
                         updatedAt = ?Time.now();
                     };
-                    let kyc_updated = state.kycs.replace(uid, kyc_update);
+                    let kyc_updated = state.kycs.replace(Principal.fromText(id), kyc_update);
                     #ok(());
                 };
             };

@@ -6,7 +6,7 @@ import AWS from "aws-sdk";
 const useUploadFile = () => {
   const [fileState, setFileState] = useState({});
   const [result, setResult] = useState();
-  const [progress, setProgress] = useState(0);
+  // const [progress, setProgress] = useState(0);
   const { storage } = useSelector(state => state.user);
   const creds = {
     accessKeyId: storage[1],
@@ -20,6 +20,7 @@ const useUploadFile = () => {
   useEffect(() => {
     (async () => {
       try {
+        console.log(fileState);
         if (!!fileState?.file) {
           const params = {
             ACL: "public-read",
@@ -33,9 +34,9 @@ const useUploadFile = () => {
           };
           await s3
             .putObject(params)
-            .on("httpUploadProgress", evt => {
-              setProgress(Math.round((evt.loaded / evt.total) * 100));
-            })
+            // .on("httpUploadProgress", evt => {
+            //   setProgress(Math.round((evt.loaded / evt.total) * 100));
+            // })
             .send(err => {
               if (err) console.log(err);
             });
@@ -58,7 +59,7 @@ const useUploadFile = () => {
     })();
   }, [fileState]);
   const setFile = useCallback(state => setFileState(state), []);
-  return [result, progress, setFile];
+  return [result, setFile];
 };
 
 export default useUploadFile;
