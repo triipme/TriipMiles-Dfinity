@@ -7,6 +7,7 @@ const Dotenv = require("dotenv-webpack");
 const CompressionPlugin = require("compression-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
+const dotenv = require("dotenv").config({ path: __dirname + "/.env" });
 let localCanisters, prodCanisters, canisters;
 
 function initCanisterIds() {
@@ -159,7 +160,7 @@ module.exports = {
       TRIIP_CANISTER_ID: canisters["triip"],
       TRIIP_TOKEN_CANISTER_ID: canisters["triip_token"],
       II_URL: isDevelopment
-        ? "http://localhost:8080/#authorize"
+        ? `http://localhost:8000?canisterId=${dotenv.parsed.CANISTER_IDENTITY_LOCAL}#authorize`
         : "https://identity.ic0.app/#authorize"
     }),
     new webpack.ProvidePlugin({
