@@ -11,19 +11,30 @@ const Metaverse = () => {
         <div className="servicesDetailInfo">
           <div className="servicesDetailInfoContainer">
             <img src="./images/static/SUSTAINATIONS/check.png" alt="checked" />
-            <span>Free to Win and Play to Earn </span>
+            <span>
+              Free to Win and
+              <b> Play to Earn</b>
+            </span>
           </div>
           <div className="servicesDetailInfoContainer">
             <img src="./images/static/SUSTAINATIONS/check.png" alt="checked" />
-            <span>One token for both travelers and gamers</span>
+            <span>
+              <b>One token</b>
+              for both travelers and gamers
+            </span>
           </div>
           <div className="servicesDetailInfoContainer">
             <img src="./images/static/SUSTAINATIONS/check.png" alt="checked" />
-            <span>100% built on Web 3.0</span>
+            <span>
+              100% built on
+              <b> Web 3.0</b>
+            </span>
           </div>
           <div className="servicesDetailInfoContainer">
             <img src="./images/static/SUSTAINATIONS/check.png" alt="checked" />
-            <span>AR ready</span>
+            <span>
+              <b>AR</b> ready
+            </span>
           </div>
         </div>
         <div className="servicesDetailImg">
@@ -78,7 +89,9 @@ const HotelBooking = () => {
         </div>
       </div>
       <div className="getStartedFooter">
-        <button className="btn btnSignUp ">Sign Up Now</button>
+        <a className="iconLink" target="_blank" href="https://stay.triip.me" rel="noreferrer">
+          <button className="btn btnSignUp btnSignUpCustom ">Sign Up Now</button>
+        </a>
       </div>
     </>
   );
@@ -178,7 +191,9 @@ function Services() {
     <>
       {/* Utilities & Services */}
       <div className="services">
-        <p className="servicesHeading">Utilities & Services</p>
+        <p className="servicesHeading">
+          <b>Utilities & Services</b>
+        </p>
         <div className="servicesContainer">
           <ul className="servicesList">
             {tabs.map((tab, index) => (

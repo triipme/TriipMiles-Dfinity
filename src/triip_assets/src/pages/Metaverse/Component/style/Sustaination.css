@@ -62,7 +62,7 @@
 
   .btnStarted {
     margin: 20px auto;
-    padding: 12px 100px;
+    padding: 20px 80px;
   }
   .btnSignUp {
     display: flex;
@@ -108,8 +108,9 @@
     height: 320px;
 
     position: absolute;
-    top: 50px;
-    left: 76px;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
     background-color: rgba(151, 151, 151, 0.8);
     border-radius: 20px;
@@ -150,6 +151,8 @@
   }
   .sustainationTrailer:after {
     content: "Sustainations";
+    font-weight: bold;
+
     color: #002e5e;
     font-size: 28px;
     position: absolute;
@@ -159,11 +162,14 @@
   }
   .sustainationTrailer::before {
     content: "Writing a greener history";
+    font-weight: bold;
+
     color: #002e5e;
     font-size: 28px;
     position: absolute;
-    top: 15px;
-    left: 72px;
+    top: 34px;
+    left: 0%;
+    transform: translate(10%, -50%);
   }
   .sustainationTrailerHeader p {
     color: #707070;
@@ -299,6 +305,7 @@
   /* Why Sustainations */
   .sustainationsReason {
     position: relative;
+    margin-bottom: 90px;
   }
   .sustainationTruck {
     display: none;
@@ -311,8 +318,9 @@
   }
   .sustainationBodyImg {
     position: absolute;
-    top: 60px;
-    left: 28%;
+    top: 16%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
   .sustainationBodyImg img {
     width: 202px;
@@ -350,15 +358,27 @@
     background-repeat: no-repeat;
     background-size: cover;
   }
+
   .artWorksHouse {
     display: none;
   }
-  .artWorks p {
+  .artworkHeadingMobile {
+    display: none;
     color: #002e5e;
     font-size: 36px;
     text-align: center;
     padding: 30px;
     margin-top: 60px;
+  }
+  .artWorks:after {
+    font-weight: bold;
+    content: "Images";
+    color: #002e5e;
+    font-size: 28px;
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .artWorksSubSlider {
@@ -386,6 +406,7 @@
     align-items: center;
   }
   .artWorksSlideShow img {
+    margin-top: 105px;
     width: 368px;
     height: 208px;
 
@@ -412,7 +433,6 @@
     text-align: center;
   }
   .startedContainer {
-    position: relative;
     display: flex;
     flex-direction: column;
   }
@@ -438,7 +458,8 @@
   .span1,
   .span2,
   .span3 {
-    padding-right: 5px;
+    padding-right: 20px;
+    position: relative;
   }
   .span3::before,
   .span2::before,
@@ -450,8 +471,10 @@
     justify-content: center;
 
     position: absolute;
-    top: 256px;
-    left: 83px;
+    top: -5px;
+    left: -5px;
+    /* top: 256px;
+    left: 83px; */
 
     width: 40px;
     height: 40px;
@@ -461,13 +484,13 @@
   }
   .span2::before {
     content: "2.";
-    left: 25%;
-    top: 55.5%;
+    /* left: 25%;
+    top: 55.5%; */
   }
   .span3::before {
     content: "3.";
-    left: 26%;
-    top: 86%;
+    /* left: 26%;
+    top: 86%; */
   }
   .startedContainerImgSubTitle {
     width: 300px;
@@ -496,7 +519,7 @@
   /* Utilities & Services */
   .services {
     width: 100%;
-    height: 1500px;
+
     background-color: #f3f3f3;
   }
   .servicesHeading {
@@ -577,7 +600,7 @@
     object-fit: contain;
     flex: 1;
     object-position: center;
-    margin-bottom: 80px;
+    margin-bottom: 20px;
   }
 }
 
@@ -668,6 +691,9 @@
     background: #48c2ca;
     font-weight: 700;
     border-radius: 40px;
+  }
+  .btnSignUpCustom {
+    margin-top: -40px;
   }
 
   /* BitMap */
@@ -970,12 +996,13 @@
     padding: 30px;
 
     margin-top: 60px;
-    margin-bottom: 44px;
+    font-weight: bold;
   }
 
   .artWorksSubSlider {
     position: absolute;
-    left: 100px;
+    left: -66px;
+    top: -40px;
   }
   .artWorksSubSlide {
     margin-right: 20px;
@@ -1000,21 +1027,62 @@
   }
 
   /* Custom */
+  .slick-arrow.slick-prev,
+  .slick-arrow.slick-next {
+    background: #fcfcfc;
+    width: 47px;
+    height: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+  .slick-arrow.slick-prev {
+    margin-left: 15%;
+    width: 40px;
+    background-color: transparent;
+    height: 40px;
+  }
+  .slick-arrow.slick-next {
+    margin-left: 0;
+    margin-right: 15%;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+  }
+
+  .slick-prev {
+    left: 0 !important;
+    border-radius: 50%;
+  }
+  .slick-next {
+    right: 0 !important;
+    border-radius: 50%;
+  }
+
+  .slick-prev:before,
+  .slick-next:before {
+    content: "←";
+    color: #48c2ca !important;
+    font-size: 45px !important;
+  }
   .slick-dots {
     display: flex !important;
-
     margin-bottom: -40px !important;
+  }
+  .slick-dots li {
+    margin: 0 -61px !important;
   }
   .custom-indicator {
     bottom: -65px;
     left: -500px;
   }
-  .custom-indicator li {
+  /* .custom-indicator li {
     filter: grayscale(100%);
   }
   .custom-indicator li.slick-active {
     filter: grayscale(0%);
-  }
+  } */
   /* Started */
   .sustainationStarted {
     position: relative;
@@ -1063,7 +1131,8 @@
   .span1,
   .span2,
   .span3 {
-    padding-right: 5px;
+    padding-right: 20px;
+    position: relative;
   }
   .span3::before,
   .span2::before,
@@ -1075,8 +1144,8 @@
     justify-content: center;
 
     position: absolute;
-    top: 362px;
-    left: 142px;
+    top: -5px;
+    left: -5px;
 
     width: 40px;
     height: 40px;
@@ -1086,11 +1155,9 @@
   }
   .span2::before {
     content: "2.";
-    left: 644px;
   }
   .span3::before {
     content: "3.";
-    left: 1106px;
   }
   .startedContainerImgSubTitle {
     width: 300px;
@@ -1212,8 +1279,5 @@
     object-fit: contain;
     flex: 1;
     object-position: center;
-  }
-  .footer {
-    height: 500px;
   }
 }

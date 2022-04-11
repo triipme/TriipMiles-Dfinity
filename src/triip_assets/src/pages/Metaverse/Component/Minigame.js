@@ -28,14 +28,18 @@ function Minigame() {
           src="./images/static/SUSTAINATIONS/gift_minigame1.png"
           alt="giftMinigame"
         />
-        <p className="minigameHeader">Play Minigames</p>
+        <p className="minigameHeader">
+          <b>Play Minigames</b>
+        </p>
         <div className="listMiniGame">
           <div className="itemMinigame">
             <div>
               <img src="./images/static/SUSTAINATIONS/memory.png" alt="MemoryCard" />
             </div>
             <div>
-              <p>Memory Game</p>
+              <p>
+                <b>Memory Game</b>
+              </p>
               <Link to="/game">Play now >> </Link>
             </div>
           </div>
@@ -44,7 +48,9 @@ function Minigame() {
               <img src="./images/static/SUSTAINATIONS/luckywheel.png" alt="LuckyWheel" />
             </div>
             <div>
-              <p>Lucky Wheel</p>
+              <p>
+                <b>Lucky Wheel</b>
+              </p>
               <a href="#">Play now >></a>
             </div>
           </div>

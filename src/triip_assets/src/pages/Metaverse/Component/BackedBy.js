@@ -5,7 +5,9 @@ function BackedBy() {
     <>
       {/* Backed by */}
       <div className="backedBy">
-        <p>Backed by</p>
+        <p>
+          <b>Backed by</b>
+        </p>
         <img src="./images/static/SUSTAINATIONS/Group_10.png" alt="backedByLogo" />
       </div>
     </>

@@ -11,12 +11,14 @@ function SustainationsReason() {
           className="sustainationTruck"
         />
         <div className="sustainationsHeader">
-          <p className="sustainationsHeading">Why Sustainations</p>
+          <p className="sustainationsHeading">
+            <b>Why Sustainations</b>
+          </p>
           <div className="sustainationsReasonItem">
             <img src="./images/static/SUSTAINATIONS/triip_gold.png" alt="triipGold" />
             <p>
-              We commits a sizeable portion of game profit to plant trees and corals in the real
-              world
+              We commits a <b>sizeable portion of game profit</b> to <b>plant trees and corals</b>{" "}
+              in the real world
             </p>
           </div>
         </div>
@@ -26,13 +28,16 @@ function SustainationsReason() {
               <div className="sustainationsReasonItemImg">
                 <img src="./images/static/SUSTAINATIONS/triip_gold.png" alt="triipGold" />
               </div>
-              <p>One token for both offline travel and metaverse economy</p>
+              <p>
+                {" "}
+                <b> One token </b> for both offline travel and metaverse economy
+              </p>
             </div>
             <div className="sustainationsReasonItem">
               <img src="./images/static/SUSTAINATIONS/triip_gold.png" alt="triipGold" />
               <p>
-                Leverage Triip’s vastness of 29 million rooms and 100,000 experiences in 192
-                countries in the physical world
+                Leverage Triip’s vastness of <b>29 million rooms</b> and <b>100,000 experiences</b>
+                in <b>192 countries</b> in the physical world
               </p>
             </div>
           </div>
@@ -42,7 +47,9 @@ function SustainationsReason() {
           <div className="sustainationBodyRight">
             <div className="sustainationsReasonItem">
               <img src="./images/static/SUSTAINATIONS/triip_gold.png" alt="triipGold" />
-              <p>Built entirely on the #1 web3.0 infrastructure - The Internet Computer</p>
+              <p>
+                Built entirely on the <b>#1 web3.0 infrastructure</b> - The Internet Computer
+              </p>
             </div>
             <div className="sustainationsReasonItem">
               <img src="./images/static/SUSTAINATIONS/triip_gold.png" alt="triipGold" />

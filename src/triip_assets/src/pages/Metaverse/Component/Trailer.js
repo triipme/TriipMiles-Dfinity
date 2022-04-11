@@ -7,7 +7,7 @@ function Trailer() {
       {/* Trailer */}
       <div className="sustainationTrailer">
         <div className="sustainationTrailerHeader">
-          <h4>Sustainations - Writing a greener history</h4>
+          <h4><b>Sustainations - Writing a greener history</b></h4>
           <p>
             “Unlike other GameFi, it’s a peaceful, educational exploration where you solve puzzles,
             overcome adverse weather conditions and other challenges to conquer a destination”
