@@ -59,11 +59,6 @@ const Carousel = () => {
           backgroundImage: `url(
           "./images/static/SUSTAINATIONS/background_artworks.png")`
         }}>
-        <img
-          src="./images/static/SUSTAINATIONS/artWorksHouse.png"
-          alt="artWorksHouse"
-          className="artWorksHouse"
-        />
         <p>Images</p>
         <Slider
           autoplay
@@ -108,6 +103,11 @@ function SliderComp() {
     <>
       {/* Artworks */}
       <div className="artWorksDesktop">
+        <img
+          src="./images/static/SUSTAINATIONS/artWorksHouse.png"
+          alt="artWorksHouse"
+          className="artWorksHouse"
+        />
         <Carousel />
       </div>
       <div className="artWorksMobile">
