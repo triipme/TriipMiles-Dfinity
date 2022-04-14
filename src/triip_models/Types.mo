@@ -1,20 +1,15 @@
+import Principal "mo:base/Principal";
+
 import User "model/User";
 import Admin "model/Admin";
 import TravelPlan "model/TravelPlan";
 import ProofTP "model/ProofTP";
 import Vetted "model/Vetted";
 import KYC "model/KYC";
-import Principal "mo:base/Principal";
 
-module Types{
-    /* ------------------------- Admin --------------------------- */
-    // public type Role ={
-    //     #owner;
-    //     #member;
-    // };
+module{
     public type Admin = {
         admin : Admin.Admin;
-        // role : Role;
     };
     public type Vetted = Vetted.Vetted;
     
@@ -46,18 +41,18 @@ module Types{
     };
 
     /* ------------------------- KYC --------------------------- */
-    public type KYCs = { // id của kyc theo principal (của user tham khảo ở profiles hoặc admin)
-        info: KYC.Info; //info 
-        images: [Text]; //mang id image để query file trong s3, max 3 vì front,back,self
-        comments:?Text; 
-        status:?Text; // 3 trang thái unknown,new,waitting,rejected,approved
+    public type KYCs = {
+        info: KYC.Info;
+        images: [Text]; //keys of front,back,self photo
+        comments:?Text; //Reason reject
+        status:?Text; // new,waitting,rejected,approved
         approver:?Principal;
-        createdAt:?Int; //dùng currenttime trong docs dfinity
-        updatedAt:?Int; //nếu đã submit nhưng bị reject thì update mà ko cần tạo kyc mới
+        createdAt:?Int;
+        updatedAt:?Int;
     };
-    public type KYCsUpdate = { // id của kyc theo principal (của user tham khảo ở profiles hoặc admin)
-        info: KYC.Info; //info 
-        images: [Text]; //mang id image để query file trong s3, max 3 vì front,back,self
+    public type KYCsUpdate = {
+        info: KYC.Info;
+        images: [Text];
         comments:?Text;
     };
 
