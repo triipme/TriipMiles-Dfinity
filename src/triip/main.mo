@@ -1,10 +1,10 @@
-import Trie "mo:base/Trie";
+import Array "mo:base/Array";
 import Debug "mo:base/Debug";
 import Hash "mo:base/Hash";
 import Nat "mo:base/Nat";
 import Nat32 "mo:base/Nat32";
+import Trie "mo:base/Trie";
 import Text "mo:base/Text";
-import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
@@ -13,9 +13,10 @@ import List "mo:base/List";
 import Time "mo:base/Time";
 import Principal "mo:base/Principal";
 import Error "mo:base/Error";
-import Binary "mo:encoding/Binary";
 import Blob "mo:base/Blob";
 import CRC32 "mo:hash/CRC32";
+
+import Binary "mo:encoding/Binary";
 import AId "mo:principal/blob/AccountIdentifier";
 
 import Types "../triip_models/Types";
@@ -386,12 +387,12 @@ shared({caller = owner}) actor class Triip() = this{
         };
         Debug.print(debug_show(tp_temp));
 
-        //Kiem tra tp cua user (uid,idtime)
-        //neu ko co idtime phu hop thi tao moi
-        //neu co kiem tra xem co bn cai
-            //neu co 2 thi khong cho tao nua va tra error
-            //neu co 1 thi tao tiep
-                //kiem tra xem current time trong tuan hay ko
+        //check tp of user (uid,idtime)
+        //if !idtime -> create a new
+        //else check how many
+            //if 2 AlreadyExisting va tra error
+            //if 1
+                //check if current time of week or not
 
         if(tp_temp < 2){
             let plan : Types.TravelPlan = {
@@ -505,15 +506,16 @@ shared({caller = owner}) actor class Triip() = this{
         let uid = msg.caller;
         if(Principal.toText(uid)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
-        };        // kiem tra proof cua tp da co hay chua
-        // neu co thi tra exist
-        // neu chua thi tiep tuc
-            // kiem tra co specific_date hay khong
-            // neu khong thi cho submit thoai mai
-            // neu co thi tiep tuc
-                // kiem tra start_date < current_Date < end_date
-                // neu co cho submit
-                // neu khong tra failed
+        };        
+        // check proof of tp already
+        // if true -> exist
+        // else
+            // check specific_date already
+            // if false -> submit
+            // else
+                // if start_date < current_Date < end_date
+                // true -> submit
+                // flase -> failed
         let findPTP = state.proofs.get(idptp);
         switch(findPTP){
             case (? v){

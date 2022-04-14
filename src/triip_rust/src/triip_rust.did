@@ -1,3 +1,0 @@
-service : {
-    "triip_rust": () -> (text) query;
-}
