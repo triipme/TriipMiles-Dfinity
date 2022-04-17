@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { CssBaseline } from "@mui/material";
-import { Main } from "./routers/index";
+import { Main } from "./routers";
 import ThemeConfig from "./theme/Theme";
 import { HelmetProvider } from "react-helmet-async";
 import { destinationService } from "./services";
@@ -8,6 +8,9 @@ import { useDispatch } from "react-redux";
 import { destinationReducer } from "./slice/static/staticSlice";
 import SimpleBarReact from "simplebar-react";
 import "simplebar/src/simplebar.css";
+import { Loading, Notification } from "./components";
+import { NavBar } from "./containers";
+import { BrowserRouter } from "react-router-dom";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -26,7 +29,13 @@ const App = () => {
       <HelmetProvider>
         <ThemeConfig>
           <CssBaseline />
-          <Main />
+          <Notification />
+          <BrowserRouter>
+            <NavBar />
+            <Suspense fallback={<Loading />}>
+              <Main />
+            </Suspense>
+          </BrowserRouter>
         </ThemeConfig>
       </HelmetProvider>
     </SimpleBarReact>
