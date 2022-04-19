@@ -19,10 +19,10 @@ const KYC = () => {
   const [statusKYC, setStatusKYC] = useState();
   const { actor } = useSelector(state => state.user);
   const { reject_reasons } = useSelector(state => state.static.kyc);
-  async function KYC_status() {
+  async function KYCStatus() {
     try {
-      if (!!actor?.get_statusKYC) {
-        const rs_status = await actor.get_statusKYC();
+      if (!!actor?.getKYCStatus) {
+        const rs_status = await actor.getKYCStatus();
         if ("ok" in rs_status) {
           setStatusKYC(rs_status.ok);
         } else {
@@ -34,7 +34,7 @@ const KYC = () => {
     }
   }
   useEffect(() => {
-    KYC_status();
+    KYCStatus();
     dispatch(kycRejectReasonThunk());
     dispatch(countryThunk());
     dispatch(citizenshipsThunk());
