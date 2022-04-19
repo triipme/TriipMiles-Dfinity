@@ -149,7 +149,7 @@ module.exports = {
       TRIIP_CANISTER_ID: canisters["triip"],
       TRIIP_TOKEN_CANISTER_ID: canisters["triip_token"],
       II_URL: isDevelopment
-        ? `http://localhost:8000?canisterId=${dotenv.parsed.CANISTER_IDENTITY_LOCAL}#authorize`
+        ? dotenv.parsed.CANISTER_IDENTITY_LOCAL_URL
         : "https://identity.ic0.app/#authorize"
     }),
     new webpack.ProvidePlugin({

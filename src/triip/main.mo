@@ -26,47 +26,13 @@ shared({caller = owner}) actor class Triip() = this{
     /*------------------------ App state--------------------------- */
     var state : State.State = State.empty();
 
-    private stable var profiles : [(Principal,Types.Profile)] = [];
-    private stable var travelplans : [(Text,Types.TravelPlan)] = [];
-    private stable var proofs : [(Text,Types.ProofTP)] = [];
-    private stable var admin : [(Principal,Types.Admin)] = [];
-    private stable var vetted : [(Text,Types.Vetted)] = [];
-    private stable var kycs : [(Principal,Types.KYCs)] = [];
+    // private stable var profiles : [(Principal,Types.Profile)] = [];
+    // private stable var travelplans : [(Text,Types.TravelPlan)] = [];
+    // private stable var proofs : [(Text,Types.ProofTP)] = [];
+    // private stable var admin : [(Principal,Types.Admin)] = [];
+    // private stable var vetted : [(Text,Types.Vetted)] = [];
+    // private stable var kycs : [(Principal,Types.KYCs)] = [];
     private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
-
-    system func preupgrade() {
-        Debug.print("Begin preupgrade");
-        profiles := Iter.toArray(state.profiles.entries());
-        travelplans := Iter.toArray(state.travelplans.entries());
-        proofs := Iter.toArray(state.proofs.entries());
-        admin := Iter.toArray(state.admin.entries());
-        vetted := Iter.toArray(state.vetted.entries());
-        kycs := Iter.toArray(state.kycs.entries());
-        Debug.print("End preupgrade");
-    };
-
-    system func postupgrade() {
-        Debug.print("Begin postupgrade");
-        for ((k, v) in Iter.fromArray(admin)) {
-            state.admin.put(k, v);
-        };
-        for ((k, v) in Iter.fromArray(profiles)) {
-            state.profiles.put(k, v);
-        };
-        for ((k, v) in Iter.fromArray(travelplans)) {
-            state.travelplans.put(k, v);
-        };
-        for ((k, v) in Iter.fromArray(proofs)) {
-            state.proofs.put(k, v);
-        };
-        for ((k, v) in Iter.fromArray(vetted)) {
-            state.vetted.put(k, v);
-        };
-        for ((k, v) in Iter.fromArray(kycs)) {
-            state.kycs.put(k, v);
-        };
-        Debug.print("End postupgrade");
-    };
 
     public query func accountId() : async Text {
         AId.toText(aId());
@@ -184,30 +150,30 @@ shared({caller = owner}) actor class Triip() = this{
             #err(#Failed);
         }
     };
-    private func getHPofTP_admin(key : Text) : ?Types.ProofTP{
+    private func getHPofTPAdmin(key : Text) : ?Types.ProofTP{
         let proof = state.proofs.get(key);
         return proof;
     };
-    private func getInfoStaff_admin(key : Principal) : Text{
+    private func getInfoStaffAdmin(key : Principal) : Text{
         let staff = state.admin.get(key);
-         switch(staff){
+        switch(staff){
             case(null) return "Not Found Info Staff";
             case(? v) return Text.concat(Option.get(v.admin.first_name,"")," "#Option.get(v.admin.last_name,""));
         };
     };
-    private func getStaff_admin(key : Text) : ?Types.Vetted{
+    private func getStaffAdmin(key : Text) : ?Types.Vetted{
         let staff = state.vetted.get(key);
         return staff;
     };
-    public shared query({caller}) func getAllTP_admin() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)],Types.Error>{
+    public shared query({caller}) func getAllTPAdmin() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)],Types.Error>{
         var allTP : [(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)] = [];
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        
         for((K,V) in state.travelplans.entries()){
-            switch(getStaff_admin(K)){
+            switch(getStaffAdmin(K)){
                 case(null){
-                    switch(getHPofTP_admin(K)){
+                    switch(getHPofTPAdmin(K)){
                         case(null){
                             allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)>([(K,V,null,null,null)],allTP);
                         };
@@ -217,8 +183,8 @@ shared({caller = owner}) actor class Triip() = this{
                     }
                 };
                 case(? vetted){
-                    let vetted_staff = getInfoStaff_admin(vetted.staff);
-                    switch(getHPofTP_admin(K)){
+                    let vetted_staff = getInfoStaffAdmin(vetted.staff);
+                    switch(getHPofTPAdmin(K)){
                         case(null){
                             allTP := Array.append<(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)>([(K,V,null,?vetted,?vetted_staff)],allTP);
                         };
@@ -231,7 +197,7 @@ shared({caller = owner}) actor class Triip() = this{
         };
         #ok(allTP);
     };
-    public shared({caller}) func approveHP_admin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Result.Result<(),Types.Error>{
+    public shared({caller}) func approveHPAdmin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Result.Result<(),Types.Error>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        let proof_update : Types.ProofTP = {
@@ -581,7 +547,7 @@ shared({caller = owner}) actor class Triip() = this{
         #ok((list));
     };
 
-    public shared query({caller}) func get_statusKYC() : async Result.Result<(?Text,?Text),Types.Error>{
+    public shared query({caller}) func getKYCStatus() : async Result.Result<(?Text,?Text),Types.Error>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };    

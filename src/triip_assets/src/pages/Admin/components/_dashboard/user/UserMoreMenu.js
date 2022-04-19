@@ -39,9 +39,9 @@ export default function UserMoreMenu({ id_proof, proof, allow_approve }) {
   const { actor } = useSelector(state => state.user);
   const handleApprove = async () => {
     try {
-      if (!!actor?.approveHP_admin) {
+      if (!!actor?.approveHPAdmin) {
         console.log(id_proof, "approved", proof[0]);
-        const aid = await actor?.approveHP_admin(id_proof, "approved", proof[0]);
+        const aid = await actor?.approveHPAdmin(id_proof, "approved", proof[0]);
         if ("ok" in aid) {
           toast.success("Approved");
           toast.success("Send 0.000033 ICP", { duration: 10000 });
@@ -59,9 +59,9 @@ export default function UserMoreMenu({ id_proof, proof, allow_approve }) {
   const handleReject = data => {
     (async () => {
       try {
-        if (!!actor?.approveHP_admin) {
+        if (!!actor?.approveHPAdmin) {
           console.log(id_proof, "rejected", proof[0]);
-          const aid = await actor?.approveHP_admin(
+          const aid = await actor?.approveHPAdmin(
             id_proof,
             `rejected ||${data.reject_reason}`,
             proof[0]
