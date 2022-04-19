@@ -1,3 +1,4 @@
+import { NormalRequiredAuth } from "@/containers";
 import React, { lazy } from "react";
 import { AccountPage } from "../pages";
 import Verify from "../pages/Account/features/KYC/verify";
@@ -8,7 +9,12 @@ export const account = [
   {
     path: "account",
     name: "Account",
-    element: <AccountPage />,
+    element: (
+      <NormalRequiredAuth>
+        <AccountPage />
+      </NormalRequiredAuth>
+    ),
+
     children: [
       {
         redirect: "/account/me",

@@ -5,7 +5,7 @@ import { info } from "../../slice/admin/adminSlice";
 
 const AdminRequiredAuth = ({ children }) => {
   const { actor } = useSelector(state => state.user);
-  const [isAuth, setIsAuth] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   useEffect(() => {

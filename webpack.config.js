@@ -250,5 +250,10 @@ module.exports = {
         parallel: true
       })
     ]
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src/triip_assets/src/")
+    }
   }
 };

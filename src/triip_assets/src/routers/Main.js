@@ -3,6 +3,7 @@ import { Navigate, useRoutes } from "react-router";
 const NotFound = lazy(() => import("../pages/Admin/pages/Page404"));
 
 import { navbar, account } from ".";
+import { admin } from "./admin";
 
 const ActorContext = createContext();
 
@@ -17,7 +18,8 @@ const Main = () => {
       path: "*",
       element: <Navigate to="404" />
     },
-    ...account
+    ...account,
+    ...admin
   ]);
 };
 

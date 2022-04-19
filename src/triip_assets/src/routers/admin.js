@@ -7,15 +7,14 @@ const User = lazy(() => import("../pages/Admin/pages/User"));
 const Kycs = lazy(() => import("../pages/Admin/pages/Kycs"));
 const Blog = lazy(() => import("../pages/Admin/pages/Blog"));
 const Login = lazy(() => import("../pages/Admin/pages/Login"));
+const Register = lazy(() => import("../pages/Admin/pages/Register"));
 
-export const account = [
+export const admin = [
   {
     path: "triip-admin",
     element: (
       <NormalRequiredAuth>
-        <AdminRequiredAuth>
-          <Admin />
-        </AdminRequiredAuth>
+        <Admin />
       </NormalRequiredAuth>
     ),
     children: [
@@ -25,27 +24,52 @@ export const account = [
         children: [
           {
             path: "app",
-            element: <DashboardApp />
+            element: (
+              <AdminRequiredAuth>
+                <DashboardApp />
+              </AdminRequiredAuth>
+            )
           },
 
           {
             path: "user",
-            element: <User />
+            element: (
+              <AdminRequiredAuth>
+                <User />
+              </AdminRequiredAuth>
+            )
           },
 
           {
             path: "blog",
-            element: <Blog />
+            element: (
+              <AdminRequiredAuth>
+                <Blog />
+              </AdminRequiredAuth>
+            )
           },
 
           {
             path: "kyc",
-            element: <Kycs />
+            element: (
+              <AdminRequiredAuth>
+                <Kycs />
+              </AdminRequiredAuth>
+            )
           },
 
           {
             path: "login",
-            element: <Login />
+            element: (
+              <AdminRequiredAuth>
+                <Login />
+              </AdminRequiredAuth>
+            )
+          },
+
+          {
+            path: "register",
+            element: <Register />
           }
         ]
       }
