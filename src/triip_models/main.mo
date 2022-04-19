@@ -1,22 +1,22 @@
 import Debug "mo:base/Debug";
-import Text "mo:base/Text";
 import Iter "mo:base/Iter";
+import Text "mo:base/Text";
 import Principal "mo:base/Principal";
 
-import Types "Types";
-import State "State";
-import Ledger "model/Ledger";
+import Types "./Types";
+import State "./State";
+import Ledger "./model/Ledger";
 
 actor TriipModels {
   /*------------------------ App state--------------------------- */
-  var state: State.State = State.empty();
+  var state : State.State = State.empty();
 
-  private stable var profiles : [(Principal, Types.Profile)] = [];
-  private stable var travelplans : [(Text, Types.TravelPlan)] = [];
-  private stable var proofs : [(Text, Types.ProofTP)] = [];
-  private stable var admin : [(Principal, Types.Admin)] = [];
-  private stable var vetted : [(Text, Types.Vetted)] = [];
-  private stable var kycs : [(Principal, Types.KYCs)] = [];
+  private stable var profiles : [(Principal,Types.Profile)] = [];
+  private stable var travelplans : [(Text,Types.TravelPlan)] = [];
+  private stable var proofs : [(Text,Types.ProofTP)] = [];
+  private stable var admin : [(Principal,Types.Admin)] = [];
+  private stable var vetted : [(Text,Types.Vetted)] = [];
+  private stable var kycs : [(Principal,Types.KYCs)] = [];
   private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
   system func preupgrade() {

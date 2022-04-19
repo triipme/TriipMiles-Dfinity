@@ -1,6 +1,7 @@
 export { default as ButtonPrimary } from "./Button/Button.primary";
 export { default as ButtonOutline } from "./Button/Button.outline";
 export { default as InputText } from "./Input/Input.text";
+export { default as InputFile } from "./Input/Input.file";
 export { default as InputRadio } from "./Input/Input.radio";
 export { InputCheckboxLabel, InputCheckbox } from "./Input/Input.checkbox";
 export { default as InputDate } from "./Input/Input.date";

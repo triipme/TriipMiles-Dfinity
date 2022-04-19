@@ -19,7 +19,7 @@ const HP = ({ idtp }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState();
   const [status, setStatus] = useState(false);
-  const [image, progress, setFile] = useUploadFile();
+  const [image,  setFile] = useUploadFile();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleUpFileHP = async e => {
