@@ -2,8 +2,8 @@ import { Icon } from "@iconify/react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import React, { useState } from "react";
-import "../containers/luckyWheel.css";
-import { Link } from "react-router-dom";
+import "./LuckySpin.css";
+LuckySpin.propTypes = {};
 
 // Modal Rules
 const styleRules = {
@@ -16,7 +16,7 @@ const styleRules = {
   backgroundImage: "linear-gradient(to right,#1d4c96,#248cab)",
   p: 3,
   zIndex: 1000,
-  overflowY: "auto"
+  overflowY: "auto",
 };
 // Modal Prize
 
@@ -30,7 +30,7 @@ const stylePrize = {
   bgcolor: "#f7c99b",
   p: 3,
   zIndex: 1000,
-  overflowY: "auto"
+  overflowY: "auto",
 };
 // Modal Reward
 
@@ -40,17 +40,17 @@ const styleReward = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   // width: "50%",
-  height: "55%",
+  height: "50%",
   backgroundImage: `url("")`,
   backgroundColor: "#fff",
   borderRadius: "30px",
   border: "10px solid #f9dfc0",
   p: 3,
   zIndex: 999,
-  overflowY: "hidden"
+  overflowY: "auto",
 };
 
-function MagicMemory() {
+function LuckySpin() {
   const [openRules, setOpenRules] = useState(false);
   const [openPrize, setOpenPrize] = useState(false);
   const [openReward, setOpenReward] = useState(false);
@@ -68,9 +68,7 @@ function MagicMemory() {
     <>
       <div className="luckyWheelContainer">
         <div className="btnBack">
-          <Link to="/game" style={{ color: "white" }}>
-            <Icon icon="fa:angle-left" className="iconBackMain" />
-          </Link>
+          <Icon icon="fa:angle-left" className="iconBackMain" />
         </div>
         <div className="luckyWheelHeader">
           <h1>LUCKY WHEEL</h1>
@@ -119,7 +117,9 @@ function MagicMemory() {
             </div>
             <div class="itemContainer">
               <h3 className="itemName">Cakes</h3>
-              <span className="itemDescription">You've earned 1 cakes in your inventory</span>
+              <span className="itemDescription">
+                You've earned 1 cakes in your inventory
+              </span>
             </div>
           </div>
 
@@ -151,7 +151,9 @@ function MagicMemory() {
             </div>
             <div class="itemContainer">
               <h3 className="itemName">Cakes</h3>
-              <span className="itemDescription">You've earned 1 cakes in your inventory</span>
+              <span className="itemDescription">
+                You've earned 1 cakes in your inventory
+              </span>
             </div>
           </div>
 
@@ -180,29 +182,43 @@ function MagicMemory() {
         open={openRules}
         onClose={handleCloseRules}
         aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description">
+        aria-describedby="modal-modal-description"
+      >
         <Box sx={styleRules}>
           <div id="modal-modal-title">
             <div className="headerRules">
-              <Icon icon="fa:angle-left" className="iconBack" onClick={handleCloseRules} />
+              <Icon
+                icon="fa:angle-left"
+                className="iconBack"
+                onClick={handleCloseRules}
+              />
               <h1 className="headingRules">RULES</h1>
             </div>
           </div>
           <div id="modal-modal-description">
             <ul className="listRules">
               <li>
-                Apple,Inc, is not a sponsor of, or involved in any way with the Lucky Wheel of Triip
-                app.
+                Apple,Inc, is not a sponsor of, or involved in any way with the
+                Lucky Wheel of Triip app.
               </li>
               <li>Lucky Wheel is a simple game to test your luck daily.</li>
-              <li>You can spin 1 time per day. Tap the button “TAP TO SPIN” to play the spin.</li>
               <li>
-                Triip Pte, and Triip Protocol are the organizers of this game. Hence the judges.
+                You can spin 1 time per day. Tap the button “TAP TO SPIN” to
+                play the spin.
+              </li>
+              <li>
+                Triip Pte, and Triip Protocol are the organizers of this game.
+                Hence the judges.
               </li>
               <li>You must complete your information for eligibility.</li>
-              <li>TriipMiles (TIIM) is the token of Triip app. You can use TIIM in app”.</li>
+              <li>
+                TriipMiles (TIIM) is the token of Triip app. You can use TIIM in
+                app”.
+              </li>
               <li>Prizes are distributed randomly.</li>
-              <li>You can view your own prizes by tapping on YOUR PRIZE button.</li>
+              <li>
+                You can view your own prizes by tapping on YOUR PRIZE button.
+              </li>
             </ul>
           </div>
         </Box>
@@ -213,11 +229,16 @@ function MagicMemory() {
         open={openPrize}
         onClose={handleClosePrize}
         aria-labelledby="modal-modal-title-prize"
-        aria-describedby="modal-modal-description-prize">
+        aria-describedby="modal-modal-description-prize"
+      >
         <Box sx={stylePrize}>
           <div id="modal-modal-title-prize">
             <div className="headerPrize">
-              <Icon icon="fa:angle-left" className="iconBack" onClick={handleClosePrize} />
+              <Icon
+                icon="fa:angle-left"
+                className="iconBack"
+                onClick={handleClosePrize}
+              />
               <h1 className="headingPrize">PRIZE LIST</h1>
             </div>
           </div>
@@ -264,7 +285,9 @@ function MagicMemory() {
               </div>
               <div class="itemContainer">
                 <h3 className="itemName">Cakes</h3>
-                <span className="itemDescription">You've earned 1 cakes in your inventory</span>
+                <span className="itemDescription">
+                  You've earned 1 cakes in your inventory
+                </span>
               </div>
             </div>
 
@@ -293,9 +316,14 @@ function MagicMemory() {
         open={openReward}
         onClose={handleCloseReward}
         aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description">
+        aria-describedby="modal-modal-description"
+      >
         <Box style={styleReward} className="customDesktop customMobile">
-          <Icon icon="fa:angle-left" className="iconBack-reward" onClick={handleCloseReward} />
+          <Icon
+            icon="fa:angle-left"
+            className="iconBack-reward"
+            onClick={handleCloseReward}
+          />
           <div id="modal-modal-title">
             <div className="rewardHeader">
               <p className="rewardHeading">+1 CAKE</p>
@@ -309,7 +337,10 @@ function MagicMemory() {
               />
             </div>
             <div>
-              <button className="btnLuckyWheel btnReward" onClick={handleOpenPrize}>
+              <button
+                className="btnLuckyWheel btnReward"
+                onClick={handleOpenPrize}
+              >
                 VIEW PRIZE
               </button>
             </div>
@@ -320,4 +351,4 @@ function MagicMemory() {
   );
 }
 
-export default MagicMemory;
+export default LuckySpin;
