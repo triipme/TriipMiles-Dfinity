@@ -4,6 +4,7 @@ import Modal from "@mui/material/Modal";
 import React, { useState } from "react";
 import "../containers/luckyWheel.css";
 import { Link } from "react-router-dom";
+import { styled } from "@mui/material/styles";
 
 // Modal Rules
 const styleRules = {
@@ -40,7 +41,6 @@ const styleReward = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   // width: "50%",
-  height: "55%",
   backgroundImage: `url("")`,
   backgroundColor: "#fff",
   borderRadius: "30px",
@@ -49,6 +49,8 @@ const styleReward = {
   zIndex: 999,
   overflowY: "hidden"
 };
+
+
 
 function MagicMemory() {
   const [openRules, setOpenRules] = useState(false);
@@ -108,67 +110,69 @@ function MagicMemory() {
         </div>
         <div className="footerLuckyWheel">
           <div className="prizeHeading">PRIZE LIST</div>
-          {/* item */}
-          <div className="prizeListContainer">
-            <div className="imgPrizeList">
-              <img
-                src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
-                alt=""
-                className="itemImgPrize"
-              />
-            </div>
-            <div class="itemContainer">
-              <h3 className="itemName">Cakes</h3>
-              <span className="itemDescription">You've earned 1 cakes in your inventory</span>
-            </div>
-          </div>
-
-          {/* item */}
-
-          <div className="prizeListContainer">
-            <div className="imgPrizeList">
-              <img
-                src="https://media.istockphoto.com/vectors/good-luck-farewell-card-vector-lettering-vector-id1001515918?k=20&m=1001515918&s=612x612&w=0&h=LzmNtNxA5pczJrK2LzNfDdmyiK5ZxVpBtNZhQk_lePk="
-                alt=""
-                className="itemImgPrize"
-              />
+          <div className="prizeListContainerAll">
+            {/* item */}
+            <div className="prizeListContainer">
+              <div className="imgPrizeList">
+                <img
+                  src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
+                  alt=""
+                  className="itemImgPrize"
+                />
+              </div>
+              <div class="itemContainer">
+                <h3 className="itemName">Cakes</h3>
+                <span className="itemDescription">You've earned 1 cakes in your inventory</span>
+              </div>
             </div>
 
-            <div class="itemContainer">
-              <h3 className="itemName">Sorry you didn’t win!</h3>
-              <span className="itemDescription">Better Luck Next Time!</span>
-            </div>
-          </div>
+            {/* item */}
 
-          {/* item */}
-          <div className="prizeListContainer">
-            <div className="imgPrizeList">
-              <img
-                src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
-                alt=""
-                className="itemImgPrize"
-              />
-            </div>
-            <div class="itemContainer">
-              <h3 className="itemName">Cakes</h3>
-              <span className="itemDescription">You've earned 1 cakes in your inventory</span>
-            </div>
-          </div>
+            <div className="prizeListContainer">
+              <div className="imgPrizeList">
+                <img
+                  src="https://media.istockphoto.com/vectors/good-luck-farewell-card-vector-lettering-vector-id1001515918?k=20&m=1001515918&s=612x612&w=0&h=LzmNtNxA5pczJrK2LzNfDdmyiK5ZxVpBtNZhQk_lePk="
+                  alt=""
+                  className="itemImgPrize"
+                />
+              </div>
 
-          {/* item */}
-
-          <div className="prizeListContainer">
-            <div className="imgPrizeList">
-              <img
-                src="https://media.istockphoto.com/vectors/good-luck-farewell-card-vector-lettering-vector-id1001515918?k=20&m=1001515918&s=612x612&w=0&h=LzmNtNxA5pczJrK2LzNfDdmyiK5ZxVpBtNZhQk_lePk="
-                alt=""
-                className="itemImgPrize"
-              />
+              <div class="itemContainer">
+                <h3 className="itemName">Sorry you didn’t win!</h3>
+                <span className="itemDescription">Better Luck Next Time!</span>
+              </div>
             </div>
 
-            <div class="itemContainer">
-              <h3 className="itemName">Sorry you didn’t win!</h3>
-              <span className="itemDescription">Better Luck Next Time!</span>
+            {/* item */}
+            <div className="prizeListContainer">
+              <div className="imgPrizeList">
+                <img
+                  src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
+                  alt=""
+                  className="itemImgPrize"
+                />
+              </div>
+              <div class="itemContainer">
+                <h3 className="itemName">Cakes</h3>
+                <span className="itemDescription">You've earned 1 cakes in your inventory</span>
+              </div>
+            </div>
+
+            {/* item */}
+
+            <div className="prizeListContainer">
+              <div className="imgPrizeList">
+                <img
+                  src="https://media.istockphoto.com/vectors/good-luck-farewell-card-vector-lettering-vector-id1001515918?k=20&m=1001515918&s=612x612&w=0&h=LzmNtNxA5pczJrK2LzNfDdmyiK5ZxVpBtNZhQk_lePk="
+                  alt=""
+                  className="itemImgPrize"
+                />
+              </div>
+
+              <div class="itemContainer">
+                <h3 className="itemName">Sorry you didn’t win!</h3>
+                <span className="itemDescription">Better Luck Next Time!</span>
+              </div>
             </div>
           </div>
         </div>
@@ -191,8 +195,8 @@ function MagicMemory() {
           <div id="modal-modal-description">
             <ul className="listRules">
               <li>
-                Apple,Inc, is not a sponsor of, or involved in any way with the Lucky Wheel of Triip
-                app.
+                Dfinity.org, is not a sponsor of, or involved in any way with the Lucky Wheel of
+                Triip app.
               </li>
               <li>Lucky Wheel is a simple game to test your luck daily.</li>
               <li>You can spin 1 time per day. Tap the button “TAP TO SPIN” to play the spin.</li>
@@ -294,7 +298,7 @@ function MagicMemory() {
         onClose={handleCloseReward}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description">
-        <Box style={styleReward} className="customDesktop customMobile">
+        <Box  className="customDesktop customMobile styleReward">
           <Icon icon="fa:angle-left" className="iconBack-reward" onClick={handleCloseReward} />
           <div id="modal-modal-title">
             <div className="rewardHeader">
