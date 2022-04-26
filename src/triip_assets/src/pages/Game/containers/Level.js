@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
-import "./Game.sass";
-import SingleCard from "./components/SingleCard";
-import { ButtonPrimary } from "../../components";
+import "./Level.sass";
+import SingleCard from "../components/SingleCard";
+import { ButtonPrimary } from "../../../components";
 import { Box, Typography } from "@mui/material";
 
 const cardImg = [
-  { src: "/img/sticker1.webp", matched: false },
-  { src: "/img/sticker2.webp", matched: false },
-  { src: "/img/sticker3.webp", matched: false },
-  { src: "/img/sticker4.webp", matched: false },
-  { src: "/img/sticker5.webp", matched: false },
-  { src: "/img/sticker6.webp", matched: false }
+  { word: "М'ясо (m'yaso)", result: "Meat", matched: false },
+  { word: "Хліб (khlib)", result: "Bread", matched: false },
+  { word: "Мед (mud)", result: "Honey", matched: false },
+  { word: "Морозиво (morozivo)", result: "Ice cream", matched: false },
+  { word: "Салат (salat)", result: "Salad", matched: false },
+  { word: "Сендвіч (sendvich)", result: "Sandwich", matched: false },
+  { word: "Риба (ryba)", result: "Fish", matched: false },
+  { word: "Овочі (ovuchi)", result: "Vegetables", matched: false }
 ];
 
-function Game() {
+function Level() {
   const [cards, setCards] = useState([]);
   const [turns, setTurns] = useState(0);
   const [choiceOne, setChoiceOne] = useState(null);
@@ -22,7 +24,10 @@ function Game() {
 
   //shuffle
   const shuffleCards = () => {
-    const shuffledCards = [...cardImg, ...cardImg]
+    const shuffledCards = [
+      ...cardImg,
+      ...cardImg.map(card => ({ result: card.result, matched: false }))
+    ]
       .sort(() => Math.random() - 0.5)
       .map(card => ({ ...card, id: Math.random() }));
 
@@ -41,10 +46,10 @@ function Game() {
   useEffect(() => {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
-      if (choiceOne.src === choiceTwo.src) {
+      if (choiceOne.result === choiceTwo.result) {
         setCards(prevCards => {
           return prevCards.map(card => {
-            if (card.src === choiceOne.src) {
+            if (card.result === choiceOne.result) {
               return { ...card, matched: true };
             } else {
               return card;
@@ -72,6 +77,8 @@ function Game() {
     shuffleCards();
   }, []);
 
+  console.log(cards);
+
   return (
     <div className="App">
       <Typography variant="h1">Magic Memory Game</Typography>
@@ -93,4 +100,4 @@ function Game() {
   );
 }
 
-export default Game;
+export default Level;

@@ -11,8 +11,8 @@ function SingleCard({ card, handleChoice, flipped, disabled }) {
   const theme = useTheme();
   return (
     <div className="card" style={{ border: `2px solid ${theme.palette.primary.main}` }}>
-      <div className={flipped ? "flipped" : "default"}>
-        <img className="front" src={card.src} alt="card" />
+      <div className={flipped ? "flipped" : "default"} style={{ justifyContent: "center" }}>
+        <p className="front">{card?.word ?? card?.result}</p>
         <img className="back" src="/img/cover.png" onClick={handleClick} alt="cover" />
       </div>
     </div>

@@ -1,7 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
-
-import Game from "../../Game";
+import { Link } from "react-router-dom";
 
 function Minigame() {
   return (

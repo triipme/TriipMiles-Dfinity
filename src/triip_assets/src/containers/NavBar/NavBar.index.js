@@ -17,7 +17,7 @@ import {
 import FormProfile from "./NavBar.form";
 import { Images } from "../../theme";
 import { LinkStyled, NavLinkStyled } from "../../components";
-import { account, navbar } from "../../utils/paths";
+import { account, navbar } from "../../routers";
 
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Divider } from "@mui/material";
@@ -124,40 +124,20 @@ const NavBar = () => {
           {isSM ? (
             <>
               <div style={{ display: "flex", alignItems: "center" }}>
-                {/* {navbar.map((item, _) => (
-                  <NavLinkStyled
-                    key={item.path}
-                    to={item.path}
-                    style={({ isActive }) => ({
-                      color: isActive && theme.palette.secondary.main
-                    })}>
-                    {item.path === "/" ? (
-                      <img style={{ display: "inline", width: 30 }} src={Images.logo} alt="" />
-                    ) : (
-                      item.name
-                    )}
-                  </NavLinkStyled>
-                ))} */}
-                <NavLinkStyled key={navbar[0].path} to={navbar[0].path}>
+                <NavLinkStyled to="/">
                   <img style={{ display: "inline", width: 30 }} src={Images.logo} alt="" />
                 </NavLinkStyled>
                 <LinkStyled href="https://stay.triip.me/">Stay</LinkStyled>
                 <LinkStyled href="https://experience.triip.me/">Experience</LinkStyled>
                 <LinkStyled href="https://share.triip.me/">Share</LinkStyled>
                 <LinkStyled href="https://shopping.triip.me/">Shop</LinkStyled>
-                <NavLinkStyled key={navbar[7].path} to={navbar[7].path}>
-                  {navbar[7].name}
-                </NavLinkStyled>
-                <NavLinkStyled key={navbar[5].path} to={navbar[5].path}>
-                  Game
-                </NavLinkStyled>
-                <NavLinkStyled key={navbar[6].path} to={navbar[6].path}>
-                  AR (Test)
-                </NavLinkStyled>
+                <NavLinkStyled to="/metaverse">Metaverse</NavLinkStyled>
+                <NavLinkStyled to="/game">Game</NavLinkStyled>
+                <NavLinkStyled to="/ar">AR (Test)</NavLinkStyled>
               </div>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 {!!profileData?.user ? (
-                  <NavLinkStyled to={account[1].nested[0].path}>
+                  <NavLinkStyled to="/account/me">
                     <Typography variant="h6" sx={{ mr: 2 }}>
                       {profileData?.user?.username}
                     </Typography>
@@ -189,33 +169,13 @@ const NavBar = () => {
                   <Icon icon={menu2Outline} width={24} height={24} />
                 )}
               </Box>
-              <NavLinkStyled
-                onClick={() => setIsOpenMenu(false)}
-                key={navbar[0].path}
-                to={navbar[0].path}>
+              <NavLinkStyled onClick={() => setIsOpenMenu(false)} to="/">
                 <img style={{ display: "inline", width: 30 }} src={Images.logo} alt="" />
               </NavLinkStyled>
               <Box hidden={!isOpenMenu} position="absolute" top={40} width="100%" zIndex={2}>
                 <Box
                   height="100vh"
                   sx={{ backgroundColor: "#fff", display: "flex", flexDirection: "column" }}>
-                  {/* {navbar.map(
-                    (item, _) =>
-                      ["/stay", "/experience", "/share", "/shop"].includes(item?.path) && (
-                        <NavLinkStyled
-                          key={item.path}
-                          to={item.path}
-                          sx={{
-                            my: 1
-                          }}
-                          style={({ isActive }) => ({
-                            color: isActive && theme.palette.secondary.main
-                          })}
-                          onClick={() => setIsOpenMenu(false)}>
-                          {item.path !== "/" && item.name}
-                        </NavLinkStyled>
-                      )
-                  )} */}
                   <LinkStyled
                     sx={{
                       my: 1
@@ -249,17 +209,15 @@ const NavBar = () => {
                     sx={{
                       my: 1
                     }}
-                    key={navbar[7].path}
-                    to={navbar[7].path}>
-                    {navbar[7].name}
+                    to="/metaverse">
+                    Metaverse
                   </NavLinkStyled>
                   <NavLinkStyled
                     onClick={() => setIsOpenMenu(false)}
                     sx={{
                       my: 1
                     }}
-                    key={navbar[5].path}
-                    to={navbar[5].path}>
+                    to="/game">
                     Game
                   </NavLinkStyled>
                   <NavLinkStyled
@@ -267,8 +225,7 @@ const NavBar = () => {
                     sx={{
                       my: 1
                     }}
-                    key={navbar[6].path}
-                    to={navbar[6].path}>
+                    to="/ar">
                     AR (Test)
                   </NavLinkStyled>
                   <Divider sx={{ my: 3 }} />
@@ -279,12 +236,12 @@ const NavBar = () => {
                           {profileData?.user?.username}
                         </Typography>
                       </NavLinkStyled>
-                      {account[1].nested.map(item => (
+                      {account[0].children.map(item => (
                         <NavLinkStyled
                           onClick={() => setIsOpenMenu(false)}
                           sx={{ my: 1 }}
-                          key={item.path}
-                          to={item.path}>
+                          key={item.redirect}
+                          to={item.redirect}>
                           {item.name}
                         </NavLinkStyled>
                       ))}

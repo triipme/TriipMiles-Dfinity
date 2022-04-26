@@ -1,2 +1,3 @@
 export { ActorContext, Main } from "./Main";
-// export { default as AccountRouter } from "./account";
+export { navbar } from "./navbar";
+export { account } from "./account";
