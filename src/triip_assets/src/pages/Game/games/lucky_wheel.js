@@ -1,10 +1,9 @@
 import { Icon } from "@iconify/react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../containers/luckyWheel.css";
 import { Link } from "react-router-dom";
-import { styled } from "@mui/material/styles";
 
 // Modal Rules
 const styleRules = {
@@ -35,27 +34,22 @@ const stylePrize = {
 };
 // Modal Reward
 
-const styleReward = {
+const styleLoading = {
   position: "fixed",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   // width: "50%",
-  backgroundImage: `url("")`,
-  backgroundColor: "#fff",
-  borderRadius: "30px",
-  border: "10px solid #f9dfc0",
   p: 3,
   zIndex: 999,
   overflowY: "hidden"
 };
 
-
-
 function MagicMemory() {
   const [openRules, setOpenRules] = useState(false);
   const [openPrize, setOpenPrize] = useState(false);
   const [openReward, setOpenReward] = useState(false);
+  const [openLoading, setOpenLoading] = useState(false);
 
   const handleOpenRules = () => setOpenRules(true);
   const handleCloseRules = () => setOpenRules(false);
@@ -63,7 +57,20 @@ function MagicMemory() {
   const handleOpenPrize = () => setOpenPrize(true);
   const handleClosePrize = () => setOpenPrize(false);
 
-  const handleOpenReward = () => setOpenReward(true);
+  const refTimeoutLoading = useRef();
+  const handleOpenReward = () => {
+    setOpenLoading(true);
+    refTimeoutLoading.current = setTimeout(() => {
+      setOpenLoading(false);
+      setOpenReward(true);
+    }, 3500);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(refTimeoutLoading.current);
+    };
+  }, [openReward]);
   const handleCloseReward = () => setOpenReward(false);
 
   return (
@@ -292,13 +299,25 @@ function MagicMemory() {
         </Box>
       </Modal>
 
+      <Modal
+        open={openLoading}
+        onClose={handleClosePrize}
+        aria-labelledby="modal-modal-title-prize"
+        aria-describedby="modal-modal-description-prize">
+        <Box sx={styleLoading}>
+          <img
+            style={{ border: "none" }}
+            src="https://media3.giphy.com/media/2fNJsREcSgLZnumrAX/giphy.gif?cid=6c09b952qpl4usssf87enwjw4vgvg7c76m6fnadxdh6qine9&rid=giphy.gif&ct=s"
+          />
+        </Box>
+      </Modal>
       {/* Modal Reward */}
       <Modal
         open={openReward}
         onClose={handleCloseReward}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description">
-        <Box  className="customDesktop customMobile styleReward">
+        <Box className="customDesktop customMobile styleReward">
           <Icon icon="fa:angle-left" className="iconBack-reward" onClick={handleCloseReward} />
           <div id="modal-modal-title">
             <div className="rewardHeader">
@@ -309,7 +328,7 @@ function MagicMemory() {
             <div className="imageBodyReward">
               <img
                 src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
-                alt=""
+                alt="Gif Lucky Wheel"
               />
             </div>
             <div>
