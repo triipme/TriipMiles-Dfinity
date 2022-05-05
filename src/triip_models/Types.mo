@@ -6,10 +6,7 @@ import TravelPlan "model/TravelPlan";
 import ProofTP "model/ProofTP";
 import Vetted "model/Vetted";
 import KYC "model/KYC";
-import Locale "model/Locale";
-import PrizeDetail "model/PrizeDetail";
 import WheelPrize "model/WheelPrize";
-import Principal "mo:base/Principal";
 
 module {
   public type Admin = {
@@ -64,20 +61,16 @@ module {
   public type Prize = {
     id: Text;
     uid: Principal;
-    // locales: [Locale.Locale];
     prize_type: Text;
     name: Text;
     icon: Text;
     quantity: Int;
     decs: Text;
     created_at: ?Int;
-    // prize_detail: PrizeDetail.PrizeDetail;
   };
 
   public type PrizeUpdate = {
     id: Text;
-    // locales: [Locale.Locale];
-    // prize_detail: PrizeDetail.PrizeDetail;
     prize_type: Text;
     name: Text;
     icon: Text;
