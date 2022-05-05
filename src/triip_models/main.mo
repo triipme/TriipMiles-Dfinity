@@ -1,15 +1,15 @@
 import Debug "mo:base/Debug";
-import Text "mo:base/Text";
 import Iter "mo:base/Iter";
+import Text "mo:base/Text";
 import Principal "mo:base/Principal";
 
-import Types "Types";
-import State "State";
-import Ledger "model/Ledger";
+import Types "./Types";
+import State "./State";
+import Ledger "./model/Ledger";
 
 actor TriipModels {
   /*------------------------ App state--------------------------- */
-  var state: State.State = State.empty();
+  var state : State.State = State.empty();
 
   private stable var profiles : [(Principal, Types.Profile)] = [];
   private stable var travelplans : [(Text, Types.TravelPlan)] = [];
@@ -17,8 +17,8 @@ actor TriipModels {
   private stable var admin : [(Principal, Types.Admin)] = [];
   private stable var vetted : [(Text, Types.Vetted)] = [];
   private stable var kycs : [(Principal, Types.KYCs)] = [];
-  private stable var prizes : [(Text, Types.Prize)] = []; // new feature
-  private stable var wheels : [(Text, Types.LuckyWheel)] = []; // new feature
+  private stable var prizes : [(Text, Types.Prize)] = [];
+  private stable var wheels : [(Text, Types.LuckyWheel)] = [];
   private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
   system func preupgrade() {
@@ -54,10 +54,10 @@ actor TriipModels {
     for ((k, v) in Iter.fromArray(kycs)) {
       state.kycs.put(k, v);
     };
-    for ((k, v) in Iter.fromArray(prizes)) { // new feature
+    for ((k, v) in Iter.fromArray(prizes)) {
       state.prizes.put(k, v);
     };
-    for ((k, v) in Iter.fromArray(wheels)) { // new feature
+    for ((k, v) in Iter.fromArray(wheels)) {
       state.wheels.put(k, v);
     };
 
