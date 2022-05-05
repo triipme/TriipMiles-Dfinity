@@ -119,7 +119,7 @@ export default function User() {
   useEffect(() => {
     (async () => {
       try {
-        const rs = await actor?.getAllTP_admin();
+        const rs = await actor?.getAllTPAdmin();
         if ("ok" in rs) {
           setData(rs?.ok);
           console.log(rs.ok);

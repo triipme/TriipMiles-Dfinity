@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 import { MenuContainer } from "./container";
 import styled from "@emotion/styled";
@@ -7,7 +6,6 @@ import { Container } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Outlet } from "react-router-dom";
-import { Notification } from "../../components";
 
 const Account = props => {
   const theme = useTheme();

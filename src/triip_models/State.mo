@@ -14,6 +14,9 @@ module{
     proofs : Map<Text,Types.ProofTP>;
     vetted : Map<Text,Types.Vetted>;
     kycs : Map<Principal,Types.KYCs>;
+    prizes: Map<Text,Types.Prize>; // new feature
+    wheels : Map<Text,Types.LuckyWheel>; // new feature
+
   };
   // public type StateShared = {
   //   profiles : MapShared<Principal,Types.Profile>;
@@ -27,6 +30,8 @@ module{
       proofs = TrieMap.TrieMap<Text,Types.ProofTP>(Text.equal,Text.hash);
       vetted = TrieMap.TrieMap<Text,Types.Vetted>(Text.equal,Text.hash);
       kycs = TrieMap.TrieMap<Principal,Types.KYCs>(Principal.equal, Principal.hash);
+       prizes = TrieMap.TrieMap<Text,Types.Prize>(Text.equal, Text.hash); // new feature
+      wheels = TrieMap.TrieMap<Text,Types.LuckyWheel>(Text.equal, Text.hash); // new feature
     };
   };
   // public func share(state : State) : StateShared {

@@ -1,43 +1,36 @@
-import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Box, Divider, Grid, Stack, Typography, CardMedia } from "@mui/material";
 import { styled } from "@mui/system";
 import React from "react";
-import { ButtonPrimary, InputRadio, InputText } from "../../../../components";
+import { useSelector } from "react-redux";
+import {
+  ButtonOutline,
+  ButtonPrimary,
+  InputFile,
+  InputRadio,
+  InputText
+} from "../../../../components";
 import { ERRORS } from "../../../../utils/constants";
 
 const S1 = ({ control, handleS1 }) => {
+  const { country, citizenships } = useSelector(state => state.static);
   return (
     <Box>
       <Grid container width="70%" columnSpacing={3} mt={3}>
         <Grid item md={6}>
-          <InputText
-            control={control}
-            label="FIRST NAME"
-            helperTextError={ERRORS}
-            name="FIRST NAME"
-          />
+          <InputText control={control} label="FIRST NAME" helperTextError={ERRORS} name="fname" />
         </Grid>
         <Grid item md={6}>
-          <InputText
-            control={control}
-            label="LAST NAME"
-            helperTextError={ERRORS}
-            name="LAST NAME"
-          />
+          <InputText control={control} label="LAST NAME" helperTextError={ERRORS} name="lname" />
         </Grid>
         <Grid item md={6}>
-          <InputText
-            control={control}
-            label="YOUR EMAIL"
-            helperTextError={ERRORS}
-            name="YOUR EMAIL"
-          />
+          <InputText control={control} label="YOUR EMAIL" helperTextError={ERRORS} name="email" />
         </Grid>
         <Grid item md={6}>
           <InputText
             control={control}
             label="YOUR PHONE NO."
             helperTextError={ERRORS}
-            name="YOUR PHONE NO."
+            name="phone"
           />
         </Grid>
         <Grid item md={6}>
@@ -45,8 +38,8 @@ const S1 = ({ control, handleS1 }) => {
             control={control}
             label="COUNTRY"
             helperTextError={ERRORS}
-            name="COUNTRY"
-            autocompleteOptions={[]}
+            name="country"
+            autocompleteOptions={country.map(c => c.name)}
           />
         </Grid>
         <Grid item md={6}>
@@ -54,12 +47,12 @@ const S1 = ({ control, handleS1 }) => {
             control={control}
             label="CITIZENSHIP"
             helperTextError={ERRORS}
-            name="CITIZENSHIP"
-            autocompleteOptions={[]}
+            name="citizenship"
+            autocompleteOptions={citizenships.map(c => c.name)}
           />
         </Grid>
         <Grid item md={6}>
-          <InputText control={control} label="ADDRESS" helperTextError={ERRORS} name="ADDRESS" />
+          <InputText control={control} label="ADDRESS" helperTextError={ERRORS} name="address" />
         </Grid>
       </Grid>
       <Box mt={1}>
@@ -68,7 +61,7 @@ const S1 = ({ control, handleS1 }) => {
     </Box>
   );
 };
-const S2 = ({ control, handleS2 }) => {
+const S2 = ({ control, handleS2, onBack }) => {
   return (
     <Box width="50%">
       <>
@@ -76,6 +69,7 @@ const S2 = ({ control, handleS2 }) => {
           Please choose your ID type
         </Typography>
         <InputRadio
+          defaultValue="ID Card"
           name="id_type"
           control={control}
           data={["ID Card", "Passport", "Driver License"]}
@@ -101,8 +95,14 @@ const S2 = ({ control, handleS2 }) => {
         <Stack flexDirection="row">
           <label htmlFor="front_photo">
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              <Input type="file" id="front_photo" />
-              <UploadBox />
+              <InputFile
+                id="front_photo"
+                control={control}
+                name="front_photo"
+                children={({ value, error }) => {
+                  return <UploadBox error={!!error} image={value?.preview} component="img" />;
+                }}
+              />
               <Typography variant="caption" align="center" mt={1}>
                 Front
               </Typography>
@@ -110,8 +110,21 @@ const S2 = ({ control, handleS2 }) => {
           </label>
           <label htmlFor="back_photo">
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              <Input type="file" id="back_photo" />
-              <UploadBox mx={2} />
+              <InputFile
+                id="back_photo"
+                control={control}
+                name="back_photo"
+                children={({ value, error }) => {
+                  return (
+                    <UploadBox
+                      error={!!error}
+                      sx={{ mx: 2 }}
+                      image={value?.preview}
+                      component="img"
+                    />
+                  );
+                }}
+              />
               <Typography variant="caption" align="center" mt={1}>
                 Back
               </Typography>
@@ -119,8 +132,14 @@ const S2 = ({ control, handleS2 }) => {
           </label>
           <label htmlFor="selfie_photo">
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              <Input type="file" id="selfie_photo" />
-              <UploadBox />
+              <InputFile
+                id="selfie_photo"
+                control={control}
+                name="selfie_photo"
+                children={({ value, error }) => {
+                  return <UploadBox error={!!error} image={value?.preview} component="img" />;
+                }}
+              />
               <Typography variant="caption" align="center" mt={1}>
                 Your Selfie
               </Typography>
@@ -129,6 +148,7 @@ const S2 = ({ control, handleS2 }) => {
         </Stack>
       </>
       <Box mt={3}>
+        <ButtonOutline sx={{ width: "15%", mr: 2 }} title="BACK" onClick={onBack} />
         <ButtonPrimary sx={{ width: "25%" }} title="CONFIRM" onClick={handleS2} />
       </Box>
     </Box>
@@ -143,14 +163,13 @@ const S3 = () => {
   );
 };
 
-const Input = styled("input")`
-  display: none;
-`;
-const UploadBox = styled(Box)(({ theme }) => ({
+const UploadBox = styled(CardMedia)(({ theme, error }) => ({
   width: 100,
   height: 100,
   borderRadius: 10,
-  backgroundColor: theme.palette.grey[400]
+  outline: "none",
+  backgroundColor: theme.palette.grey[400],
+  border: `3px solid ${error ? theme.palette.error["light"] : theme.palette.grey[400]}`
 }));
 
 export const FormKYC = {
