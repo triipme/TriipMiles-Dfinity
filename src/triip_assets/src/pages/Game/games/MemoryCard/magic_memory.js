@@ -1,8 +1,8 @@
 import React from "react";
-import Level from "../containers/Level";
+import { Outlet } from "react-router-dom";
 
 const MagicMemory = () => {
-  return <Level />;
+  return <Outlet />;
 };
 
 export default MagicMemory;

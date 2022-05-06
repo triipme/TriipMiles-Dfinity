@@ -7,8 +7,7 @@ import Principal "mo:base/Principal";
 import Types "Types";
 
 module{
-  public type Map<K,V> = TrieMap.TrieMap<K,V>;
-  
+  private type Map<K,V> = TrieMap.TrieMap<K,V>;
   public type State = {
     admin : Map<Principal,Types.Admin>;
     profiles : Map<Principal,Types.Profile>;
@@ -16,6 +15,12 @@ module{
     proofs : Map<Text,Types.ProofTP>;
     vetted : Map<Text,Types.Vetted>;
     kycs : Map<Principal,Types.KYCs>;
+    games : {
+      memory_card : {
+        levels : Map<Text,Types.MemoryCardLevel>;
+        players : Map<Principal,Types.MemoryCardPlayer>;
+      }
+    };
   };
   
   public func empty() : State { 
@@ -26,6 +31,12 @@ module{
       proofs = TrieMap.TrieMap<Text,Types.ProofTP>(Text.equal,Text.hash);
       vetted = TrieMap.TrieMap<Text,Types.Vetted>(Text.equal,Text.hash);
       kycs = TrieMap.TrieMap<Principal,Types.KYCs>(Principal.equal, Principal.hash);
+      games = {
+        memory_card = {
+          levels = TrieMap.TrieMap<Text,Types.MemoryCardLevel>(Text.equal,Text.hash);
+          players = TrieMap.TrieMap<Principal,Types.MemoryCardPlayer>(Principal.equal, Principal.hash);
+        }
+      };
     };
   };
 }

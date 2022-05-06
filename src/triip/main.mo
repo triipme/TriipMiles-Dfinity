@@ -20,18 +20,76 @@ import State "../triip_models/State";
 import Ledger "../triip_models/model/Ledger";
 import ProofTP "../triip_models/model/ProofTP";
 
+import MemoryCardController "./controllers/games/memory_card";
+
 import Env ".env";
 
 shared({caller = owner}) actor class Triip() = this{
     /*------------------------ App state--------------------------- */
     var state : State.State = State.empty();
 
-    // private stable var profiles : [(Principal,Types.Profile)] = [];
-    // private stable var travelplans : [(Text,Types.TravelPlan)] = [];
-    // private stable var proofs : [(Text,Types.ProofTP)] = [];
-    // private stable var admin : [(Principal,Types.Admin)] = [];
-    // private stable var vetted : [(Text,Types.Vetted)] = [];
-    // private stable var kycs : [(Principal,Types.KYCs)] = [];
+    private stable var profiles : [(Principal,Types.Profile)] = [];
+    private stable var travelplans : [(Text,Types.TravelPlan)] = [];
+    private stable var proofs : [(Text,Types.ProofTP)] = [];
+    private stable var admin : [(Principal,Types.Admin)] = [];
+    private stable var vetted : [(Text,Types.Vetted)] = [];
+    private stable var kycs : [(Principal,Types.KYCs)] = [];
+    private stable var games = {
+        memory_card = {
+            levels : [(Text,Types.MemoryCardLevel)] = [];
+            players : [(Principal,Types.MemoryCardPlayer)] = [];
+        }
+    };
+
+    system func preupgrade() {
+        Debug.print("Begin preupgrade");
+        profiles := Iter.toArray(state.profiles.entries());
+        travelplans := Iter.toArray(state.travelplans.entries());
+        proofs := Iter.toArray(state.proofs.entries());
+        admin := Iter.toArray(state.admin.entries());
+        vetted := Iter.toArray(state.vetted.entries());
+        kycs := Iter.toArray(state.kycs.entries());
+        games := {
+            memory_card = {
+                levels = Iter.toArray(state.games.memory_card.levels.entries());
+                players = Iter.toArray(state.games.memory_card.players.entries());
+            }
+        };
+        Debug.print("End preupgrade");
+    };
+
+    system func postupgrade() {
+        Debug.print("Begin postupgrade");
+        for ((k, v) in Iter.fromArray(admin)) {
+        state.admin.put(k, v);
+        };
+        for ((k, v) in Iter.fromArray(profiles)) {
+        state.profiles.put(k, v);
+        };
+        for ((k, v) in Iter.fromArray(travelplans)) {
+        state.travelplans.put(k, v);
+        };
+        for ((k, v) in Iter.fromArray(proofs)) {
+        state.proofs.put(k, v);
+        };
+        for ((k, v) in Iter.fromArray(vetted)) {
+        state.vetted.put(k, v);
+        };
+        for ((k, v) in Iter.fromArray(kycs)) {
+        state.kycs.put(k, v);
+        };
+        for ((k, v) in Iter.fromArray(games.memory_card.levels)) {
+        state.games.memory_card.levels.put(k, v);
+        };
+        for ((k, v) in Iter.fromArray(games.memory_card.players)) {
+        state.games.memory_card.players.put(k, v);
+        };
+        Debug.print("End postupgrade");
+    };
+
+    type MemoryCard = MemoryCardController.MemoryCardController;
+    type Response<Ok> = Result.Result<Ok,Types.Error>;
+
     private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
     public query func accountId() : async Text {
@@ -92,7 +150,7 @@ shared({caller = owner}) actor class Triip() = this{
         proofs_approved : Nat;
         proofs_rejected : Nat;
     };
-    public query({caller}) func analysis() : async Result.Result<(Analysis,[Text]),Types.Error>{
+    public query({caller}) func analysis() : async Response<(Analysis,[Text])>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
@@ -126,7 +184,7 @@ shared({caller = owner}) actor class Triip() = this{
     private func isSecretKey(key : Text) : Bool{
         return Text.hash(key)==Text.hash(Env.secret_key_admin);
     };
-    public shared query({caller}) func loginAdmin() : async Result.Result<Types.Admin,Types.Error>{
+    public query({caller}) func loginAdmin() : async Response<Types.Admin>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        let is_admin = isAdmin(caller);
@@ -135,7 +193,7 @@ shared({caller = owner}) actor class Triip() = this{
             case(? v) #ok((v));
         }
     };
-    public shared({caller}) func registerAdmin(key : Text,info : Types.Admin) : async Result.Result<Types.Admin,Types.Error>{
+    public query({caller}) func registerAdmin(key : Text,info : Types.Admin) : async Response<Types.Admin>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        let isKey = isSecretKey(key);
@@ -165,7 +223,7 @@ shared({caller = owner}) actor class Triip() = this{
         let staff = state.vetted.get(key);
         return staff;
     };
-    public shared query({caller}) func getAllTPAdmin() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)],Types.Error>{
+    public query({caller}) func getAllTPAdmin() : async Response<[(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)]>{
         var allTP : [(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)] = [];
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
@@ -197,7 +255,7 @@ shared({caller = owner}) actor class Triip() = this{
         };
         #ok(allTP);
     };
-    public shared({caller}) func approveHPAdmin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Result.Result<(),Types.Error>{
+    public shared({caller}) func approveHPAdmin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Response<()>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        let proof_update : Types.ProofTP = {
@@ -235,13 +293,13 @@ shared({caller = owner}) actor class Triip() = this{
     /* ------------------------------------------------------------------------------------------------------- */
     // User
     // Create
-    public query({caller}) func storage() : async Result.Result<(Text,Text,Text,Text),Types.Error>{
+    public query({caller}) func storage() : async Response<(Text,Text,Text,Text)>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
         #ok((Env.S3_BUCKET,Env.S3_ACCESS_KEY,Env.S3_SECRET_KEY,Env.S3_REGION))
     };
-    public shared({caller}) func create(profile: Types.Profile) : async Result.Result<(),Types.Error> {
+    public query({caller}) func create(profile: Types.Profile) : async Response<()> {
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
@@ -257,7 +315,7 @@ shared({caller = owner}) actor class Triip() = this{
             };
         }
     };
-    public shared query({caller}) func read() : async Result.Result<(Types.Profile,Text),Types.Error>{
+    public query({caller}) func read() : async Response<(Types.Profile,Text)>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        
@@ -272,7 +330,7 @@ shared({caller = owner}) actor class Triip() = this{
         }
     };
     // Wallet
-    public shared({caller}) func addWallet(wallet_id:Text) : async Result.Result<(Types.Profile,Text),Types.Error>{
+    public query({caller}) func addWallet(wallet_id:Text) : async Response<(Types.Profile,Text)>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
@@ -291,7 +349,7 @@ shared({caller = owner}) actor class Triip() = this{
             }
         }
     };
-    // public shared({caller}) func addWallet(wallet_id:Text) : async Result.Result<(),Types.Error>{
+    // public query({caller}) func addWallet(wallet_id:Text) : async Response<()>{
     //     if(Principal.toText(caller)=="2vxsx-fae"){
     //         return #err(#NotAuthorized);//isNotAuthorized
     //     };
@@ -317,7 +375,7 @@ shared({caller = owner}) actor class Triip() = this{
     //     }
     // };
     // TravelPlan
-    public shared({caller}) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<Text,Types.Error>{
+    public shared({caller}) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Response<Text>{
         var tp_temp : Int = 0;
 
         if(Principal.toText(caller)=="2vxsx-fae"){
@@ -367,7 +425,7 @@ shared({caller = owner}) actor class Triip() = this{
             #err(#Enough);
         }
     };
-    public shared({caller}) func updateTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(),Types.Error>{
+    public query({caller}) func updateTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Response<()>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
@@ -389,7 +447,7 @@ shared({caller = owner}) actor class Triip() = this{
             };
         }
     };
-    public shared({caller}) func setStatusReceivedICP(status : Bool,idtp: Text) : async Result.Result<(),Types.Error>{
+    public query({caller}) func setStatusReceivedICP(status : Bool,idtp: Text) : async Response<()>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             return #err(#NotAuthorized);//isNotAuthorized
         };
@@ -413,7 +471,7 @@ shared({caller = owner}) actor class Triip() = this{
         }
     };
 
-    public shared query({caller}) func readAllTPUser() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP)],Types.Error>{
+    public query({caller}) func readAllTPUser() : async Response<[(Text,Types.TravelPlan,?Types.ProofTP)]>{
         var tps : [(Text,Types.TravelPlan,?Types.ProofTP)] = [];
 
         if(Principal.toText(caller)=="2vxsx-fae"){
@@ -428,7 +486,7 @@ shared({caller = owner}) actor class Triip() = this{
         #ok((tps));
     };
 
-    public shared({caller}) func createProofTP(idptp: Text,prooftp:ProofTP.ProofTP) : async Result.Result<?Text,Types.Error>{
+    public query({caller}) func createProofTP(idptp: Text,prooftp:ProofTP.ProofTP) : async Response<?Text>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };        
@@ -477,7 +535,7 @@ shared({caller = owner}) actor class Triip() = this{
         };
     };
 
-    public shared({caller}) func readProofOfTP(idtp:Text) : async Result.Result<Types.ProofTP,Types.Error>{
+    public query({caller}) func readProofOfTP(idtp:Text) : async Response<Types.ProofTP>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
@@ -486,7 +544,7 @@ shared({caller = owner}) actor class Triip() = this{
     };
 
     // KYC
-    public shared({caller}) func createKYC(kyc: Types.KYCsUpdate) : async Result.Result<Text,Types.Error> {
+    public query({caller}) func createKYC(kyc: Types.KYCsUpdate) : async Response<Text> {
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
@@ -526,7 +584,7 @@ shared({caller = owner}) actor class Triip() = this{
         };
     };
 
-    public shared query({caller}) func readKYC() : async Result.Result<(Types.KYCs),Types.Error>{
+    public query({caller}) func readKYC() : async Response<(Types.KYCs)>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };    
@@ -536,7 +594,7 @@ shared({caller = owner}) actor class Triip() = this{
         return Result.fromOption(read_kyc, #NotFound);
     };
 
-    public shared query({caller}) func listKYCs() : async Result.Result<[(Principal,Types.KYCs)],Types.Error>{
+    public query({caller}) func listKYCs() : async Response<[(Principal,Types.KYCs)]>{
         var list : [(Principal,Types.KYCs)] = [];
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
@@ -547,7 +605,7 @@ shared({caller = owner}) actor class Triip() = this{
         #ok((list));
     };
 
-    public shared query({caller}) func getKYCStatus() : async Result.Result<(?Text,?Text),Types.Error>{
+    public query({caller}) func getKYCStatus() : async Response<(?Text,?Text)>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };    
@@ -565,7 +623,7 @@ shared({caller = owner}) actor class Triip() = this{
         };
     };
 
-    public shared({caller}) func updateKYC(kyc : Types.KYCs) : async Result.Result<(),Types.Error>{
+    public query({caller}) func updateKYC(kyc : Types.KYCs) : async Response<()>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
@@ -593,7 +651,7 @@ shared({caller = owner}) actor class Triip() = this{
     };
 
 
-    public shared({caller}) func approveKYC(kyc_status: Text,comments:Text,id:Text) : async Result.Result<(),Types.Error>{
+    public query({caller}) func approveKYC(kyc_status: Text,comments:Text,id:Text) : async Response<()>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };
@@ -622,5 +680,48 @@ shared({caller = owner}) actor class Triip() = this{
                 };
             };
         };
+    };
+
+    /* MemoryCard */
+    //Adding a level to the memory card game.
+    public func addLevel() : async Response<()>{
+        let mc : MemoryCard = await MemoryCardController.MemoryCardController();
+        let levelsSize : Nat = Iter.size(state.games.memory_card.levels.keys());
+        if(Nat.equal(levelsSize,0)){
+            let levels = await mc.addLevel();
+            for ((K,V) in Iter.fromArray(levels)){
+                let setLevel = state.games.memory_card.levels.put(K,V);
+            };
+        };
+        #ok(());
+    };
+    public query func getLevel(key : Text) : async Response<Types.MemoryCardLevel>{
+        let level : ?Types.MemoryCardLevel = state.games.memory_card.levels.get(key);
+        switch(level){
+            case null{
+                #err(#NotFound);
+            };
+            case (? current_level){
+                #ok((current_level));
+            };
+        }
+    };
+    public query func getAllLevel() : async Response<[Text]>{
+        #ok((Iter.toArray(state.games.memory_card.levels.keys())));
+    };
+
+    public query({caller}) func getPlayer() : async Response<?Types.MemoryCardPlayer>{
+        let player = state.games.memory_card.players.get(caller);
+        Debug.print(debug_show(player));
+        #ok(player);
+    };
+
+    public query({caller}) func setPlayer() : async Response<()>{
+        
+        #ok(());
+    };
+    
+    public func getHighScore() : async Response<()>{
+        #ok(());
     };
 }
