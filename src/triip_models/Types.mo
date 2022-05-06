@@ -4,8 +4,6 @@ import TravelPlan "model/TravelPlan";
 import ProofTP "model/ProofTP";
 import Vetted "model/Vetted";
 import KYC "model/KYC";
-import Locale "model/Locale";
-import PrizeDetail "model/PrizeDetail";
 import WheelPrize "model/WheelPrize";
 import Principal "mo:base/Principal";
 

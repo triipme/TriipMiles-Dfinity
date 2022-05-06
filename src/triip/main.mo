@@ -606,6 +606,7 @@ shared({caller = owner}) actor class Triip() = this{
 				};
 				let create_prize = state.prizes.put(prize.id, new_prize);
 				#ok(("success"));
+        
 			};
 		};
   };
@@ -691,14 +692,26 @@ shared({caller = owner}) actor class Triip() = this{
   };
 	
   // Lucky Wheel
-  public func test() : async Result.Result<Nat,Types.Error> {
+  public func test() : async Result.Result<?Types.LuckyWheel,Types.Error> {
     var gg = 0;
     let ff = [1,2,3];
-    
-    for ( v in ff.vals() ){
-      gg += v;
+    let z = do {
+    let x = 1;
+    let y = x + 1;
+    x * y + x
+  };
+
+  let activated_wheel = do {
+    var temp : ?Types.LuckyWheel= null;
+    for((K,V) in state.wheels.entries()){
+      if(V.activate == true){
+        temp := state.wheels.get(K);
+      };
     };
-    #ok((gg));
+    temp
+  };
+
+    #ok((activated_wheel));
   };
   public shared(msg) func createWheel(wheel: Types.LuckyWheelUpdate) : async Result.Result<Text,Types.Error> {
     let uid = msg.caller;
@@ -935,59 +948,75 @@ shared({caller = owner}) actor class Triip() = this{
     return (randomFloat / maxRange) * max;
   };
 
-  public shared(msg) func spinLuckyWheel(id: Text) : async Result.Result<Text,Types.Error>{
+  public shared(msg) func spinLuckyWheel() : async Result.Result<Text,Types.Error>{
     let uid = msg.caller;
 
 		if(Principal.toText(uid)=="2vxsx-fae"){
 				throw Error.reject("NotAuthorized");//isNotAuthorized
 		}; 
-    
-    let read_wheel = state.wheels.get(id);
 
-    switch(read_wheel){
-      case(? V){
-        let prizes = V.wheel_prizes;
-
-        var tempArray : [Float] = [];
-        // Getting percentages from wheel's prizes and append each of them into a temp array
-        for (prize in prizes.vals()){
-          tempArray := Array.append<Float>(tempArray,[prize.percentage]);
-        };
-        // Creating array that contains cumulative weights 
-        
-        var i = 1;
-        var weight = tempArray[0];
-        var cumulativeWeights : [Float] = [];
-
-        cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
-        // and caculating weights based on values in temp array
-        while(i < tempArray.size()){
-          weight += tempArray[i];
-          cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
-          i += 1;
-        };
-        let maxCumulativeWeight = cumulativeWeights[cumulativeWeights.size() - 1];
-
-        let randomNumber = await getRandomNumber(1.0);
-        // Getting the random percentage in a range of [0...sum(weights)]
-        let randomPercentage = maxCumulativeWeight * randomNumber;
-        Debug.print(debug_show(tempArray));
-        Debug.print(debug_show(cumulativeWeights));
-        Debug.print(debug_show(randomPercentage));
-        var result : [Text] = [];
-        var itemIndex = 0;
-        // Picking the random item based on its weight
-        // The items with higher weight will be picked more often
-        while(itemIndex < cumulativeWeights.size()){
-          if(cumulativeWeights[itemIndex] >= randomPercentage){
-            result:=Array.append<Text>(result,[prizes[itemIndex].prize_id]);
-          };
-          itemIndex += 1;
-        };
-        #ok((result[0]));
-      };
-      case(null){
+    let read_kyc = state.kycs.get(uid);
+    switch(read_kyc){
+      case null {
         #err(#NotFound);
+      };
+      case(? current_kyc){
+        if(current_kyc.status == "approved"){
+          var activated_wheel : ?Types.LuckyWheel = null;
+          for((K,V) in state.wheels.entries()){
+            if(V.activate == true){
+              activated_wheel := state.wheels.get(K);
+            };
+          };
+          switch(activated_wheel){
+            case(? V){
+              let prizes = V.wheel_prizes;
+
+              var tempArray : [Float] = [];
+              // Getting percentages from wheel's prizes and append each of them into a temp array
+              for (prize in prizes.vals()){
+                tempArray := Array.append<Float>(tempArray,[prize.percentage]);
+              };
+              // Creating array that contains cumulative weights 
+              
+              var i = 1;
+              var weight = tempArray[0];
+              var cumulativeWeights : [Float] = [];
+
+              cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
+              // and caculating weights based on values in temp array
+              while(i < tempArray.size()){
+                weight += tempArray[i];
+                cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
+                i += 1;
+              };
+              let maxCumulativeWeight = cumulativeWeights[cumulativeWeights.size() - 1];
+
+              let randomNumber = await getRandomNumber(1.0);
+              // Getting the random percentage in a range of [0...sum(weights)]
+              let randomPercentage = maxCumulativeWeight * randomNumber;
+              Debug.print(debug_show(tempArray));
+              Debug.print(debug_show(cumulativeWeights));
+              Debug.print(debug_show(randomPercentage));
+              var result : [Text] = [];
+              var itemIndex = 0;
+              // Picking the random item based on its weight
+              // The items with higher weight will be picked more often
+              while(itemIndex < cumulativeWeights.size()){
+                if(cumulativeWeights[itemIndex] >= randomPercentage){
+                  result:=Array.append<Text>(result,[prizes[itemIndex].prize_id]);
+                };
+                itemIndex += 1;
+              };
+              #ok((result[0]));
+            };
+            case(null){
+              #err(#NotFound);
+            };
+          };
+        }else{
+          #err(#Failed);
+        };
       };
     };
   };
