@@ -212,19 +212,27 @@ shared({caller = owner}) actor class Triip() = this{
         };
         let proof_replace = state.proofs.replace(id_proof,proof_update);
         let vetted = state.vetted.put(id_proof,vetted_data);
+        let kycOfUser : Bool = await isKYCedUser(caller);
         if(Text.equal(status,"approved")){
             let wallet_id = state.profiles.get(proof.uid);
             switch(wallet_id){
                 case(null) #err(#NotFound);
                 case(? v){
-                    switch(await transfer("tp",Option.get(v.wallets,[""])[0])){
-                        case (#Err(transfer)){
-                            #err(#NotFound);
+                    switch(kycOfUser){
+                        case (false){
+                            #err(#NonKYC);
                         };
-                        case (#Ok(transfer)){
-                            #ok(());
+                        case (true){
+                            switch(await transfer("tp",Option.get(v.wallets,[""])[0])){
+                                case (#Err(transfer)){
+                                    #err(#NotFound);
+                                };
+                                case (#Ok(transfer)){
+                                    #ok(());
+                                };
+                            };
                         };
-                    };
+                    }
                 }
             };
         }else{
@@ -317,7 +325,7 @@ shared({caller = owner}) actor class Triip() = this{
     //     }
     // };
     // TravelPlan
-    public shared({caller}) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<Text,Types.Error>{
+    public shared({caller}) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(Text,Text),Types.Error>{
         var tp_temp : Int = 0;
 
         if(Principal.toText(caller)=="2vxsx-fae"){
@@ -346,19 +354,28 @@ shared({caller = owner}) actor class Triip() = this{
                 is_received = true;
                 created_at = Time.now();
             };
+            let kycOfUser : Bool = await isKYCedUser(caller);
             let rsReadUser : ? Types.Profile = state.profiles.get(caller);
             switch(rsReadUser){
                 case null{
                     #err(#NotFound);
                 };
                 case (? v){
-                    switch(await transfer("tp",Option.get(v.wallets,[""])[0])){
-                        case (#Err(transfer)){
-                            #err(#NotFound);
-                        };
-                        case (#Ok(transfer)){
+                    switch(kycOfUser){
+                        case (false){
                             state.travelplans.put(travel_plan.idtp,plan);
-                            #ok((travel_plan.idtp));
+                            #ok((travel_plan.idtp,"non-KYC"));
+                        };
+                        case (true){
+                            switch(await transfer("tp",Option.get(v.wallets,[""])[0])){
+                                case (#Err(transfer)){
+                                    #err(#NotFound);
+                                };
+                                case (#Ok(transfer)){
+                                    state.travelplans.put(travel_plan.idtp,plan);
+                                    #ok((travel_plan.idtp,""));
+                                };
+                            };
                         };
                     };
                 };
@@ -367,6 +384,7 @@ shared({caller = owner}) actor class Triip() = this{
             #err(#Enough);
         }
     };
+    
     public shared({caller}) func updateTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(),Types.Error>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
@@ -469,7 +487,7 @@ shared({caller = owner}) actor class Triip() = this{
                             };
                         } else{
                             state.proofs.put(idptp,newProof);
-                            #ok((prooftp.img_key));
+                            #ok((prooftp.img_key))
                         };
                     };
                 };
@@ -546,12 +564,27 @@ shared({caller = owner}) actor class Triip() = this{
         };
         #ok((list));
     };
+    func isKYCedUser(p_user : Principal) : async Bool{
+        let read_kyc = state.kycs.get(p_user);
+
+        switch(read_kyc){
+            case null{
+                return false;
+            };
+            case (? current_kyc){
+                if(current_kyc.status == ?"approved"){
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+        };
+    };
 
     public shared query({caller}) func getKYCStatus() : async Result.Result<(?Text,?Text),Types.Error>{
         if(Principal.toText(caller)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
         };    
-
         let read_kyc = state.kycs.get(caller);
 
         switch(read_kyc){

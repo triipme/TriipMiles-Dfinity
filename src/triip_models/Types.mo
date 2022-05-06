@@ -64,5 +64,6 @@ module{
         #SomethingWrong;
         #Failed;
         #Enough;
+        #NonKYC;
     };
 }
