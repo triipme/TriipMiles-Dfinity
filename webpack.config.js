@@ -5,8 +5,8 @@ const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
 const CompressionPlugin = require("compression-webpack-plugin");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
+const dotenv = require("dotenv").config({ path: __dirname + "/.env" });
 let localCanisters, prodCanisters, canisters;
 
 function initCanisterIds() {
@@ -106,16 +106,6 @@ module.exports = {
         test: /\.(css|scss|sass)$/i,
         use: ["style-loader", "css-loader", "sass-loader"]
       }
-      // {
-      //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
-      //   include: path.resolve(__dirname, "assets"),
-      //   type: "asset/resource"
-      // }
-      // {
-      //   test: /\.(css|scss|sass)$/,
-      //   use: ["style-loader", "css-loader", "sass-loader"],
-      //   exclude: /node_modules/
-      // }
     ]
   },
   plugins: [
@@ -186,8 +176,6 @@ module.exports = {
     },
     hot: true,
     watchFiles: [path.resolve(__dirname, "src", frontendDirectory)],
-    // contentBase: path.resolve(__dirname, "./src/triip_assets"),
-    // watchContentBase: true,
     port: 3000,
     liveReload: true,
     historyApiFallback: true
@@ -232,9 +220,6 @@ module.exports = {
         }
       }
     },
-    // runtimeChunk: {
-    //   name: "manifest"
-    // },
     runtimeChunk: {
       name: entrypoint => `runtimechunk~${entrypoint.name}`
     },
@@ -265,5 +250,10 @@ module.exports = {
         parallel: true
       })
     ]
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src/triip_assets/src/")
+    }
   }
 };

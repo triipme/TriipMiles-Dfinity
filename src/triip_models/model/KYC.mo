@@ -1,6 +1,7 @@
 module {
   public type Info = {
-    code:Text;
+    id_number:Text;
+    id_type:Text;
     name:Text;
     email:Text;
     phone:Text;

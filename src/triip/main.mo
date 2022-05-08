@@ -677,14 +677,14 @@ shared({caller = owner}) actor class Triip() = this{
         #ok((list));
     };
 
-	public shared query(msg) func readPrize(id: Text) : async Result.Result<Types.Prize,Types.Error>{
-		let uid = msg.caller;
+  public shared query(msg) func readPrize(id: Text) : async Result.Result<Types.Prize,Types.Error>{
+    let uid = msg.caller;
 
 		if(Principal.toText(uid)=="2vxsx-fae"){
 			throw Error.reject("NotAuthorized");//isNotAuthorized
 		};    
 
-		let read_prize = state.prizes.get(id);
+    let read_prize = state.prizes.get(id);
 
 		return Result.fromOption(read_prize, #NotFound);
     };
@@ -696,7 +696,7 @@ shared({caller = owner}) actor class Triip() = this{
         throw Error.reject("NotAuthorized");//isNotAuthorized
         };
 
-		let read_prize = state.prizes.get(prize.id);
+    let read_prize = state.prizes.get(prize.id);
 
 		switch(read_prize){
 			case(? V){
@@ -831,9 +831,7 @@ shared({caller = owner}) actor class Triip() = this{
 		if(Principal.toText(uid)=="2vxsx-fae"){
 			throw Error.reject("NotAuthorized");//isNotAuthorized
 		};    
-
-		let read_wheel = state.wheels.get(id);
-
+        let read_wheel = state.wheels.get(id);
 		return Result.fromOption(read_wheel, #NotFound);
     };
 
@@ -877,14 +875,12 @@ shared({caller = owner}) actor class Triip() = this{
 			throw Error.reject("NotAuthorized");//isNotAuthorized
 		};    
 
-		let read_wheel = state.wheels.get(id);
-
+        let read_wheel = state.wheels.get(id);
 		switch(read_wheel){
 			case(? V){
                 if(V.id == id){
                     let deleted_wheel = state.wheels.delete(id);
                     #ok(("success"));
-
                 }else{
                     #err(#Failed);
                 };
@@ -895,8 +891,8 @@ shared({caller = owner}) actor class Triip() = this{
 		};
     };
 
-	public shared(msg) func deleteAllWheels() : async Result.Result<Text,Types.Error>{
-		let uid = msg.caller;
+  public shared(msg) func deleteAllWheels() : async Result.Result<Text,Types.Error>{
+    let uid = msg.caller;
 
         if(Principal.toText(uid)=="2vxsx-fae"){
             throw Error.reject("NotAuthorized");//isNotAuthorized
@@ -916,7 +912,7 @@ shared({caller = owner}) actor class Triip() = this{
 			throw Error.reject("NotAuthorized");//isNotAuthorized
 		};    
 
-		let read_wheel = state.wheels.get(id);
+        let read_wheel = state.wheels.get(id);
 
         switch(read_wheel){
             case(? curr_wheel){
@@ -962,8 +958,8 @@ shared({caller = owner}) actor class Triip() = this{
         };
     };
 
-	public shared(msg) func deactivateWheel(id: Text) : async Result.Result<(),Types.Error>{
-		let uid = msg.caller;
+  public shared(msg) func deactivateWheel(id: Text) : async Result.Result<(),Types.Error>{
+    let uid = msg.caller;
 
 		if(Principal.toText(uid)=="2vxsx-fae"){
 			throw Error.reject("NotAuthorized");//isNotAuthorized

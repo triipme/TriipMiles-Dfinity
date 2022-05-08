@@ -1,13 +1,14 @@
-import TrieMap "mo:base/TrieMap";
-import Trie "mo:base/Trie";
-import Types "Types";
-import Principal "mo:base/Principal";
 import Text "mo:base/Text";
+import Trie "mo:base/Trie";
 import Prelude "mo:base/Prelude";
+import TrieMap "mo:base/TrieMap";
+import Principal "mo:base/Principal";
+
+import Types "Types";
 
 module{
   public type Map<K,V> = TrieMap.TrieMap<K,V>;
-  // public type MapShared<K,V> = Trie.Trie<K,V>;
+  
   public type State = {
     admin : Map<Principal,Types.Admin>;
     profiles : Map<Principal,Types.Profile>;
@@ -19,10 +20,7 @@ module{
     wheels : Map<Text,Types.LuckyWheel>; // new feature
     spinresults : Map<Text,Types.SpinResult>
   };
-  // public type StateShared = {
-  //   profiles : MapShared<Principal,Types.Profile>;
-  //   travelplans : MapShared<Text,Types.TravelPlan>;
-  // };
+  
   public func empty() : State { 
     {
       admin = TrieMap.TrieMap<Principal,Types.Admin>(Principal.equal, Principal.hash);
@@ -36,10 +34,4 @@ module{
       spinresults = TrieMap.TrieMap<Text,Types.SpinResult>(Text.equal,Text.hash);
     };
   };
-  // public func share(state : State) : StateShared {
-  //   Prelude.nyi(); // to do -- for testing / upgrades sub-story
-  // };
-  // public func fromShared(share : StateShared) : State {
-  //   Prelude.nyi(); // to do -- for testing / upgrades sub-story
-  // };
 }

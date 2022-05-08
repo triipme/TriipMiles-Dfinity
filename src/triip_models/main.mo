@@ -1,15 +1,15 @@
 import Debug "mo:base/Debug";
-import Text "mo:base/Text";
 import Iter "mo:base/Iter";
+import Text "mo:base/Text";
 import Principal "mo:base/Principal";
 
-import Types "Types";
-import State "State";
-import Ledger "model/Ledger";
+import Types "./Types";
+import State "./State";
+import Ledger "./model/Ledger";
 
 actor TriipModels {
   /*------------------------ App state--------------------------- */
-  var state: State.State = State.empty();
+  var state : State.State = State.empty();
 
   private stable var profiles : [(Principal, Types.Profile)] = [];
   private stable var travelplans : [(Text, Types.TravelPlan)] = [];

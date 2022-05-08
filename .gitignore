@@ -125,3 +125,4 @@ dist
 .tern-port
 /src/pages/AR/style
 src/declarations
+src/triip_assets/assets/data
