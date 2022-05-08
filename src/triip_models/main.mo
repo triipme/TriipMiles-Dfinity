@@ -17,8 +17,9 @@ actor TriipModels {
   private stable var admin : [(Principal, Types.Admin)] = [];
   private stable var vetted : [(Text, Types.Vetted)] = [];
   private stable var kycs : [(Principal, Types.KYCs)] = [];
-  private stable var prizes : [(Text, Types.Prize)] = []; // new feature
-  private stable var wheels : [(Text, Types.LuckyWheel)] = []; // new feature
+  private stable var prizes : [(Text, Types.Prize)] = [];
+  private stable var wheels : [(Text, Types.LuckyWheel)] = []; 
+  private stable var spinresults : [(Text, Types.SpinResult)] = [];
   private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
   system func preupgrade() {
@@ -29,8 +30,9 @@ actor TriipModels {
     admin := Iter.toArray(state.admin.entries());
     vetted := Iter.toArray(state.vetted.entries());
     kycs := Iter.toArray(state.kycs.entries());
-    prizes := Iter.toArray(state.prizes.entries()); // new feature
-    wheels := Iter.toArray(state.wheels.entries()); // new feature
+    prizes := Iter.toArray(state.prizes.entries());
+    wheels := Iter.toArray(state.wheels.entries());
+    spinresults := Iter.toArray(state.spinresults.entries());
     Debug.print("End preupgrade");
   };
 
@@ -54,11 +56,14 @@ actor TriipModels {
     for ((k, v) in Iter.fromArray(kycs)) {
       state.kycs.put(k, v);
     };
-    for ((k, v) in Iter.fromArray(prizes)) { // new feature
+    for ((k, v) in Iter.fromArray(prizes)) {
       state.prizes.put(k, v);
     };
-    for ((k, v) in Iter.fromArray(wheels)) { // new feature
+    for ((k, v) in Iter.fromArray(wheels)) {
       state.wheels.put(k, v);
+    };
+    for ((k, v) in Iter.fromArray(spinresults)) {
+      state.spinresults.put(k, v);
     };
 
     Debug.print("End postupgrade");
