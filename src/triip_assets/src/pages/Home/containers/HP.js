@@ -19,7 +19,7 @@ const HP = ({ idtp }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState();
   const [status, setStatus] = useState(false);
-  const [image,  setFile] = useUploadFile();
+  const [image, setFile] = useUploadFile();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleUpFileHP = async e => {
@@ -39,12 +39,12 @@ const HP = ({ idtp }) => {
           created_at: [moment(new Date()).unix()]
         });
         if ("ok" in result) {
-          await setFile({
+          setFile({
             file: img,
             name: result?.ok[0]
           });
           toast.success("Success !.");
-          await setStatus(true);
+          setStatus(true);
           // handleIsOpenParent(false);
         } else {
           throw result?.err;
@@ -59,7 +59,6 @@ const HP = ({ idtp }) => {
       dispatch(tranvelPlansAPI());
     }
   };
-  console.log(isError);
   return (
     <>
       <ScrollHidden
@@ -109,7 +108,7 @@ const HP = ({ idtp }) => {
           </>
         ) : (
           <>
-            <Box>
+            <Box sx={{ textAlign: "center" }}>
               <Typography sx={{ mb: 2 }} variant="h6" align="center">
                 Uploading travel document
               </Typography>
