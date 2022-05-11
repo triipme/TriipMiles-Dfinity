@@ -4,11 +4,19 @@ module {
   };
 
   public type Player = {
-    current_level : Text;
-    score : Nat;
-    turn : Nat;
+    uid: Principal;
     history : [
-      (Nat,Int) //turn,time
-    ]
+      {
+        level : Text;
+        turn : Nat;
+        timing_play: Float;
+      }
+    ];
+    createdAt : Int;
+    updatedAt : Int;
   };
+  public type Reward = {
+    reward : Nat64;
+    createdAt : Int;
+  }
 }

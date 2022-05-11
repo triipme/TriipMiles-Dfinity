@@ -18,30 +18,27 @@ const useUploadFile = () => {
     region: storage[3]
   });
   useEffect(() => {
-    (async () => {
-      try {
-        console.log(fileState);
-        if (!!fileState?.file) {
-          const params = {
-            ACL: "public-read",
-            Body: fileState?.file,
-            Bucket: storage[0],
-            Key: fileState?.name
-          };
-          const target = {
-            Bucket: storage[0],
-            Key: fileState?.name
-          };
-          await s3
-            .putObject(params)
-            // .on("httpUploadProgress", evt => {
-            //   setProgress(Math.round((evt.loaded / evt.total) * 100));
-            // })
-            .send(err => {
-              if (err) console.log(err);
-            });
-          await s3.getObject(target, (err, data) => {
-            console.log("err", err);
+    if (!!fileState?.file) {
+      const params = {
+        ACL: "public-read",
+        Body: fileState?.file,
+        Bucket: storage[0],
+        Key: fileState?.name
+      };
+      const target = {
+        Bucket: storage[0],
+        Key: fileState?.name
+      };
+      s3.putObject(params)
+        // .on("httpUploadProgress", evt => {
+        //   setProgress(Math.round((evt.loaded / evt.total) * 100));
+        // })
+        .send(err => {
+          console.log("up");
+          if (err) console.log(err);
+          s3.getObject(target, (err, data) => {
+            console.log("get");
+            console.log("err", err, data);
             if (err != null) {
               console.log("Failed to retrieve an object", err);
             } else {
@@ -52,12 +49,9 @@ const useUploadFile = () => {
               });
             }
           });
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, [fileState]);
+        });
+    }
+  }, [fileState?.name]);
   const setFile = useCallback(state => setFileState(state), []);
   return [result, setFile];
 };

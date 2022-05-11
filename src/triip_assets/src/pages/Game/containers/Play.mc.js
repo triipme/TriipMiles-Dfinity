@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./Play.mc.sass";
 import SingleCard from "../components/SingleCard";
-import { ButtonPrimary } from "../../../components";
-import { Box, Typography } from "@mui/material";
+import { ButtonPrimary, Loading } from "../../../components";
+import { Box, Modal, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 function Play() {
   const [cards, setCards] = useState([]);
@@ -25,7 +25,6 @@ function Play() {
     setCards(shuffledCards);
     setTurns(0);
   };
-  console.log(cards);
   //handle choice
   const handleChoice = card => {
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
@@ -63,30 +62,34 @@ function Play() {
 
   //start new game
   useEffect(() => {
-    (async () => {
-      try {
-        if (!!actor?.getLevel) {
-          const level = await actor.getLevel(state?.lv_id);
-          if ("ok" in level) {
-            shuffleCards(
-              level.ok.volcabulary.map(v => ({ word: v[0], result: v[1], matched: false }))
-            );
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    })();
+    apiShuffleCards();
   }, []);
+
+  async function apiShuffleCards() {
+    try {
+      if (!!actor?.Game__GC_getLevel) {
+        const level = await actor.Game__GC_getLevel(state?.lv_id);
+        if ("ok" in level) {
+          shuffleCards(
+            level.ok.volcabulary.map(v => ({ word: v[0], result: v[1], matched: false }))
+          );
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   if (!!!state?.lv_id) {
     return <Navigate to="/game/magic_memory" />;
   }
-
   return (
     <div className="App">
       <Typography variant="h1">Magic Memory Game</Typography>
-      <ButtonPrimary onClick={shuffleCards} title="New Game" sx={{ width: 150 }} />
+      {cards?.length > 0 && (
+        <TimingPlay turns={turns} cards={cards} level={state?.lv_id} id_player={state?.id_player} />
+      )}
+      <ButtonPrimary onClick={apiShuffleCards} title="New Game" sx={{ width: 150 }} />
       <div className="card-grid">
         {cards?.map(card => (
           <SingleCard
@@ -103,5 +106,57 @@ function Play() {
     </div>
   );
 }
+
+const TimingPlay = ({ turns, cards, level, id_player }) => {
+  const { actor } = useSelector(state => state.user);
+  const [time, setTime] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const to = setTimeout(() => {
+      !isLoading && setTime(prevTime => prevTime + 1);
+    }, 10);
+    return () => clearTimeout(to);
+  }, [time, isLoading]);
+  async function apiSetPlayer() {
+    try {
+      const rs = await actor?.Game__GC_setPlayer({
+        id_player: !!id_player ? [id_player] : [],
+        turn: turns,
+        timing_play: parseFloat((time / 100).toFixed(2)),
+        level
+      });
+      if ("ok" in rs) {
+        navigate(-1);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  useEffect(() => {
+    if (cards.length > 0) {
+      if (cards.every(card => card.matched)) {
+        // submit to Server
+        setIsLoading(true);
+        if (!!actor?.Game__GC_setPlayer) {
+          apiSetPlayer();
+        }
+      }
+    }
+    if (turns === 0) {
+      setTime(0);
+    }
+  }, [turns]);
+  return (
+    <div>
+      <Modal open={isLoading}>
+        <Loading />
+      </Modal>
+      <p>Turns: {(time / 100).toFixed(2)}</p>
+    </div>
+  );
+};
 
 export default Play;

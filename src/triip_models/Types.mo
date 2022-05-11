@@ -61,14 +61,17 @@ module{
     // MemoryCard
     public type MemoryCardLevel = MemoryCard.Level;
     public type MemoryCardPlayer = MemoryCard.Player;
+    public type MemoryCardReward = MemoryCard.Reward;
 
     /* ------------------------- Error --------------------------- */
     public type Error = {
         #NotFound;
         #AlreadyExisting;
+        #NotEnoughPermission;
         #NotAuthorized;
         #SomethingWrong;
         #Failed;
         #Enough;
+        #NonKYC;
     };
 }

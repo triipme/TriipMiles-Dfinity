@@ -18,7 +18,8 @@ module{
     games : {
       memory_card : {
         levels : Map<Text,Types.MemoryCardLevel>;
-        players : Map<Principal,Types.MemoryCardPlayer>;
+        players : Map<Text,Types.MemoryCardPlayer>;
+        rewards : Map<Text,Types.MemoryCardReward>;
       }
     };
   };
@@ -34,7 +35,8 @@ module{
       games = {
         memory_card = {
           levels = TrieMap.TrieMap<Text,Types.MemoryCardLevel>(Text.equal,Text.hash);
-          players = TrieMap.TrieMap<Principal,Types.MemoryCardPlayer>(Principal.equal, Principal.hash);
+          players = TrieMap.TrieMap<Text,Types.MemoryCardPlayer>(Text.equal, Text.hash);
+          rewards = TrieMap.TrieMap<Text,Types.MemoryCardReward>(Text.equal, Text.hash);
         }
       };
     };
