@@ -16,8 +16,8 @@ module{
     proofs : Map<Text,Types.ProofTP>;
     vetted : Map<Text,Types.Vetted>;
     kycs : Map<Principal,Types.KYCs>;
-    prizes: Map<Text,Types.Prize>; // new feature
-    wheels : Map<Text,Types.LuckyWheel>; // new feature
+    prizes: Map<Text,Types.Prize>;
+    wheels : Map<Text,Types.LuckyWheel>;
     spinresults : Map<Text,Types.SpinResult>
   };
   
