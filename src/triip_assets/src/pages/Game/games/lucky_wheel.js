@@ -1,9 +1,15 @@
 import { Icon } from "@iconify/react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "../containers/luckyWheel.css";
 import { Link } from "react-router-dom";
+import { Empty, Loading } from "../../../components";
+import toast from "react-hot-toast";
+
+import { spinResultsAPI } from "../../../slice/user/thunk";
+import { spinRemainingAPI } from "../../../slice/user/thunk";
 
 // Modal Rules
 const styleRules = {
@@ -45,33 +51,70 @@ const styleLoading = {
   overflowY: "hidden"
 };
 
-function MagicMemory() {
+const LuckyWheel = () => {
+  const { actor } = useSelector(state => state.user);
   const [openRules, setOpenRules] = useState(false);
   const [openPrize, setOpenPrize] = useState(false);
   const [openReward, setOpenReward] = useState(false);
   const [openLoading, setOpenLoading] = useState(false);
+  const [isResultsLoading, setIsResultsLoading] = useState(false);
+  const [currentReward, setCurrentReward] = useState(null);
+  const dispatch = useDispatch();
 
   const handleOpenRules = () => setOpenRules(true);
   const handleCloseRules = () => setOpenRules(false);
 
-  const handleOpenPrize = () => setOpenPrize(true);
+  const handleOpenPrize = () => {
+    setOpenReward(false);
+    setOpenPrize(true);
+  }
   const handleClosePrize = () => setOpenPrize(false);
 
-  const refTimeoutLoading = useRef();
-  const handleOpenReward = () => {
-    setOpenLoading(true);
-    refTimeoutLoading.current = setTimeout(() => {
-      setOpenLoading(false);
-      setOpenReward(true);
-    }, 3500);
-  };
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(refTimeoutLoading.current);
-    };
-  }, [openReward]);
   const handleCloseReward = () => setOpenReward(false);
+
+  const { spinResults: spinResults } = useSelector(state => state.user);
+  useEffect(() => {
+    setIsResultsLoading(true);
+    dispatch(spinResultsAPI());
+    setIsResultsLoading(false);
+  }, []);
+
+  const { remainingSpinTimes: remainingSpinTimes } = useSelector(state => state.user);
+  useEffect(() => {
+    setIsResultsLoading(true);
+    dispatch(spinRemainingAPI());
+    setIsResultsLoading(false);
+  }, []);
+
+  const handleSpin = async () => {
+    if(remainingSpinTimes > 0) {
+      setOpenLoading(true);
+      try {
+        const result = await actor?.spinLuckyWheel();
+        dispatch(spinRemainingAPI());
+        dispatch(spinResultsAPI());
+        setOpenLoading(false);
+        if ("ok" in result) {
+          setCurrentReward(result.ok);
+          setOpenReward(true);
+        } else {
+          throw result?.err;
+        }
+      } catch (error) {
+        setOpenLoading(false);
+        toast.error(
+          {
+            "NotAuthorized": "Please sign in!.",
+            "NotFound": "Please complete KYC first.",
+            "NonKYC": "Please complete KYC first.",
+            "Unavailable":
+              "This service is temporary unavailable."
+          }[Object.keys(error)[0]],
+          { duration: 5000 }
+        );
+      }
+    }
+  };
 
   return (
     <>
@@ -93,7 +136,7 @@ function MagicMemory() {
               alt=""
             />
             <img
-              src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
+              src="https://triip.imgix.net/triipme/prize/icon/12/triipmiles.jpg"
               alt=""
             />
             <img
@@ -103,8 +146,8 @@ function MagicMemory() {
           </div>
         </div>
         <div className="btnLuckyWheelSpin">
-          <button className="btnLuckyWheel btnSpin" onClick={handleOpenReward}>
-            TAP TO SPIN (1 LEFT)
+          <button className="btnLuckyWheel btnSpin" onClick={handleSpin}>
+            {remainingSpinTimes > 0 ? `TAP TO SPIN (${remainingSpinTimes} LEFT)` : "SORRY YOU'VE RUN OUT OF SPINS"}
           </button>
         </div>
         <div className="btnLuckyWheelOption">
@@ -118,69 +161,13 @@ function MagicMemory() {
         <div className="footerLuckyWheel">
           <div className="prizeHeading">PRIZE LIST</div>
           <div className="prizeListContainerAll">
-            {/* item */}
-            <div className="prizeListContainer">
-              <div className="imgPrizeList">
-                <img
-                  src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
-                  alt=""
-                  className="itemImgPrize"
-                />
-              </div>
-              <div class="itemContainer">
-                <h3 className="itemName">Cakes</h3>
-                <span className="itemDescription">You've earned 1 cakes in your inventory</span>
-              </div>
-            </div>
-
-            {/* item */}
-
-            <div className="prizeListContainer">
-              <div className="imgPrizeList">
-                <img
-                  src="https://media.istockphoto.com/vectors/good-luck-farewell-card-vector-lettering-vector-id1001515918?k=20&m=1001515918&s=612x612&w=0&h=LzmNtNxA5pczJrK2LzNfDdmyiK5ZxVpBtNZhQk_lePk="
-                  alt=""
-                  className="itemImgPrize"
-                />
-              </div>
-
-              <div class="itemContainer">
-                <h3 className="itemName">Sorry you didn’t win!</h3>
-                <span className="itemDescription">Better Luck Next Time!</span>
-              </div>
-            </div>
-
-            {/* item */}
-            <div className="prizeListContainer">
-              <div className="imgPrizeList">
-                <img
-                  src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
-                  alt=""
-                  className="itemImgPrize"
-                />
-              </div>
-              <div class="itemContainer">
-                <h3 className="itemName">Cakes</h3>
-                <span className="itemDescription">You've earned 1 cakes in your inventory</span>
-              </div>
-            </div>
-
-            {/* item */}
-
-            <div className="prizeListContainer">
-              <div className="imgPrizeList">
-                <img
-                  src="https://media.istockphoto.com/vectors/good-luck-farewell-card-vector-lettering-vector-id1001515918?k=20&m=1001515918&s=612x612&w=0&h=LzmNtNxA5pczJrK2LzNfDdmyiK5ZxVpBtNZhQk_lePk="
-                  alt=""
-                  className="itemImgPrize"
-                />
-              </div>
-
-              <div class="itemContainer">
-                <h3 className="itemName">Sorry you didn’t win!</h3>
-                <span className="itemDescription">Better Luck Next Time!</span>
-              </div>
-            </div>
+            {isResultsLoading ? (
+              <Loading height="70vh" />
+            ) : spinResults?.length > 0 && (
+              spinResults?.map((spinResult, _key) => (
+                <SpinResultPrize spinResult={spinResult} />
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -233,68 +220,11 @@ function MagicMemory() {
             </div>
           </div>
           <div id="modal-modal-description-prize">
-            <div className="prizeListContainer  rewardSpace">
-              <div className="imgPrizeList">
-                <img
-                  src="https://media.istockphoto.com/vectors/good-luck-farewell-card-vector-lettering-vector-id1001515918?k=20&m=1001515918&s=612x612&w=0&h=LzmNtNxA5pczJrK2LzNfDdmyiK5ZxVpBtNZhQk_lePk="
-                  alt=""
-                  className="itemImgPrize"
-                />
-              </div>
-
-              <div class="itemContainer">
-                <h3 className="itemName">Sorry you didn’t win!</h3>
-                <span className="itemDescription">Better Luck Next Time!</span>
-              </div>
-            </div>
-            {/* item */}
-
-            <div className="prizeListContainer rewardSpace">
-              <div className="imgPrizeList">
-                <img
-                  src="https://media.istockphoto.com/vectors/good-luck-farewell-card-vector-lettering-vector-id1001515918?k=20&m=1001515918&s=612x612&w=0&h=LzmNtNxA5pczJrK2LzNfDdmyiK5ZxVpBtNZhQk_lePk="
-                  alt=""
-                  className="itemImgPrize"
-                />
-              </div>
-
-              <div class="itemContainer">
-                <h3 className="itemName">Sorry you didn’t win!</h3>
-                <span className="itemDescription">Better Luck Next Time!</span>
-              </div>
-            </div>
-
-            {/* item */}
-            <div className="prizeListContainer rewardSpace">
-              <div className="imgPrizeList">
-                <img
-                  src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
-                  alt=""
-                  className="itemImgPrize"
-                />
-              </div>
-              <div class="itemContainer">
-                <h3 className="itemName">Cakes</h3>
-                <span className="itemDescription">You've earned 1 cakes in your inventory</span>
-              </div>
-            </div>
-
-            {/* item */}
-
-            <div className="prizeListContainer rewardSpace">
-              <div className="imgPrizeList">
-                <img
-                  src="https://media.istockphoto.com/vectors/good-luck-farewell-card-vector-lettering-vector-id1001515918?k=20&m=1001515918&s=612x612&w=0&h=LzmNtNxA5pczJrK2LzNfDdmyiK5ZxVpBtNZhQk_lePk="
-                  alt=""
-                  className="itemImgPrize"
-                />
-              </div>
-
-              <div class="itemContainer">
-                <h3 className="itemName">Sorry you didn’t win!</h3>
-                <span className="itemDescription">Better Luck Next Time!</span>
-              </div>
-            </div>
+            {spinResults?.length > 0 && (
+              spinResults?.map((spinResult, _key) => (
+                <SpinResultPrize spinResult={spinResult} />
+              ))
+            )}
           </div>
         </Box>
       </Modal>
@@ -321,14 +251,14 @@ function MagicMemory() {
           <Icon icon="fa:angle-left" className="iconBack-reward" onClick={handleCloseReward} />
           <div id="modal-modal-title">
             <div className="rewardHeader">
-              <p className="rewardHeading">+1 CAKE</p>
+              <p className="rewardHeading">{currentReward?.prize_name}</p>
             </div>
           </div>
           <div id="modal-modal-description">
             <div className="imageBodyReward">
               <img
-                src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-strawberry-cream-cake-illustration-png-image_4692089.jpg"
-                alt="Gif Lucky Wheel"
+                src={currentReward?.icon}
+                alt={currentReward?.prize_name}
               />
             </div>
             <div>
@@ -341,6 +271,24 @@ function MagicMemory() {
       </Modal>
     </>
   );
-}
+};
 
-export default MagicMemory;
+const SpinResultPrize = ({ spinResult }) => {
+  return (
+    <div className="prizeListContainer" key={spinResult?.uuid}>
+      <div className="imgPrizeList">
+        <img
+          src={spinResult?.icon}
+          alt=""
+          className="itemImgPrize"
+        />
+      </div>
+      <div class="itemContainer">
+        <h3 className="itemName">{spinResult.prize_name}</h3>
+        <span className="itemDescription">{spinResult.remark}</span>
+      </div>
+    </div>
+  )
+};
+
+export default LuckyWheel;

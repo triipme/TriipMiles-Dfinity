@@ -16,6 +16,9 @@ module{
     proofs : Map<Text,Types.ProofTP>;
     vetted : Map<Text,Types.Vetted>;
     kycs : Map<Principal,Types.KYCs>;
+    prizes: Map<Text,Types.Prize>;
+    wheels : Map<Text,Types.LuckyWheel>;
+    spinresults : Map<Text,Types.SpinResult>
   };
   
   public func empty() : State { 
@@ -25,7 +28,10 @@ module{
       travelplans = TrieMap.TrieMap<Text,Types.TravelPlan>(Text.equal,Text.hash);
       proofs = TrieMap.TrieMap<Text,Types.ProofTP>(Text.equal,Text.hash);
       vetted = TrieMap.TrieMap<Text,Types.Vetted>(Text.equal,Text.hash);
-      kycs = TrieMap.TrieMap<Principal,Types.KYCs>(Principal.equal, Principal.hash);
+      kycs = TrieMap.TrieMap<Principal,Types.KYCs>(Principal.equal,Principal.hash);
+      prizes = TrieMap.TrieMap<Text,Types.Prize>(Text.equal,Text.hash);
+      wheels = TrieMap.TrieMap<Text,Types.LuckyWheel>(Text.equal,Text.hash);
+      spinresults = TrieMap.TrieMap<Text,Types.SpinResult>(Text.equal,Text.hash);
     };
   };
 }
