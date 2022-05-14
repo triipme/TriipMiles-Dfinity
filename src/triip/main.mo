@@ -16,6 +16,7 @@ import Random "mo:base/Random";
 import Float "mo:base/Float";
 import Nat8 "mo:base/Nat8";
 import Int "mo:base/Int";
+import Int64 "mo:base/Int64";
 
 import GeneralUtils "./utils/general";
 import LuckyWheel "./luckyWheel";
@@ -28,7 +29,7 @@ import ProofTP "../triip_models/model/ProofTP";
 
 import Env ".env";
 
-shared({caller = owner}) actor class Triip() = this{
+shared({caller = owner}) actor class Triip() = this {
   /*------------------------ App state--------------------------- */
   var state : State.State = State.empty();
 
@@ -68,7 +69,8 @@ shared({caller = owner}) actor class Triip() = this{
       account = principalToAid(caller);
     });
   };
-  func transfer(type_transfer: Text, to : Text) : async Ledger.TransferResult {
+
+  func transfer(amount : Ledger.ICP, to : Text) : async Ledger.TransferResult {
     // assert(caller == owner); //this check principal owner vs caller is Admin
     let toAId : AId.AccountIdentifier = switch(AId.fromText(to)) {
       case (#err(_)) {
@@ -77,10 +79,6 @@ shared({caller = owner}) actor class Triip() = this{
       };
       case (#ok(a)) a;
     };
-    
-    var amount : Ledger.ICP = {e8s=0};
-    if(type_transfer=="tp") amount := {e8s = 100};
-    if(type_transfer=="ptp_approve") amount := {e8s = 3300};
 
     await ledger.transfer({
       memo            = 1;
@@ -91,6 +89,7 @@ shared({caller = owner}) actor class Triip() = this{
       created_at_time = null;
     });
   };
+
   //Admin
   type Analysis = {
     profiles : Nat;
@@ -98,6 +97,7 @@ shared({caller = owner}) actor class Triip() = this{
     proofs_approved : Nat;
     proofs_rejected : Nat;
   };
+
   public query({caller}) func analysis() : async Result.Result<(Analysis,[Text]),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
@@ -125,26 +125,31 @@ shared({caller = owner}) actor class Triip() = this{
     };
     #ok((analysis,Iter.toArray(destination)));
   };
-  private func isAdmin(key : Principal) : ?Types.Admin{
-    let findAdmin = state.admin.get(key);
-    return findAdmin;
+
+  private func isAdmin(key : Principal) : ?Types.Admin {
+    state.admin.get(key);
   };
-  private func isSecretKey(key : Text) : Bool{
-    return Text.hash(key)==Text.hash(Env.secret_key_admin);
+
+  private func isSecretKey(key : Text) : Bool {
+    Text.hash(key)==Text.hash(Env.secret_key_admin);
   };
+
   public shared query({caller}) func loginAdmin() : async Result.Result<Types.Admin,Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };        let is_admin = isAdmin(caller);
+    };
+    let is_admin = isAdmin(caller);
     switch(is_admin){
       case(null) #err(#NotFound);
       case(? v) #ok((v));
     }
   };
+
   public shared({caller}) func registerAdmin(key : Text,info : Types.Admin) : async Result.Result<Types.Admin,Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };        let isKey = isSecretKey(key);
+    };
+    let isKey = isSecretKey(key);
     if(isKey){
       state.admin.put(caller,info);
       let rs = isAdmin(caller);
@@ -156,10 +161,11 @@ shared({caller = owner}) actor class Triip() = this{
       #err(#Failed);
     }
   };
+
   private func getHPofTPAdmin(key : Text) : ?Types.ProofTP{
-    let proof = state.proofs.get(key);
-    return proof;
+    state.proofs.get(key);
   };
+
   private func getInfoStaffAdmin(key : Principal) : Text{
     let staff = state.admin.get(key);
     switch(staff){
@@ -167,15 +173,19 @@ shared({caller = owner}) actor class Triip() = this{
       case(? v) return Text.concat(Option.get(v.admin.first_name,"")," "#Option.get(v.admin.last_name,""));
     };
   };
+
   private func getStaffAdmin(key : Text) : ?Types.Vetted{
-    let staff = state.vetted.get(key);
-    return staff;
+    state.vetted.get(key);
   };
+
   public shared query({caller}) func getAllTPAdmin() : async Result.Result<[(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)],Types.Error>{
     var allTP : [(Text,Types.TravelPlan,?Types.ProofTP,?Types.Vetted,?Text)] = [];
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };        
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     for((K,V) in state.travelplans.entries()){
       switch(getStaffAdmin(K)){
         case(null){
@@ -203,10 +213,15 @@ shared({caller = owner}) actor class Triip() = this{
     };
     #ok(allTP);
   };
-  public shared({caller}) func approveHPAdmin(id_proof : Text,status:Text,proof : Types.ProofTP) : async Result.Result<(),Types.Error>{
+
+  public shared ({caller}) func approveHPAdmin(id_proof : Text, status:Text, proof : Types.ProofTP) : async Result.Result<(), Types.Error> {
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };        let proof_update : Types.ProofTP = {
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
+    let proof_update : Types.ProofTP = {
       proof = proof.proof;
       uid = proof.uid;
       status = status;
@@ -216,24 +231,32 @@ shared({caller = owner}) actor class Triip() = this{
       staff  = caller;
       updated_at = Time.now() / 10**9;
     };
-    let proof_replace = state.proofs.replace(id_proof,proof_update);
-    let vetted = state.vetted.put(id_proof,vetted_data);
-    if(Text.equal(status,"approved")){
-      let wallet_id = state.profiles.get(proof.uid);
-      switch(wallet_id){
+    let proof_replace = state.proofs.replace(id_proof, proof_update);
+    let vetted = state.vetted.put(id_proof, vetted_data);
+    let kycOfUser : Bool = await isKYCedUser(proof.uid);
+    if(Text.equal(status, "approved")){
+      let profile = state.profiles.get(proof.uid);
+      switch(profile){
         case(null) #err(#NotFound);
         case(? v){
-          switch(await transfer("tp",Option.get(v.wallets,[""])[0])){
-            case (#Err(transfer)){
-              #err(#NotFound);
+          switch(kycOfUser){
+            case (false){
+              #err(#NonKYC);
             };
-            case (#Ok(transfer)){
-              #ok(());
+            case (true){
+              switch(await transfer({e8s = 3300},Option.get(v.wallets,[""])[0])){
+                case (#Err(transfer)){
+                  #err(#NotFound);
+                };
+                case (#Ok(transfer)){
+                  #ok(());
+                };
+              };
             };
-          };
+          }
         }
       };
-    }else{
+    } else {
       #ok(());
     }
   };
@@ -247,6 +270,7 @@ shared({caller = owner}) actor class Triip() = this{
     };
     #ok((Env.S3_BUCKET,Env.S3_ACCESS_KEY,Env.S3_SECRET_KEY,Env.S3_REGION))
   };
+
   public shared({caller}) func create(profile: Types.Profile) : async Result.Result<(),Types.Error> {
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
@@ -263,20 +287,22 @@ shared({caller = owner}) actor class Triip() = this{
       };
     }
   };
+
   public shared query({caller}) func read() : async Result.Result<(Types.Profile,Text),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };        
+    };
     let rsReadUser = state.profiles.get(caller);
     switch(rsReadUser){
-      case null{
-        #err(#NotFound);
-      };
-      case (? v){
-        #ok((v,Principal.toText(caller)));
-      };
+        case null{
+          #err(#NotFound);
+        };
+        case (? v){
+          #ok((v,Principal.toText(caller)));
+        };
     }
   };
+
   // Wallet
   public shared({caller}) func addWallet(wallet_id:Text) : async Result.Result<(Types.Profile,Text),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
@@ -297,33 +323,9 @@ shared({caller = owner}) actor class Triip() = this{
       }
     }
   };
-  // public shared({caller}) func addWallet(wallet_id:Text) : async Result.Result<(),Types.Error>{
-  //     if(Principal.toText(caller)=="2vxsx-fae"){
-  //         return #err(#NotAuthorized);//isNotAuthorized
-  //     };
-  //     let rsReadUser = state.profiles.get(caller);
-  //     switch(rsReadUser){
-  //         case null{
-  //             #err(#NotFound);
-  //         };
-  //         case (? v){
-  //             if(?Array.find(Option.get(v.wallets,[]),func(rs : Text) : Bool{
-  //                 rs == wallet_id
-  //             }) == ?null){
-  //                 let updateInfo : Types.Profile = {
-  //                     user = v.user;
-  //                     wallets = ?Array.append(Option.get(v.wallets,[]),[wallet_id]);
-  //                 };
-  //                 let rs = state.profiles.replace(caller,updateInfo);
-  //                 #ok(());
-  //             } else {
-  //                 #err(#AlreadyExisting);
-  //             }
-  //         }
-  //     }
-  // };
+
   // TravelPlan
-  public shared({caller}) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<Text,Types.Error>{
+  public shared({caller}) func createTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(Text,Text),Types.Error>{
     var tp_temp : Int = 0;
 
     if(Principal.toText(caller)=="2vxsx-fae"){
@@ -333,8 +335,8 @@ shared({caller = owner}) actor class Triip() = this{
     for((K,V) in state.travelplans.entries()){
       if(Principal.toText(V.uid)==Principal.toText(caller) 
         and 
-        travel_plan.travel_plan.week_of_year == V.travel_plan.week_of_year){
-          tp_temp := tp_temp+1;
+        travel_plan.travel_plan.week_of_year == V.travel_plan.week_of_year) {
+          tp_temp := tp_temp + 1;
       }
     };
 
@@ -352,19 +354,28 @@ shared({caller = owner}) actor class Triip() = this{
         is_received = true;
         created_at = Time.now();
       };
+      let kycOfUser : Bool = await isKYCedUser(caller);
       let rsReadUser : ? Types.Profile = state.profiles.get(caller);
       switch(rsReadUser){
         case null{
           #err(#NotFound);
         };
         case (? v){
-          switch(await transfer("tp",Option.get(v.wallets,[""])[0])){
-            case (#Err(transfer)){
-              #err(#NotFound);
-            };
-            case (#Ok(transfer)){
+          switch(kycOfUser){
+            case (false){
               state.travelplans.put(travel_plan.idtp,plan);
-              #ok((travel_plan.idtp));
+              #ok((travel_plan.idtp,"non-KYC"));
+            };
+            case (true){
+              switch(await transfer({e8s = 100}, Option.get(v.wallets, [""])[0])) {
+                case (#Err(transfer)){
+                  #err(#NotFound);
+                };
+                case (#Ok(transfer)){
+                  state.travelplans.put(travel_plan.idtp,plan);
+                  #ok((travel_plan.idtp,""));
+                };
+              };
             };
           };
         };
@@ -373,6 +384,7 @@ shared({caller = owner}) actor class Triip() = this{
       #err(#Enough);
     }
   };
+
   public shared({caller}) func updateTravelPlan(travel_plan : Types.TravelPlanUpdate) : async Result.Result<(),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
@@ -395,6 +407,7 @@ shared({caller = owner}) actor class Triip() = this{
       };
     }
   };
+
   public shared({caller}) func setStatusReceivedICP(status : Bool,idtp: Text) : async Result.Result<(),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       return #err(#NotAuthorized);//isNotAuthorized
@@ -437,7 +450,7 @@ shared({caller = owner}) actor class Triip() = this{
   public shared({caller}) func createProofTP(idptp: Text,prooftp:ProofTP.ProofTP) : async Result.Result<?Text,Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };        
+    };
     // check proof of tp already
     // if true -> exist
     // else
@@ -475,7 +488,7 @@ shared({caller = owner}) actor class Triip() = this{
               };
             } else{
               state.proofs.put(idptp,newProof);
-              #ok((prooftp.img_key));
+              #ok((prooftp.img_key))
             };
           };
         };
@@ -495,7 +508,7 @@ shared({caller = owner}) actor class Triip() = this{
   public shared({caller}) func createKYC(kyc: Types.KYCsUpdate) : async Result.Result<Text,Types.Error> {
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    }; 
+    };
 
     let read_kyc = state.kycs.get(caller);
 
@@ -506,7 +519,7 @@ shared({caller = owner}) actor class Triip() = this{
             info = kyc.info;
             images = kyc.images;
             comments = kyc.comments;
-            approver: ?Principal = null;
+            approver: ?Principal= null;
             status = ?"waiting";
             createdAt = current_kyc.createdAt;
             updatedAt = ?Time.now();
@@ -522,7 +535,7 @@ shared({caller = owner}) actor class Triip() = this{
           images = kyc.images;
           comments : ?Text = Option.get(null,?"");
           status : ?Text = Option.get(null,?"new");
-          approver: ?Principal = null;
+          approver: ?Principal= null;
           createdAt : ?Int = Option.get(null,?Time.now());
           updatedAt : ?Int = Option.get(null,?Time.now());
         };
@@ -535,7 +548,7 @@ shared({caller = owner}) actor class Triip() = this{
   public shared query({caller}) func readKYC() : async Result.Result<(Types.KYCs),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
+    };
 
     let read_kyc = state.kycs.get(caller);
 
@@ -546,18 +559,37 @@ shared({caller = owner}) actor class Triip() = this{
     var list : [(Principal,Types.KYCs)] = [];
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     for((K,V) in state.kycs.entries()){
       list := Array.append<(Principal,Types.KYCs)>(list,[(K,V)]);
     };
     #ok((list));
   };
 
+  func isKYCedUser(p_user : Principal) : async Bool{
+    let read_kyc = state.kycs.get(p_user);
+
+    switch(read_kyc){
+      case null{
+        return false;
+      };
+      case (? current_kyc){
+        if(current_kyc.status == ?"approved"){
+          return true;
+        } else {
+          return false;
+        }
+      };
+    };
+  };
+
   public shared query({caller}) func getKYCStatus() : async Result.Result<(?Text,?Text),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
-
+    };
     let read_kyc = state.kycs.get(caller);
 
     switch(read_kyc){
@@ -575,7 +607,6 @@ shared({caller = owner}) actor class Triip() = this{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
     };
-    
     let read_kyc = state.kycs.get(caller);
 
     switch(read_kyc){
@@ -587,7 +618,7 @@ shared({caller = owner}) actor class Triip() = this{
           info = kyc.info;
           images = kyc.images;
           comments = kyc.comments;
-          approver: ?Principal = null;
+          approver: ?Principal= null;
           status : ?Text = Option.get(null,?"waiting");
           createdAt = current_kyc.createdAt;
           updatedAt = ?Time.now();
@@ -598,12 +629,13 @@ shared({caller = owner}) actor class Triip() = this{
     };
   };
 
-
   public shared({caller}) func approveKYC(kyc_status: Text,comments:Text,id:Text) : async Result.Result<(),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
     };
-    
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     let read_kyc = state.kycs.get((Principal.fromText(id)));
 
     switch(read_kyc){
@@ -631,31 +663,29 @@ shared({caller = owner}) actor class Triip() = this{
   };
 
   // Prizes
-  public shared({caller}) func putPrize(uuid: Text, prize: Types.Prize) : async () {
-    if(Principal.toText(caller)=="2vxsx-fae"){
-      throw Error.reject("NotAuthorized");//isNotAuthorized
-    };
+  private func putPrize(uuid: Text, prize: Types.Prize) : async () {
     let new_prize : Types.Prize = {
+      uuid = ?uuid;
       prize_type = prize.prize_type;
       name = prize.name;
       icon = prize.icon;
       quantity = prize.quantity;
-      decs = prize.decs;
+      description = prize.description;
       created_at : ?Int = Option.get(null,?Time.now());
     };
     state.prizes.put(uuid, new_prize);
   };
 
-   public shared({caller}) func replacePrize(uuid: Text, prize: Types.Prize) : async (){
-    if(Principal.toText(caller)=="2vxsx-fae"){
-      throw Error.reject("NotAuthorized");//isNotAuthorized
-    };
+  private func replacePrize(uuid: Text, prize: Types.Prize) : async (){
     let updated_prize = state.prizes.replace(uuid, prize);
   };
 
   public shared({caller}) func createPrize(prize: Types.Prize) : async Result.Result<Text,Types.Error> {
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
     };
     let uuid = await GeneralUtils.createUUID();
     let read_prize = state.prizes.get(uuid);
@@ -674,7 +704,10 @@ shared({caller = owner}) actor class Triip() = this{
     var list : [(Text,Types.Prize)] = [];
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     for((K,V) in state.prizes.entries()){
       list := Array.append<(Text,Types.Prize)>(list,[(K,V)]);
     };
@@ -684,7 +717,10 @@ shared({caller = owner}) actor class Triip() = this{
   public shared query({caller}) func readPrize(uuid: Text) : async Result.Result<Types.Prize,Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     let read_prize = state.prizes.get(uuid);
     return Result.fromOption(read_prize, #NotFound);
   };
@@ -692,6 +728,9 @@ shared({caller = owner}) actor class Triip() = this{
   public shared({caller}) func updatePrize(uuid: Text, prize: Types.Prize) : async Result.Result<(),Types.Error> {
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
     };
     let read_prize = state.prizes.get(uuid);
     switch(read_prize){
@@ -708,7 +747,10 @@ shared({caller = owner}) actor class Triip() = this{
   public shared({caller}) func deletePrize(uuid: Text) : async Result.Result<(),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     let read_prize = state.prizes.get(uuid);
     switch(read_prize){
       case(? V){
@@ -738,6 +780,9 @@ shared({caller = owner}) actor class Triip() = this{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
     };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     let uuid = await GeneralUtils.createUUID();
     let read_wheel = state.wheels.get(uuid);
     switch(read_wheel){
@@ -746,6 +791,7 @@ shared({caller = owner}) actor class Triip() = this{
       };
       case(null){
         let new_wheel : Types.LuckyWheel = {
+          uuid = ?uuid;
           name = wheel.name;
           max_spin_times = wheel.max_spin_times;
           max_buy_spin_times = wheel.max_buy_spin_times;
@@ -772,7 +818,10 @@ shared({caller = owner}) actor class Triip() = this{
     var list : [(Text,Types.LuckyWheel)] = [];
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };   
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     for((K,V) in state.wheels.entries()){
       list := Array.append<(Text,Types.LuckyWheel)>(list,[(K,V)]);
     };
@@ -780,23 +829,28 @@ shared({caller = owner}) actor class Triip() = this{
   };
 
   public shared query({caller}) func readWheel(uuid: Text) : async Result.Result<(Types.LuckyWheel),Types.Error>{
-
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     let read_wheel = state.wheels.get(uuid);
     return Result.fromOption(read_wheel, #NotFound);
   };
 
   public shared({caller}) func updateWheel(uuid: Text, wheel: Types.LuckyWheelUpdate) : async Result.Result<Text,Types.Error> {
-
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
     };
     let read_wheel = state.wheels.get(uuid);
     switch(read_wheel){
       case(? V){
         let new_wheel : Types.LuckyWheel = {
+          uuid = ?uuid;
           name = wheel.name;
           max_spin_times = wheel.max_spin_times;
           max_buy_spin_times = wheel.max_buy_spin_times;
@@ -824,7 +878,10 @@ shared({caller = owner}) actor class Triip() = this{
   public shared({caller}) func deleteWheel(uuid: Text) : async Result.Result<Text,Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     let read_wheel = state.wheels.get(uuid);
     switch(read_wheel){
       case(? V){
@@ -837,28 +894,20 @@ shared({caller = owner}) actor class Triip() = this{
     };
   };
 
-  // public shared({caller}) func deleteAllWheels() : async Result.Result<Text,Types.Error>{
-  //   if(Principal.toText(uid)=="2vxsx-fae"){
-  //     throw Error.reject("NotAuthorized");//isNotAuthorized
-  //   };    
-  //   for((K,V) in state.wheels.entries()){
-  //     let deleted_wheel = state.wheels.delete(K);
-  //   };
-  //   #ok(("success"));
-  // };
-
   public shared({caller}) func activateWheel(uuid: Text) : async Result.Result<(),Types.Error>{
-
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
-
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     let read_wheel = state.wheels.get(uuid);
     switch(read_wheel){
       case(? curr_wheel){
         for((K,V) in state.wheels.entries()){
           if(K == uuid){
             let new_wheel : Types.LuckyWheel = {
+              uuid = ?uuid;
               name = V.name;
               max_spin_times = V.max_spin_times;
               max_buy_spin_times = V.max_buy_spin_times;
@@ -872,6 +921,7 @@ shared({caller = owner}) actor class Triip() = this{
             let updated_wheel = state.wheels.replace(K, new_wheel);
           } else {
             let new_wheel : Types.LuckyWheel = {
+              uuid = ?uuid;
               name = V.name;
               max_spin_times = V.max_spin_times;
               max_buy_spin_times = V.max_buy_spin_times;
@@ -896,12 +946,16 @@ shared({caller = owner}) actor class Triip() = this{
   public shared({caller}) func deactivateWheel(uuid: Text) : async Result.Result<(),Types.Error>{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
     let read_wheel = state.wheels.get(uuid);
     switch(read_wheel){
       case(? V){
         if(V.activate == true){
           let new_wheel : Types.LuckyWheel = {
+            uuid = ?uuid;
             name = V.name;
             max_spin_times = V.max_spin_times;
             max_buy_spin_times = V.max_buy_spin_times;
@@ -924,127 +978,178 @@ shared({caller = owner}) actor class Triip() = this{
     };
   };
 
-  // Lucky Wheel Spin Game
-  type PrizeResult = {
-    prize_id: Text;
-    percentage: Float;
-    cap_per_user_per_month: Int;
-    cap_per_month: Int;
-    cap_per_day: Int;
-  };
-
   public shared({caller}) func remainingSpinTimes() : async Int {
     var remaining_spin_times : Int = 0;
     if(Principal.toText(caller)=="2vxsx-fae"){
       return 0;
     };
-    var activated_wheel = LuckyWheel.activatedWheel(state);
-    switch (activated_wheel) {
-      case null {
+    let read_kyc = state.kycs.get(caller);
+    let kycOfUser : Bool = await isKYCedUser(caller);
+    switch(kycOfUser){
+      case (false){
         return 0;
       };
-      case (? v) {
-        LuckyWheel.remainingSpinTimes(Principal.toText(caller), state, v.max_spin_times);
+      case (true){
+        var activated_wheel = LuckyWheel.activatedWheel(state);
+        switch (activated_wheel) {
+          case null {
+            return 0;
+          };
+          case (? wheel) {
+            LuckyWheel.remainingSpinTimes(Principal.toText(caller), state, wheel.max_spin_times);
+          };
+        };
       };
-    }
+    };
   };
 
-  public shared({caller}) func spinLuckyWheel() : async Result.Result<Text,Types.SpinResult> {
+  public shared({caller}) func spinLuckyWheel() : async Result.Result<Types.SpinResultSerializer,Types.Error> {
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
     };
+
     let read_kyc = state.kycs.get(caller);
-    switch(read_kyc){
-      case null {
-        #err("Unlucky happens! Error code: Please comeplete the KYC process to spin");
+    let kycOfUser : Bool = await isKYCedUser(caller);
+    switch(kycOfUser){
+      case (false){
+        #err(#NonKYC);
       };
-      case(? current_kyc){
-        if(current_kyc.status == ?"approved"){
-          var activated_wheel : ?Types.LuckyWheel = null;
-          for((K,V) in state.wheels.entries()){
-            if(V.activate == true){
-              activated_wheel := state.wheels.get(K);
+      case (true){
+        let profile = state.profiles.get(caller);
+        switch(profile){
+          case(null) #err(#NotFound);
+          case(?profile) {
+            let remaining_spin_times = await remainingSpinTimes();
+            if(remaining_spin_times == 0) {
+              return #err(#Unavailable);
             };
-          };
-
-          switch(activated_wheel){
-            case(? V){
-              let prizes = V.wheel_prizes;
-              var tempArray : [Float] = [];
-              // Getting percentages from wheel's prizes and append each of them into a temp array
-              for (prize in prizes.vals()){
-                tempArray := Array.append<Float>(tempArray,[prize.percentage]);
-              };
-
-              // Creating array that contains cumulative weights 
-              var i = 1;
-              var weight = tempArray[0];
-              var cumulativeWeights : [Float] = [];
-              cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
-
-              // and caculating weights based on its values
-              while(i < tempArray.size()){
-                weight += tempArray[i];
-                cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
-                i += 1;
-              };
-              let maxCumulativeWeight = cumulativeWeights[cumulativeWeights.size() - 1];
-
-              let randomNumber = await GeneralUtils.getRandomNumber(1.0);
-              // Getting the random percentage in a range of [0...sum(weights)]
-              let randomPercentage = maxCumulativeWeight * randomNumber;
-
-              var result : PrizeResult = null;
-              var itemIndex = 0;
-              // Picking the random item based on its weight
-              // The items with higher weight will be picked more often
-              while(itemIndex < cumulativeWeights.size()){
-                if(cumulativeWeights[itemIndex] >= randomPercentage){
-                  result := Array.append<PrizeResult>(result,[prizes[itemIndex]]);
+            var activated_wheel = LuckyWheel.activatedWheel(state);
+            switch(activated_wheel){
+              case(? wheel){
+                let uid = Principal.toText(caller);
+                let prizes = LuckyWheel.availablePrizes(uid, wheel.wheel_prizes, state, wheel.uuid);
+                var tempArray : [Float] = [];
+                // Getting percentages from wheel's prizes and append each of them into a temp array
+                for (prize in prizes.vals()){
+                  tempArray := Array.append<Float>(tempArray,[prize.percentage]);
                 };
-                itemIndex += 1;
-              };
-              let resultPrize = result[0];
 
-              // Get prize key to store spin result and award to user
-              let uuid = await GeneralUtils.createUUID();
-              let prize = state.prizes.get(resultPrize.prize_id);
-              let spin_result : Types.SpinResult = {
-                uid = Principal.toText(caller);
-                prize_id = resultPrize.prize_id;
-                prize_name = prize.name;
-                prize_type = prize.prize_type;
-                state = "completed";
-                remark : ?Text = Option.get(null, ?"No need oparation to process");
-                created_at : Int = Time.now();
-                updated_at : ?Int = Option.get(null,?Time.now()); 
+                // Creating array that contains cumulative weights 
+                var i = 1;
+                var weight = tempArray[0];
+                var cumulativeWeights : [Float] = [];
+                cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
+
+                // and caculating weights based on its values
+                while(i < tempArray.size()){
+                  weight += tempArray[i];
+                  cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
+                  i += 1;
+                };
+                let maxCumulativeWeight = cumulativeWeights[cumulativeWeights.size() - 1];
+
+                let randomNumber = await GeneralUtils.getRandomNumber(1.0);
+                // Getting the random percentage in a range of [0...sum(weights)]
+                let randomPercentage = maxCumulativeWeight * randomNumber;
+
+                var itemIndex = 0;
+                // Picking the random item based on its weight
+                // The items with higher weight will be picked more often
+                var lucky_prize : ?Types.LuckyWheelPrize = null;
+                while(itemIndex < cumulativeWeights.size()){
+                  if(cumulativeWeights[itemIndex] >= randomPercentage) {
+                    lucky_prize := ?prizes[itemIndex];
+                    itemIndex += cumulativeWeights.size();
+                  };
+                  itemIndex += 1;
+                };
+
+                let prize = switch(lucky_prize) {
+                  case (null) {
+                    LuckyWheel.defaultWastedPrize(state);
+                  };
+                  case (?lp) {
+                    state.prizes.get(lp.prize_id);
+                  };
+                };
+
+                switch(prize) {
+                  case(null) {
+                    #err(#Unavailable);
+                  };
+                  case(?prize) {
+                    // Get prize key to store spin result and award to user
+                    let uuid = await GeneralUtils.createUUID();
+                    Debug.print(debug_show(prize));
+                    let spin_result : Types.SpinResult = {
+                      uid = uid;
+                      lucky_wheel_id = wheel.uuid;
+                      prize_id = prize.uuid;
+                      prize_name = prize.name;
+                      prize_type = prize.prize_type;
+                      state = "completed";
+                      remark = ?prize.description;
+                      created_at : Int = Time.now();
+                      updated_at : ?Int = Option.get(null,?Time.now()); 
+                    };
+                    state.spinresults.put(uuid, spin_result);
+                    let result_formated : Types.SpinResultSerializer = {
+                      uuid = uuid;
+                      prize_name = prize.name;
+                      icon = prize.icon;
+                      remark = ?prize.description;
+                    };
+                    if (prize.prize_type == "TriipCredit") {
+                      // Reward ICP to User
+                      let amount = Int64.toNat64(Float.toInt64(prize.quantity));
+                      Debug.print(debug_show(amount));
+                      switch(await transfer({e8s = amount},Option.get(profile.wallets,[""])[0])){
+                        case (#Err(transfer)){
+                          state.spinresults.delete(uuid);
+                          #err(#Unavailable);
+                        };
+                        case (#Ok(transfer)){
+                          #ok(result_formated);
+                        };
+                      };
+                    } else {
+                      #ok(result_formated);
+                    };
+                  };
+                };
               };
-              state.spinresults.put(uuid, spin_result);
-              if (prize.prize_type == "TriipCredit") {
-                // Reward ICP to User
-                
+              case(null){
+                #err(#Unavailable);
               };
-              #ok(state.spinresults.get(uuid));
-            };
-            case(null){
-              #err("Error code: This function is temporary unavailable.");
             };
           };
-        } else {
-          #err("Unlucky happens! Error code: Please comeplete the KYC process to spin");
         };
       };
     };
   };
 
   // Spin Result
-  public shared query({caller}) func listSpinResults() : async Result.Result<[(Text,Types.SpinResult)],Types.Error>{
-    var list : [(Text,Types.SpinResult)] = [];
-    if(Principal.toText(caller)=="2vxsx-fae"){
+  public shared query({caller}) func listSpinResults() : async Result.Result<[Types.SpinResultSerializer],Types.Error>{
+    var list : [Types.SpinResultSerializer] = [];
+    let uid = Principal.toText(caller);
+    if(uid=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    };    
-    for((K,V) in state.spinresults.entries()){
-      list := Array.append<(Text,Types.SpinResult)>(list,[(K,V)]);
+    };
+    for((id, result) in state.spinresults.entries()){
+      if(result.uid == uid) {
+        let prize = state.prizes.get(Option.get(result.prize_id, ""));
+        let icon = switch(prize) {
+          case null { "https://triip.imgix.net/triipme/prize/icon/12/triipmiles.jpg"; };
+          case (? prize) { prize.icon; };
+        };
+        let result_serializer : Types.SpinResultSerializer = {
+          uuid = id;
+          prize_name = result.prize_name;
+          icon = icon;
+          remark = result.remark;
+        };
+        list := Array.append<Types.SpinResultSerializer>(list,[result_serializer]);
+      };
     };
     #ok((list));
   };

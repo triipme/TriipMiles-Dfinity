@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { storageAPI, tranvelPlansAPI } from "./thunk";
+import * as API from "./thunk";
 const initialState = {
   isLogin: false,
   actor: {},
   profile: {},
   tranvelplans: {},
-  storage: {}
+  storage: {},
+  spinResults: {},
+  remainingSpinTimes: 0,
 };
 
 export const userSlice = createSlice({
@@ -33,16 +35,28 @@ export const userSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(tranvelPlansAPI.fulfilled, (state, action) => {
+      .addCase(API.tranvelPlansAPI.fulfilled, (state, action) => {
         return {
           ...state,
           tranvelplans: action.payload
         };
       })
-      .addCase(storageAPI.fulfilled, (state, action) => {
+      .addCase(API.storageAPI.fulfilled, (state, action) => {
         return {
           ...state,
           storage: action.payload
+        };
+      })
+      .addCase(API.spinResultsAPI.fulfilled, (state, action) => {
+        return {
+          ...state,
+          spinResults: action.payload
+        };
+      })
+      .addCase(API.spinRemainingAPI.fulfilled, (state, action) => {
+        return {
+          ...state,
+          remainingSpinTimes: action.payload
         };
       });
   }

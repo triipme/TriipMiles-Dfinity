@@ -7,7 +7,7 @@ import ProofTP "model/ProofTP";
 import Vetted "model/Vetted";
 import KYC "model/KYC";
 
-module{
+module {
   public type Admin = {
     admin : Admin.Admin;
   };
@@ -58,16 +58,26 @@ module{
 
   /* ------------------------- Prize --------------------------- */ // new feature
   public type Prize = {
+    uuid: ?Text;
     prize_type: Text;
     name: Text;
     icon: Text;
     quantity: Float;
-    decs: Text;
+    description: Text;
     created_at: ?Int;
+  };
+
+  public type LuckyWheelPrize = {
+    prize_id: Text;
+    percentage: Float;
+    cap_per_user_per_month: Int;
+    cap_per_month: Int;
+    cap_per_day: Int;
   };
 
   /* ------------------------- Lucky Wheel --------------------------- */ // new feature
   public type LuckyWheel = {
+    uuid: ?Text;
     name: Text;
     max_spin_times: Int;
     max_buy_spin_times: Int;
@@ -76,15 +86,7 @@ module{
     updated_at: ?Int;
     activate: Bool;
     activated_at: Int;
-    wheel_prizes: [
-      {
-        prize_id: Text;
-        percentage: Float;
-        cap_per_user_per_month: Int;
-        cap_per_month: Int;
-        cap_per_day: Int;
-      }
-    ];
+    wheel_prizes: [LuckyWheelPrize];
   };
 
   public type LuckyWheelUpdate = {
@@ -92,21 +94,14 @@ module{
     max_spin_times: Int;
     max_buy_spin_times: Int;
     price_of_spin: Float;
-    wheel_prizes: [
-      {
-        prize_id: Text;
-        percentage: Float;
-        cap_per_user_per_month: Int;
-        cap_per_month: Int;
-        cap_per_day: Int;
-      }
-    ];
+    wheel_prizes: [LuckyWheelPrize];
   };
 
   /* ------------------------- Spin Result --------------------------- */
   public type SpinResult = {
     uid: Text;
-    prize_id: Text;
+    lucky_wheel_id: ?Text;
+    prize_id: ?Text;
     prize_name: Text;
     prize_type: Text;
     state: Text;
@@ -115,13 +110,23 @@ module{
     updated_at: ?Int;
   };
 
+  public type SpinResultSerializer = {
+    uuid : Text;
+    prize_name : Text;
+    icon : Text;
+    remark : ?Text;
+  };
+
   /* ------------------------- Error --------------------------- */
   public type Error = {
     #NotFound;
     #AlreadyExisting;
     #NotAuthorized;
+    #AdminRoleRequired;
     #SomethingWrong;
     #Failed;
     #Enough;
+    #NonKYC;
+    #Unavailable;
   };
 }

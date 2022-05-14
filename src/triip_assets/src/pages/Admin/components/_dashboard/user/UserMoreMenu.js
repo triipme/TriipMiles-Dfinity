@@ -51,7 +51,11 @@ export default function UserMoreMenu({ id_proof, proof, allow_approve }) {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Failed");
+      if ("NonKYC" in error) {
+        toast.success("Approved");
+      } else {
+        toast.error("Failed");
+      }
     } finally {
       setIsOpen(false);
     }

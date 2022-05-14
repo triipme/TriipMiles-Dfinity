@@ -95,10 +95,12 @@ const HomeForm = ({ handleIsOpenParent }) => {
       try {
         const result = await actor?.createTravelPlan(body());
         if ("ok" in result) {
-          setIdtp(result.ok);
-          toast.success("Success !.");
+          if (result.ok[1] !== "non-KYC") {
+            toast.success("Success !.");
+            toast("You received 0.000001 ICP. Please check your wallet.🥳", { duration: 10000 });
+          }
+          setIdtp(result.ok[0]);
           setCreatedStatus("HP");
-          toast("You received 0.000001 ICP. Please check your wallet.🥳", { duration: 10000 });
           //- handleIsOpenParent(false);
         } else {
           throw result?.err;
