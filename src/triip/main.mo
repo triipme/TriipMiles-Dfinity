@@ -17,7 +17,8 @@ import Float "mo:base/Float";
 import Nat8 "mo:base/Nat8";
 import Int "mo:base/Int";
 
-import UUID "./plugins/uuid";
+import GeneralUtils "./utils/general";
+import LuckyWheel "./luckyWheel";
 import AId "mo:principal/blob/AccountIdentifier";
 
 import Types "../triip_models/Types";
@@ -629,16 +630,6 @@ shared({caller = owner}) actor class Triip() = this{
     };
   };
 
-  // Create UUUID
-  public shared({caller}) func createUUID() : async Text{
-    if(Principal.toText(caller)=="2vxsx-fae"){
-      throw Error.reject("NotAuthorized");//isNotAuthorized
-    };
-    let uuid : UUID.UUID = await UUID.UUID([0,0,0,0,0,0]);
-    let uuid_text : Text = await uuid.newAsync();
-    return uuid_text;
-  };
-
   // Prizes
   public shared({caller}) func putPrize(uuid: Text, prize: Types.Prize) : async () {
     if(Principal.toText(caller)=="2vxsx-fae"){
@@ -666,7 +657,7 @@ shared({caller = owner}) actor class Triip() = this{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
     };
-    let uuid = await createUUID();
+    let uuid = await GeneralUtils.createUUID();
     let read_prize = state.prizes.get(uuid);
     switch(read_prize){
       case(? V){
@@ -747,7 +738,7 @@ shared({caller = owner}) actor class Triip() = this{
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
     };
-    let uuid = await createUUID();
+    let uuid = await GeneralUtils.createUUID();
     let read_wheel = state.wheels.get(uuid);
     switch(read_wheel){
       case(? V){
@@ -934,30 +925,34 @@ shared({caller = owner}) actor class Triip() = this{
   };
 
   // Lucky Wheel Spin Game
-  public shared({caller}) func getRandomNumber(max: Float) : async Float {
-    assert (max > 0 and max <= 100);
-    // get random blob
-    var blob = await Random.blob();
-    // random Nat8 in range [0..255]
-    var random = Random.byteFrom(blob);
-    // convert Nat8 to Float
-    var randomFloat = Float.fromInt(Nat8.toNat(random));
-    var maxRange : Float = 255;
-    return (randomFloat / maxRange) * max;
-  };
-
   type PrizeResult = {
-    key: Text;
+    prize_id: Text;
     percentage: Float;
     cap_per_user_per_month: Int;
     cap_per_month: Int;
     cap_per_day: Int;
   };
 
-  public shared({caller}) func spinLuckyWheel() : async Result.Result<Text,Text> {
+  public shared({caller}) func remainingSpinTimes() : async Int {
+    var remaining_spin_times : Int = 0;
+    if(Principal.toText(caller)=="2vxsx-fae"){
+      return 0;
+    };
+    var activated_wheel = LuckyWheel.activatedWheel(state);
+    switch (activated_wheel) {
+      case null {
+        return 0;
+      };
+      case (? v) {
+        LuckyWheel.remainingSpinTimes(Principal.toText(caller), state, v.max_spin_times);
+      };
+    }
+  };
+
+  public shared({caller}) func spinLuckyWheel() : async Result.Result<Text,Types.SpinResult> {
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
-    }; 
+    };
     let read_kyc = state.kycs.get(caller);
     switch(read_kyc){
       case null {
@@ -995,47 +990,44 @@ shared({caller = owner}) actor class Triip() = this{
               };
               let maxCumulativeWeight = cumulativeWeights[cumulativeWeights.size() - 1];
 
-              let randomNumber = await getRandomNumber(1.0);
+              let randomNumber = await GeneralUtils.getRandomNumber(1.0);
               // Getting the random percentage in a range of [0...sum(weights)]
               let randomPercentage = maxCumulativeWeight * randomNumber;
 
-              var result : [PrizeResult] = [];
+              var result : PrizeResult = null;
               var itemIndex = 0;
               // Picking the random item based on its weight
               // The items with higher weight will be picked more often
               while(itemIndex < cumulativeWeights.size()){
                 if(cumulativeWeights[itemIndex] >= randomPercentage){
-                  result:=Array.append<PrizeResult>(result,[prizes[itemIndex]]);
+                  result := Array.append<PrizeResult>(result,[prizes[itemIndex]]);
                 };
                 itemIndex += 1;
               };
               let resultPrize = result[0];
-              Debug.print(debug_show(resultPrize));
+
               // Get prize key to store spin result and award to user
-              var spinResultIndex = state.spinresults.size() + 1;
-              for((K,V) in state.prizes.entries()){
-                if(resultPrize.key == K){
-                  let spin_result : Types.SpinResult = {
-                    user_id = Principal.toText(caller);
-                    prize_id = resultPrize.key;
-                    prize_name = V.name;
-                    state = "completed";
-                    remark : ?Text = Option.get(null, ?"No need oparation to process");
-                    created_at : ?Int = Option.get(null,?Time.now());
-                    updated_at : ?Int = Option.get(null,?Time.now()); 
-                  };
-                  let store_spin_rs = state.spinresults.put(Int.toText(spinResultIndex), spin_result);
-
-                  // if(V.name != "Unlucky"){
-                    // award to user
-                  // };
-                };
+              let uuid = await GeneralUtils.createUUID();
+              let prize = state.prizes.get(resultPrize.prize_id);
+              let spin_result : Types.SpinResult = {
+                uid = Principal.toText(caller);
+                prize_id = resultPrize.prize_id;
+                prize_name = prize.name;
+                prize_type = prize.prize_type;
+                state = "completed";
+                remark : ?Text = Option.get(null, ?"No need oparation to process");
+                created_at : Int = Time.now();
+                updated_at : ?Int = Option.get(null,?Time.now()); 
               };
-
-              #ok((result[0].key));  
+              state.spinresults.put(uuid, spin_result);
+              if (prize.prize_type == "TriipCredit") {
+                // Reward ICP to User
+                
+              };
+              #ok(state.spinresults.get(uuid));
             };
             case(null){
-              #err("Error code: Please activate this wheel to spin");
+              #err("Error code: This function is temporary unavailable.");
             };
           };
         } else {

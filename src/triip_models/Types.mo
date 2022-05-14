@@ -78,7 +78,7 @@ module{
     activated_at: Int;
     wheel_prizes: [
       {
-        key: Text;
+        prize_id: Text;
         percentage: Float;
         cap_per_user_per_month: Int;
         cap_per_month: Int;
@@ -94,7 +94,7 @@ module{
     price_of_spin: Float;
     wheel_prizes: [
       {
-        key: Text;
+        prize_id: Text;
         percentage: Float;
         cap_per_user_per_month: Int;
         cap_per_month: Int;
@@ -105,12 +105,13 @@ module{
 
   /* ------------------------- Spin Result --------------------------- */
   public type SpinResult = {
-    user_id: Text;
+    uid: Text;
     prize_id: Text;
     prize_name: Text;
+    prize_type: Text;
     state: Text;
     remark: ?Text;
-    created_at: ?Int;
+    created_at: Int;
     updated_at: ?Int;
   };
 
