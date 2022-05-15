@@ -22,6 +22,9 @@ module{
         rewards : Map<Text,Types.MemoryCardReward>;
       }
     };
+    prizes: Map<Text,Types.Prize>;
+    wheels : Map<Text,Types.LuckyWheel>;
+    spinresults : Map<Text,Types.SpinResult>
   };
   
   public func empty() : State { 
@@ -39,6 +42,9 @@ module{
           rewards = TrieMap.TrieMap<Text,Types.MemoryCardReward>(Text.equal, Text.hash);
         }
       };
+      prizes = TrieMap.TrieMap<Text,Types.Prize>(Text.equal,Text.hash);
+      wheels = TrieMap.TrieMap<Text,Types.LuckyWheel>(Text.equal,Text.hash);
+      spinresults = TrieMap.TrieMap<Text,Types.SpinResult>(Text.equal,Text.hash);
     };
   };
 }
