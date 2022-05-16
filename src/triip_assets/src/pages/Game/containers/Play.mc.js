@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import "./Play.mc.sass";
 import SingleCard from "../components/SingleCard";
 import { ButtonPrimary, Loading } from "../../../components";
@@ -67,8 +67,8 @@ function Play() {
 
   async function apiShuffleCards() {
     try {
-      if (!!actor?.Game__GC_getLevel) {
-        const level = await actor.Game__GC_getLevel(state?.lv_id);
+      if (!!actor?.gameGcGetLevel) {
+        const level = await actor.gameGcGetLevel(state?.lv_id);
         if ("ok" in level) {
           shuffleCards(
             level.ok.volcabulary.map(v => ({ word: v[0], result: v[1], matched: false }))
@@ -83,13 +83,27 @@ function Play() {
   if (!!!state?.lv_id) {
     return <Navigate to="/game/magic_memory" />;
   }
+  const ref = useRef(null);
   return (
     <div className="App">
       <Typography variant="h1">Magic Memory Game</Typography>
       {cards?.length > 0 && (
-        <TimingPlay turns={turns} cards={cards} level={state?.lv_id} id_player={state?.id_player} />
+        <TimingPlay
+          ref={ref}
+          turns={turns}
+          cards={cards}
+          level={state?.lv_id}
+          player_id={state?.player_id}
+        />
       )}
-      <ButtonPrimary onClick={apiShuffleCards} title="New Game" sx={{ width: 150 }} />
+      <ButtonPrimary
+        onClick={() => {
+          apiShuffleCards();
+          ref.current.resetTime();
+        }}
+        title="New Game"
+        sx={{ width: 150 }}
+      />
       <div className="card-grid">
         {cards?.map(card => (
           <SingleCard
@@ -107,7 +121,7 @@ function Play() {
   );
 }
 
-const TimingPlay = ({ turns, cards, level, id_player }) => {
+const TimingPlay = forwardRef(({ turns, cards, level, player_id }, ref) => {
   const { actor } = useSelector(state => state.user);
   const [time, setTime] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -120,8 +134,8 @@ const TimingPlay = ({ turns, cards, level, id_player }) => {
   }, [time, isLoading]);
   async function apiSetPlayer() {
     try {
-      const rs = await actor?.Game__GC_setPlayer({
-        id_player: !!id_player ? [id_player] : [],
+      const rs = await actor?.gameGcSetPlayer({
+        player_id: !!player_id ? [player_id] : [],
         turn: turns,
         timing_play: parseFloat((time / 100).toFixed(2)),
         level
@@ -135,12 +149,20 @@ const TimingPlay = ({ turns, cards, level, id_player }) => {
       setIsLoading(false);
     }
   }
+  useImperativeHandle(ref, () => ({
+    resetTime() {
+      resetTime();
+    }
+  }));
+  function resetTime() {
+    setTime(0);
+  }
   useEffect(() => {
     if (cards.length > 0) {
       if (cards.every(card => card.matched)) {
         // submit to Server
         setIsLoading(true);
-        if (!!actor?.Game__GC_setPlayer) {
+        if (!!actor?.gameGcSetPlayer) {
           apiSetPlayer();
         }
       }
@@ -154,9 +176,9 @@ const TimingPlay = ({ turns, cards, level, id_player }) => {
       <Modal open={isLoading}>
         <Loading />
       </Modal>
-      <p>Turns: {(time / 100).toFixed(2)}</p>
+      <p>Time: {(time / 100).toFixed(2)}</p>
     </div>
   );
-};
+});
 
 export default Play;
