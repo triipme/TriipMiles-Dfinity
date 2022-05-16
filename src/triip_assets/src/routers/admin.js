@@ -8,6 +8,8 @@ const Kycs = lazy(() => import("../pages/Admin/pages/Kycs"));
 const Blog = lazy(() => import("../pages/Admin/pages/Blog"));
 const Login = lazy(() => import("../pages/Admin/pages/Login"));
 const Register = lazy(() => import("../pages/Admin/pages/Register"));
+const PrizeList = lazy(() => import("../pages/Admin/pages/prize/PrizeList"));
+const PrizeForm = lazy(() => import("../pages/Admin/pages/prize/Form"));
 
 export const admin = [
   {
@@ -70,6 +72,23 @@ export const admin = [
           {
             path: "register",
             element: <Register />
+          },
+
+          {
+            path: "prizes",
+            element: (
+              <AdminRequiredAuth>
+                <PrizeList />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "prizes/new",
+            element: (
+              <AdminRequiredAuth>
+                <PrizeForm />
+              </AdminRequiredAuth>
+            )
           }
         ]
       }

@@ -700,8 +700,8 @@ shared({caller = owner}) actor class Triip() = this {
     };
   };
 
-  public shared query({caller}) func listPrizes() : async Result.Result<[(Text,Types.Prize)],Types.Error>{
-    var list : [(Text,Types.Prize)] = [];
+  public shared query({caller}) func listPrizes() : async Result.Result<[Types.Prize],Types.Error>{
+    var list : [Types.Prize] = [];
     if(Principal.toText(caller)=="2vxsx-fae"){
       throw Error.reject("NotAuthorized");//isNotAuthorized
     };
@@ -709,7 +709,7 @@ shared({caller = owner}) actor class Triip() = this {
       return #err(#AdminRoleRequired);
     };
     for((K,V) in state.prizes.entries()){
-      list := Array.append<(Text,Types.Prize)>(list,[(K,V)]);
+      list := Array.append<Types.Prize>(list,[V]);
     };
     #ok((list));
   };
