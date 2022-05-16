@@ -95,7 +95,11 @@ const HomeForm = ({ handleIsOpenParent }) => {
       try {
         const result = await actor?.createTravelPlan(body());
         if ("ok" in result) {
-          if (result.ok[1] !== "non-KYC") {
+          if (result.ok[1] === "non-KYC") {
+            toast.error("You need to verify KYC before submitting travel plan to earn ICP", {
+              duration: 10000
+            });
+          } else {
             toast.success("Success !.");
             toast("You received 0.000001 ICP. Please check your wallet.🥳", { duration: 10000 });
           }

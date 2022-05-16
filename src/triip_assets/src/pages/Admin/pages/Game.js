@@ -21,8 +21,8 @@ const ListAll = () => {
   const { actor } = useSelector(state => state.user);
   async function initialEffect() {
     try {
-      if (!!actor?.Game__GC_listAll) {
-        const rs_list = await actor.Game__GC_listAll();
+      if (!!actor?.gameGcListAll) {
+        const rs_list = await actor.gameGcListAll();
         if ("ok" in rs_list) setList(rs_list.ok);
       }
     } catch (error) {
@@ -42,8 +42,9 @@ const ListAll = () => {
         col2,
         col3,
         col4: col2 + col3,
-        col5: moment.unix(parseInt(l.createdAt / BigInt(1e9))).format("L"),
-        col6: moment.unix(parseInt(l.updatedAt / BigInt(1e9))).format("LLL")
+        col5: l?.history?.length,
+        col6: moment.unix(parseInt(l.createdAt / BigInt(1e9))).format("L"),
+        col7: moment.unix(parseInt(l.updatedAt / BigInt(1e9))).format("LLL")
       };
     });
   }, [list]);
@@ -54,7 +55,8 @@ const ListAll = () => {
       { field: "col3", headerName: "Total time(s)" },
       { field: "col4" },
       { field: "col5", headerName: "CreatedAt", width: 200 },
-      { field: "col6", headerName: "UpdatedAt", width: 200 }
+      { field: "col6", headerName: "CreatedAt", width: 200 },
+      { field: "col7", headerName: "UpdatedAt", width: 200 }
     ],
     []
   );
@@ -86,8 +88,8 @@ const ListOfDay = () => {
   const { actor } = useSelector(state => state.user);
   async function initialEffect() {
     try {
-      if (!!actor?.Game__GC_listOfDay) {
-        const rs_list = await actor.Game__GC_listOfDay();
+      if (!!actor?.gameGcListOfDay) {
+        const rs_list = await actor.gameGcListOfDay();
         if ("ok" in rs_list) setList(rs_list.ok);
       }
     } catch (error) {
@@ -167,8 +169,8 @@ const TopOfYesterday = () => {
   } = useForm();
   async function initialTopOne() {
     try {
-      if (!!actor?.Game__GC_listOfYesterday) {
-        const rs_list = await actor.Game__GC_listOfYesterday();
+      if (!!actor?.gameGcListOfYesterday) {
+        const rs_list = await actor.gameGcListOfYesterday();
         if ("ok" in rs_list) {
           setTop(topOne(rs_list.ok));
         }
@@ -179,8 +181,8 @@ const TopOfYesterday = () => {
   }
   async function checkReward(id) {
     try {
-      if (!!actor?.Game__GC_checkReward) {
-        const rs = await actor.Game__GC_checkReward(id);
+      if (!!actor?.gameGcCheckReward) {
+        const rs = await actor.gameGcCheckReward(id);
         if ("ok" in rs) {
           console.log("check", rs.ok);
           setDisableReward(!!rs.ok);
@@ -201,9 +203,9 @@ const TopOfYesterday = () => {
   console.log("top", top);
   const handleReward = async () => {
     try {
-      if (!!actor?.Game__GC_reward) {
+      if (!!actor?.gameGcReward) {
         setLoading(true);
-        const rs_reward = await actor.Game__GC_reward(top?.[0], 0.00001, top?.[1]?.uid);
+        const rs_reward = await actor.gameGcReward(top?.[0], 0.00001, top?.[1]?.uid);
         if ("ok" in rs_reward) {
           console.log(rs_reward);
           setDisableReward(true);

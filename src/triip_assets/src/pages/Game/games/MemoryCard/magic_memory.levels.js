@@ -7,26 +7,20 @@ import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 const MCLevels = () => {
   const [levels, setLevels] = useState();
-  const [player, Game__GC_setPlayer] = useState();
+  const [player, gameGcSetPlayer] = useState();
   const [list, setList] = useState();
   const navigate = useNavigate();
   const { actor } = useSelector(state => state.user);
   async function initialEffect() {
     try {
-      if (
-        !!actor?.Game__GC_getAllLevel &&
-        !!actor?.Game__GC_getPlayer &&
-        !!actor?.Game__GC_listOfDay
-      ) {
+      if (!!actor?.gameGcGetAllLevel && !!actor?.gameGcGetPlayer && !!actor?.gameGcListOfDay) {
         const all = await Promise.all(
-          [
-            actor.Game__GC_getAllLevel(),
-            actor.Game__GC_getPlayer([]),
-            actor.Game__GC_listOfDay()
-          ].map(data => data)
+          [actor.gameGcGetAllLevel(), actor.gameGcGetPlayer([]), actor.gameGcListOfDay()].map(
+            data => data
+          )
         );
         setLevels(all[0].ok);
-        Game__GC_setPlayer(all[1]);
+        gameGcSetPlayer(all[1]);
         setList(all[2].ok);
       }
     } catch (error) {
@@ -38,7 +32,7 @@ const MCLevels = () => {
   }, []);
   const handleLevel = lv_id => {
     console.log(player);
-    navigate("/game/magic_memory/play", { state: { lv_id, id_player: player?.[0]?.[0] } });
+    navigate("/game/magic_memory/play", { state: { lv_id, player_id: player?.[0]?.[0] } });
   };
   const rows = useMemo(() => {
     return list?.map((l, l_i) => {
