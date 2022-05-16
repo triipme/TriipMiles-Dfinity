@@ -1,3 +1,6 @@
+import AdminLuckyWheels from "@/pages/Admin/components/admin_luckywheel/AdminLuckyWheels";
+import LayoutAddPrize from "../pages/Admin/components//admin_luckywheel/prizes/handlePrizes/Layout";
+import EditPrizes from "../pages/Admin/components//admin_luckywheel/prizes/handlePrizes/EditPrizes";
 import React, { lazy } from "react";
 import { AdminRequiredAuth, NormalRequiredAuth } from "../containers";
 const Admin = lazy(() => import("../pages/Admin/index"));
@@ -63,6 +66,30 @@ export const admin = [
             element: (
               <AdminRequiredAuth>
                 <Login />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "admin_luckywheel",
+            element: (
+              <AdminRequiredAuth>
+                <AdminLuckyWheels />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "admin_luckywheel/prizes",
+            element: (
+              <AdminRequiredAuth>
+                <LayoutAddPrize />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "/triip-admin/dashboard/admin_luckywheel/prizes/edit",
+            element: (
+              <AdminRequiredAuth>
+                <EditPrizes />
               </AdminRequiredAuth>
             )
           },

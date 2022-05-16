@@ -27,6 +27,11 @@ const sidebarConfig = [
     title: "KYC",
     path: "/triip-admin/dashboard/kyc",
     icon: getIcon("clarity:map-solid")
+  },
+  {
+    title: "Lucky Wheels",
+    path: "/triip-admin/dashboard/admin_luckywheel",
+    icon: getIcon("clarity:map-solid")
   }
   // {
   //   title: "product",

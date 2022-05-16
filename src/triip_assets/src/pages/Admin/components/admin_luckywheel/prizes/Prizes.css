@@ -1,0 +1,140 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  color: #626262;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  letter-spacing: 0.01em;
+}
+:root {
+  --padding_button: 6px 17px;
+  --primary_color: #6d5cae;
+}
+.btn {
+  padding: var(--padding_button);
+  border: 1px solid #f0f0f0;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 3px;
+  text-shadow: none;
+  box-shadow: none;
+  line-height: 21px;
+}
+button {
+  outline: none;
+  border: none;
+}
+a {
+  text-decoration: none;
+}
+.prizes_content {
+  padding: 0 15px;
+  background-color: #f5f5f5;
+}
+.prizes_container {
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+.prizes_data {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.prizes_pagination button {
+  background-color: transparent;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+.btn-pagination {
+  opacity: 0.35;
+}
+.prizes_pagination a {
+  color: #626262;
+}
+.prizes_pagination button:hover {
+  opacity: 0.65;
+}
+.prizes_pagination > .active {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.prizes_dataInfor {
+  padding: 8px;
+}
+
+.pull_right {
+  display: flex;
+  justify-content: flex-end;
+  margin: 12px 0;
+}
+.pull_right a {
+  display: flex;
+  padding: var(--padding_button);
+  color: #fff;
+  background-color: var(--primary_color);
+  border-color: var(--primary_color);
+  border: none;
+  outline: none;
+  border-radius: 2.5px;
+  cursor: pointer;
+}
+.pull_right a:hover {
+  background-color: #8a7dbe;
+  border-color: #8a7dbe;
+}
+
+.table_title {
+  color: #2c2c2c59 !important;
+  font-size: 10.5px !important;
+}
+
+.table_container {
+  padding: 20px;
+}
+.table_container:hover {
+  background-color: #daeffd !important;
+}
+.table_item {
+  color: #626262 !important;
+}
+.prizes_table {
+}
+.btn_actions {
+  padding: var(--padding_button);
+  margin-right: 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 16px;
+}
+
+.btn_delete {
+  background-color: #f55753;
+  border-color: #f55753;
+}
+.btn_delete:hover {
+  background-color: #f77975;
+  border-color: #f77975;
+}
+.btn_edit {
+  background-color: #10cfbd;
+  border-color: #10cfbd;
+}
+.btn_edit:hover {
+  background-color: #40d9ca;
+  border-color: #40d9ca;
+}
+
+.prize_edit-img {
+  max-height: 200px;
+  max-width: 200px;
+  width: 100%;
+}
+.content_edit_prize {
+  display: flex;
+}
