@@ -201,13 +201,12 @@ const TopOfYesterday = () => {
     }
   }, [top]);
   console.log("top", top);
-  const handleReward = async () => {
+  const handleReward = async data => {
     try {
       if (!!actor?.gameGcReward) {
         setLoading(true);
-        const rs_reward = await actor.gameGcReward(top?.[0], 0.00001, top?.[1]?.uid);
+        const rs_reward = await actor.gameGcReward(top?.[0], +data.reward, top?.[1]?.uid);
         if ("ok" in rs_reward) {
-          console.log(rs_reward);
           setDisableReward(true);
         }
       }
