@@ -27,6 +27,11 @@ const sidebarConfig = [
     title: "KYC",
     path: "/triip-admin/dashboard/kyc",
     icon: getIcon("clarity:map-solid")
+  },
+  {
+    title: "Game",
+    path: "/triip-admin/dashboard/game",
+    icon: getIcon("clarity:map-solid")
   }
   // {
   //   title: "product",
