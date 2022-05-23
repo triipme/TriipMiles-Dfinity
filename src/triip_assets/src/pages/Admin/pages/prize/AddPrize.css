@@ -1,0 +1,136 @@
+.wrapper {
+  padding: 0 15px;
+  background-color: #f5f5f5;
+}
+.content {
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  background-color: #fff;
+}
+abbr[title="required"] {
+  color: red;
+}
+.form_group {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+  text-align: left;
+  transition: ease 0.3s;
+}
+
+label {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #62626262;
+  transition: all 0.4s;
+}
+
+label:hover {
+  color: unset;
+}
+label:last-child {
+  color: unset;
+}
+.form_group select,
+input[type="number"] {
+  height: 36px;
+  width: 454px;
+  border: 1px solid;
+  border-color: #efefef;
+  padding: 0 10px;
+}
+.form_group select:focus,
+input[type="number"]:focus {
+  border-color: rgba(0, 0, 0, 0.1);
+  background-color: #f0f0f0;
+  outline: 0 !important;
+  box-shadow: none;
+}
+.form_group input[type="number"] {
+  width: 224px;
+  text-align: right;
+}
+.form_group input[type="file"] {
+  width: 230px;
+}
+.footer_form {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn_add-locale {
+  color: #fff;
+  background-color: #10cfbd;
+  border-color: #10cfbd;
+}
+
+.btn_submit {
+  color: #fff;
+  background-color: #6d5cae;
+  border-color: #6d5cae;
+  margin-right: 5px;
+}
+
+.btn_cancel {
+  background-color: #f0f0f0;
+  border-color: #e6e6e6;
+  color: #2c2c2c;
+}
+
+.btn_cancel:hover {
+  background-color: #fafafa;
+  border-color: rgba(98, 98, 98, 0.27);
+  color: #1a1a1a;
+}
+
+.form_add-locale-content {
+}
+.form_add-locale {
+  display: flex;
+  width: 100%;
+}
+
+.form_locale {
+  display: flex;
+  flex-direction: column;
+  margin-right: 15px;
+  margin-bottom: 10px;
+}
+
+.form_locale select:focus,
+input[type="text"]:focus {
+  border-color: rgba(0, 0, 0, 0.1);
+  background-color: #f0f0f0;
+  outline: 0 !important;
+  box-shadow: none;
+}
+.form_locale-decs {
+  width: 450px !important;
+}
+.form_locale input[type="text"] {
+  height: 36px;
+  width: 330px;
+  padding: 0 10px;
+  border: 1px solid;
+  border-color: #efefef;
+}
+
+.form_locale select {
+  border: 1px solid;
+  border-color: #efefef;
+  padding: 0 10px;
+  height: 36px;
+  width: 110px;
+}
+
+.btn_remove {
+  color: #fff;
+  background-color: #f55753;
+  border-color: #f55753;
+  margin-top: 10px;
+}
+
+.align_center {
+  display: flex;
+  align-items: center;
+}

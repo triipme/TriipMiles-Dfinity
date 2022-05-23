@@ -41,6 +41,9 @@ shared({caller = owner}) actor class Triip() = this {
   private stable var admin : [(Principal,Types.Admin)] = [];
   private stable var vetted : [(Text,Types.Vetted)] = [];
   private stable var kycs : [(Principal,Types.KYCs)] = [];
+  private stable var prizes : [(Text, Types.Prize)] = [];
+  private stable var wheels : [(Text, Types.LuckyWheel)] = [];
+  private stable var spinresults : [(Text, Types.SpinResult)] = [];
   private stable var games = {
     memory_card = {
       levels : [(Text,Types.MemoryCardLevel)] = [];
@@ -57,6 +60,9 @@ shared({caller = owner}) actor class Triip() = this {
     admin := Iter.toArray(state.admin.entries());
     vetted := Iter.toArray(state.vetted.entries());
     kycs := Iter.toArray(state.kycs.entries());
+    prizes := Iter.toArray(state.prizes.entries());
+    wheels := Iter.toArray(state.wheels.entries());
+    spinresults := Iter.toArray(state.spinresults.entries());
     games := {
       memory_card = {
         levels = Iter.toArray(state.games.memory_card.levels.entries());
@@ -86,6 +92,15 @@ shared({caller = owner}) actor class Triip() = this {
     };
     for ((k, v) in Iter.fromArray(kycs)) {
       state.kycs.put(k, v);
+    };
+    for ((k, v) in Iter.fromArray(prizes)) {
+      state.prizes.put(k, v);
+    };
+    for ((k, v) in Iter.fromArray(wheels)) {
+      state.wheels.put(k, v);
+    };
+    for ((k, v) in Iter.fromArray(spinresults)) {
+      state.spinresults.put(k, v);
     };
     for ((k, v) in Iter.fromArray(games.memory_card.levels)) {
       state.games.memory_card.levels.put(k, v);
@@ -163,6 +178,9 @@ shared({caller = owner}) actor class Triip() = this {
   public query({caller}) func analysis() : async Response<(Analysis,[Text])>{
     if(Principal.toText(caller) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
     };
     var p : Nat = state.profiles.size();
     var t : Nat = state.travelplans.size();
@@ -795,16 +813,16 @@ shared({caller = owner}) actor class Triip() = this {
     };
   };
 
-  public shared query({caller}) func listPrizes() : async Response<[(Text,Types.Prize)]>{
-    var list : [(Text,Types.Prize)] = [];
+  public shared query({caller}) func listPrizes() : async Response<[Types.Prize]>{
+    var list : [Types.Prize] = [];
     if(Principal.toText(caller) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
     if(isAdmin(caller) == null) {
       return #err(#AdminRoleRequired);
     };
-    for((K,V) in state.prizes.entries()) {
-      list := Array.append<(Text, Types.Prize)>(list, [(K, V)]);
+    for((_K,V) in state.prizes.entries()){
+      list := Array.append<Types.Prize>(list,[V]);
     };
     #ok((list));
   };
@@ -1073,12 +1091,30 @@ shared({caller = owner}) actor class Triip() = this {
     };
   };
 
+  public query func currentWheelPrizes() : async Response<[Types.Prize]>{
+    var list : [Types.Prize] = [];
+    var activated_wheel = LuckyWheel.activatedWheel(state);
+    switch (activated_wheel) {
+      case null {};
+      case (? wheel) {
+        for (p in wheel.wheel_prizes.vals()) {
+          var prize = state.prizes.get(p.prize_id);
+          switch (prize) {
+            case null {};
+            case (? prize) { list := Array.append<Types.Prize>(list, [prize]); };
+          };
+        };
+      };
+    };
+    #ok((list));
+  };
+
   public shared({caller}) func remainingSpinTimes() : async Int {
     var remaining_spin_times : Int = 0;
     if(Principal.toText(caller) == "2vxsx-fae") {
       return 0;
     };
-    let read_kyc = state.kycs.get(caller);
+
     let kycOfUser : Bool = await isKYCedUser(caller);
     switch (kycOfUser) {
       case (false) {
@@ -1103,7 +1139,6 @@ shared({caller = owner}) actor class Triip() = this {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
 
-    let read_kyc = state.kycs.get(caller);
     let kycOfUser : Bool = await isKYCedUser(caller);
     switch (kycOfUser) {
       case (false) {
@@ -1114,13 +1149,14 @@ shared({caller = owner}) actor class Triip() = this {
         switch (profile) {
           case (null) #err(#NotFound);
           case (?profile) {
-            let remaining_spin_times = await remainingSpinTimes();
-            if(remaining_spin_times == 0) {
-              return #err(#Unavailable);
-            };
             var activated_wheel = LuckyWheel.activatedWheel(state);
             switch (activated_wheel) {
               case (? wheel) {
+                let remaining_spin_times = LuckyWheel.remainingSpinTimes(
+                  Principal.toText(caller), state, wheel.max_spin_times);
+                if(remaining_spin_times == 0) {
+                  return #err(#Unavailable);
+                };
                 let uid = Principal.toText(caller);
                 let prizes = LuckyWheel.availablePrizes(uid, wheel.wheel_prizes, state, wheel.uuid);
                 var tempArray : [Float] = [];

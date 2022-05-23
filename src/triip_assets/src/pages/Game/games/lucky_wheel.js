@@ -59,6 +59,7 @@ const LuckyWheel = () => {
   const [openLoading, setOpenLoading] = useState(false);
   const [isResultsLoading, setIsResultsLoading] = useState(false);
   const [currentReward, setCurrentReward] = useState(null);
+  const [prizeList, setPrizeList] = useState();
   const dispatch = useDispatch();
 
   const handleOpenRules = () => setOpenRules(true);
@@ -69,13 +70,25 @@ const LuckyWheel = () => {
     setOpenPrize(true);
   }
   const handleClosePrize = () => setOpenPrize(false);
-
   const handleCloseReward = () => setOpenReward(false);
 
-  const { spinResults: spinResults } = useSelector(state => state.user);
+  async function loadPrizeList() {
+    try {
+      if (!!actor?.currentWheelPrizes) {
+        const result = await actor?.currentWheelPrizes();
+        if ("ok" in result) {
+          setPrizeList(result.ok);
+        } else {
+          throw result?.err;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   useEffect(() => {
     setIsResultsLoading(true);
-    dispatch(spinResultsAPI());
+    loadPrizeList();
     setIsResultsLoading(false);
   }, []);
 
@@ -83,6 +96,13 @@ const LuckyWheel = () => {
   useEffect(() => {
     setIsResultsLoading(true);
     dispatch(spinRemainingAPI());
+    setIsResultsLoading(false);
+  }, []);
+
+  const { spinResults: spinResults } = useSelector(state => state.user);
+  useEffect(() => {
+    setIsResultsLoading(true);
+    dispatch(spinResultsAPI());
     setIsResultsLoading(false);
   }, []);
 
@@ -163,9 +183,9 @@ const LuckyWheel = () => {
           <div className="prizeListContainerAll">
             {isResultsLoading ? (
               <Loading height="70vh" />
-            ) : spinResults?.length > 0 && (
-              spinResults?.map((spinResult, _key) => (
-                <SpinResultPrize spinResult={spinResult} />
+            ) : prizeList?.length > 0 && (
+              prizeList?.map((prize, _key) => (
+                <PrizeList prize={prize} />
               ))
             )}
           </div>
@@ -216,7 +236,7 @@ const LuckyWheel = () => {
           <div id="modal-modal-title-prize">
             <div className="headerPrize">
               <Icon icon="fa:angle-left" className="iconBack" onClick={handleClosePrize} />
-              <h1 className="headingPrize">PRIZE LIST</h1>
+              <h1 className="headingPrize">YOUR PRIZE</h1>
             </div>
           </div>
           <div id="modal-modal-description-prize">
@@ -286,6 +306,24 @@ const SpinResultPrize = ({ spinResult }) => {
       <div class="itemContainer">
         <h3 className="itemName">{spinResult.prize_name}</h3>
         <span className="itemDescription">{spinResult.remark}</span>
+      </div>
+    </div>
+  )
+};
+
+const PrizeList = ({ prize }) => {
+  return (
+    <div className="prizeListContainer" key={prize?.uuid}>
+      <div className="imgPrizeList">
+        <img
+          src={prize.icon}
+          alt=""
+          className="itemImgPrize"
+        />
+      </div>
+      <div class="itemContainer">
+        <h3 className="itemName">{prize.name}</h3>
+        <span className="itemDescription">{prize.description}</span>
       </div>
     </div>
   )
