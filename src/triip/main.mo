@@ -1250,16 +1250,25 @@ shared({caller = owner}) actor class Triip() = this {
   };
   /* MemoryCard */
   //Adding a level to the memory card game.
-  public shared func gameGcAddLevel() : async Response<()>{
-    let mc : MemoryCard = await MemoryCardController.MemoryCardController();
-    let levelsSize : Nat = Iter.size(state.games.memory_card.levels.keys());
-    if(Nat.equal(levelsSize, 0)) {
-      let levels = await mc.addLevel();
-      for ((K, V) in Iter.fromArray(levels)) {
-        state.games.memory_card.levels.put(K, V);
+  public shared({caller}) func gameGcAddLevel() : async Response<()>{
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    let is_admin = isAdmin(caller);
+    switch (is_admin) {
+      case (null) #err(#AdminRoleRequired);
+      case (? v) {
+        let mc : MemoryCard = await MemoryCardController.MemoryCardController();
+        let levelsSize : Nat = Iter.size(state.games.memory_card.levels.keys());
+        if(Nat.equal(levelsSize, 0)) {
+          let levels = await mc.addLevel();
+          for ((K, V) in Iter.fromArray(levels)) {
+            state.games.memory_card.levels.put(K, V);
+          };
+        };
+        #ok(());
       };
     };
-    #ok(());
   };
   public query func gameGcGetLevel(key : Text) : async Response<Types.MemoryCardLevel>{
     let level : ?Types.MemoryCardLevel = state.games.memory_card.levels.get(key);

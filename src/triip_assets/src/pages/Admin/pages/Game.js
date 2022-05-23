@@ -63,6 +63,9 @@ const ListAll = () => {
 
   return (
     <Box height={400} width="100%">
+      <Typography variant="h1" align="center">
+        Player List
+      </Typography>
       <DataGrid
         rows={rows ?? []}
         columns={columns}
@@ -135,6 +138,9 @@ const ListOfDay = () => {
 
   return (
     <Box>
+      <Typography variant="h1" align="center">
+        Top of Today
+      </Typography>
       <Box height={400} width="100%">
         <DataGrid
           rows={rows ?? []}
