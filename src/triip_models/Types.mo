@@ -6,6 +6,7 @@ import TravelPlan "model/TravelPlan";
 import ProofTP "model/ProofTP";
 import Vetted "model/Vetted";
 import KYC "model/KYC";
+import MemoryCard "model/games/MemoryCard";
 
 module {
   public type Admin = {
@@ -55,6 +56,12 @@ module {
     images: [Text];
     comments:?Text;
   };
+
+  /* ------------------------- Games --------------------------- */
+  // MemoryCard
+  public type MemoryCardLevel = MemoryCard.Level;
+  public type MemoryCardPlayer = MemoryCard.Player;
+  public type MemoryCardReward = MemoryCard.Reward;
 
   /* ------------------------- Prize --------------------------- */ // new feature
   public type Prize = {
@@ -128,5 +135,7 @@ module {
     #Enough;
     #NonKYC;
     #Unavailable;
+    #NotEnoughPermission;
   };
+    /* ------------------------- Error --------------------------- */
 }

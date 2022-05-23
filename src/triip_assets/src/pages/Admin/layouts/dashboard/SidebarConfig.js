@@ -33,31 +33,11 @@ const sidebarConfig = [
     path: "/triip-admin/dashboard/prizes",
     icon: getIcon("clarity:map-solid")
   },
-  // {
-  //   title: "product",
-  //   path: "/triip-admin/dashboard/products",
-  //   icon: getIcon(shoppingBagFill)
-  // },
-  // {
-  //   title: "blog",
-  //   path: "/triip-admin/dashboard/blog",
-  //   icon: getIcon(fileTextFill)
-  // },
-  // {
-  //   title: "login",
-  //   path: "/triip-admin/dashboard/login",
-  //   icon: getIcon(lockFill)
-  // },
-  // {
-  //   title: "register",
-  //   path: "/triip-admin/dashboard/register",
-  //   icon: getIcon(personAddFill)
-  // },
-  // {
-  //   title: "Not found",
-  //   path: "/404",
-  //   icon: getIcon(alertTriangleFill)
-  // }
+  {
+    title: "Game",
+    path: "/triip-admin/dashboard/game",
+    icon: getIcon("clarity:map-solid")
+  }
 ];
 
 export default sidebarConfig;

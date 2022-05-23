@@ -44,8 +44,8 @@ function Game() {
           <Grid
             item
             key={index}
-            xs="12"
-            md="6"
+            xs={12}
+            md={6}
             display="flex"
             justifyContent={matches ? "center" : index === 0 ? "end" : "start"}>
             <Card sx={{ maxWidth: 240 }}>

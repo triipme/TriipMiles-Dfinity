@@ -1,4 +1,7 @@
 import React, { lazy } from "react";
+import Play from "@/pages/Game/containers/Play.mc";
+import MCLevels from "@/pages/Game/games/MemoryCard/magic_memory.levels";
+import { NormalRequiredAuth } from "@/containers";
 // import { ExperiencePage, HomePage, SharePage, ShopPage, StayPage, GamePage } from "../pages";
 const HomePage = lazy(() => import("../pages/Home"));
 const ExperiencePage = lazy(() => import("../pages/Experience"));
@@ -7,8 +10,8 @@ const ShopPage = lazy(() => import("../pages/Shop"));
 const StayPage = lazy(() => import("../pages/Stay"));
 const GamePage = lazy(() => import("../pages/Game"));
 const GameLayout = lazy(() => import("../pages/Game/layout"));
-const MagicMemory = lazy(() => import("../pages/Game/games/magic_memory"));
-const LuckyWheel = lazy(() => import("../pages/Game/games/lucky_wheel"));
+const MagicMemory = lazy(() => import("../pages/Game/games/MemoryCard/magic_memory"));
+const LucKyWheel = lazy(() => import("../pages/Game/games/lucky_wheel"));
 const ARPage = lazy(() => import("../pages/AR"));
 const Geolocation = lazy(() => import("../pages/AR/Geolocation"));
 const Marker = lazy(() => import("../pages/AR/Marker"));
@@ -44,12 +47,23 @@ export const navbar = [
   },
   {
     path: "game",
-    element: <GameLayout />,
+    element: (
+      <NormalRequiredAuth>
+        <GameLayout />
+      </NormalRequiredAuth>
+    ),
     name: "Game",
     children: [
       { index: true, element: <GamePage /> },
-      { path: "magic_memory", element: <MagicMemory /> },
-      { path: "lucky_wheel", element: <LuckyWheel /> }
+      {
+        path: "magic_memory",
+        element: <MagicMemory />,
+        children: [
+          { index: true, element: <MCLevels /> },
+          { path: "play", element: <Play /> }
+        ]
+      },
+      { path: "lucky_wheel", element: <LucKyWheel /> }
     ]
   },
   {

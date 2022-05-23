@@ -1,3 +1,4 @@
+import GameLayout from "@/pages/Admin/pages/Game";
 import React, { lazy } from "react";
 import { AdminRequiredAuth, NormalRequiredAuth } from "../containers";
 const Admin = lazy(() => import("../pages/Admin/index"));
@@ -56,6 +57,14 @@ export const admin = [
             element: (
               <AdminRequiredAuth>
                 <Kycs />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "game",
+            element: (
+              <AdminRequiredAuth>
+                <GameLayout />
               </AdminRequiredAuth>
             )
           },

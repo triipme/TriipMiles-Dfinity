@@ -7,9 +7,22 @@ const ButtonStyled = styled(LoadingButton)(({ theme }) => ({
   width: "100%"
 }));
 
-const ButtonPrimary = ({ title, onClick, variant = "primary", sx, loading = false }) => {
+const ButtonPrimary = ({
+  title,
+  onClick,
+  variant = "primary",
+  sx,
+  loading = false,
+  disabled = false
+}) => {
   return (
-    <ButtonStyled component="span" loading={loading} variant={variant} sx={sx} onClick={onClick}>
+    <ButtonStyled
+      disabled={disabled}
+      component="span"
+      loading={loading}
+      variant={disabled ? "outline" : variant}
+      sx={sx}
+      onClick={onClick}>
       {title}
     </ButtonStyled>
   );
