@@ -55,9 +55,6 @@ function Game() {
                   <Typography gutterBottom variant="h5" component="div">
                     {game.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {game.description}
-                  </Typography>
                 </CardContent>
               </Box>
             </Card>
