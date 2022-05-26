@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import Page from "../components/Page";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { kycRejectReasonThunk } from "../../../slice/static/staticSlice";
@@ -62,7 +63,7 @@ function Kycs() {
     }
   };
   return (
-    <>
+    <Page title="KYC | Triip Admin">
       <TableContainer component={Paper}>
         <Grid
           className="infor-manual"
@@ -152,7 +153,7 @@ function Kycs() {
       </TableContainer>
 
       <ModalKyc open={open} handleClose={handleClose} modalKyc={modalKyc} refresh={KYCs} />
-    </>
+    </Page>
   );
 }
 

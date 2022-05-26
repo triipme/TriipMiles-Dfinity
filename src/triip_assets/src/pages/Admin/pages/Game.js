@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Stack, Box, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import Page from "../components/Page";
 import moment from "moment";
 import { ButtonPrimary, InputText } from "@/components";
 import { useForm } from "react-hook-form";
@@ -9,11 +10,13 @@ import { ERRORS } from "@/utils/constants";
 
 const GameLayout = () => {
   return (
-    <Box>
-      <TopOfYesterday />
-      <ListOfDay />
-      <ListAll />
-    </Box>
+    <Page title="Memory Game | Triip Admin">
+      <Box>
+        <TopOfYesterday />
+        <ListOfDay />
+        <ListAll />
+      </Box>
+    </Page>
   );
 };
 const ListAll = () => {

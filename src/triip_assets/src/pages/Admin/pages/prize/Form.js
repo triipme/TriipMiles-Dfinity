@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import "./AddPrize.css";
 
+import Page from "../../components/Page";
+
 import {
   ButtonPrimary,
   InputText
@@ -75,7 +77,7 @@ const PrizeForm = () => {
   };
 
   return (
-    <>
+    <Page title="New Prize | Triip Admin">
       <div className="wrapper">
         <div className="content">
           <InputText
@@ -126,7 +128,7 @@ const PrizeForm = () => {
           </div>
         </div>
       </div>
-    </>
+    </Page>
   );
 }
 export default PrizeForm;

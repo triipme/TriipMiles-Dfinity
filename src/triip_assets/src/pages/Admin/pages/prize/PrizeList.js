@@ -10,10 +10,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
+import Page from "../../components/Page";
 import "./Prize.css";
 import AddPrizeBtn from "./AddPrizeBtn";
-import { BrowserRouter as Router, Route, Link, NavLink } from "react-router-dom";
-import Pagination from "./Pagination";
 
 const PrizeList = () => {
   const [prizeList, setPrizeList] = useState([]);
@@ -36,7 +35,7 @@ const PrizeList = () => {
     getPrizes();
   }, []);
   return (
-    <>
+    <Page title="Prize | Triip Admin">
       <div className="prizes_content">
         <AddPrizeBtn />
         {/* Table  Prizes */}
@@ -83,7 +82,7 @@ const PrizeList = () => {
           </Grid>
         </TableContainer>
       </div>
-    </>
+    </Page>
   );
 };
 

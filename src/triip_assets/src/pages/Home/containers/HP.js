@@ -124,7 +124,7 @@ const HP = ({ idtp }) => {
                 Upload Completed
               </Typography>
               <Typography sx={{ mb: 1 }} variant="body2" align="center">
-                You will receive 33.0 TIIM <br />
+                You will receive 0.000033 ICP <br />
                 when your travel proof is approved
               </Typography>
               <Typography sx={{ mb: 1 }} variant="body2" align="center">
@@ -155,8 +155,8 @@ const HP = ({ idtp }) => {
             <Typography mt={3}>
               {
                 {
-                  AlreadyExisting: "Proof of Travel already !.",
-                  NotFound: "Not Found Travel Plan !.",
+                  AlreadyExisting: "Proof of Travel already!.",
+                  NotFound: "Not Found Travel Plan!.",
                   Failed:
                     "You just only submit Proof of Travel after start date and before end date !."
                 }[isError]

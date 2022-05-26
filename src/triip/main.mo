@@ -29,7 +29,6 @@ import Moment "./utils/moment";
 import ProofTP "../triip_models/model/ProofTP";
 import State "../triip_models/State";
 import Types "../triip_models/Types";
-import UUID "./plugins/uuid";
 
 shared({caller = owner}) actor class Triip() = this {
   /*------------------------ App state--------------------------- */
@@ -114,7 +113,6 @@ shared({caller = owner}) actor class Triip() = this {
     Debug.print("End postupgrade");
   };
 
-  type MemoryCard = MemoryCardController.MemoryCardController;
   type Response<Ok> = Result.Result<Ok, Types.Error>;
   private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
@@ -1294,10 +1292,9 @@ shared({caller = owner}) actor class Triip() = this {
     switch (is_admin) {
       case (null) #err(#AdminRoleRequired);
       case (? v) {
-        let mc : MemoryCard = await MemoryCardController.MemoryCardController();
         let levelsSize : Nat = Iter.size(state.games.memory_card.levels.keys());
         if(Nat.equal(levelsSize, 0)) {
-          let levels = await mc.addLevel();
+          let levels = await MemoryCardController.initLevels();
           for ((K, V) in Iter.fromArray(levels)) {
             state.games.memory_card.levels.put(K, V);
           };

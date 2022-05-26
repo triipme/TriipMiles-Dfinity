@@ -1,13 +1,14 @@
 import Random "mo:base/Random";
 import Float "mo:base/Float";
 import Nat8 "mo:base/Nat8";
-
-import UUID "../plugins/uuid";
+import UUID "mo:uuid/UUID";
+import AsyncSource "mo:uuid/async/SourceV4";
 
 module GeneralUtils {
   public func createUUID() : async Text {
-    let uuid : UUID.UUID = await UUID.UUID([0,0,0,0,0,0]);
-    await uuid.newAsync();
+    var ae = AsyncSource.Source();
+    let id = await ae.new();
+    UUID.toText(id);
   };
 
   public  func getRandomNumber(max: Float) : async Float {
