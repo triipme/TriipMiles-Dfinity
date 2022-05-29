@@ -7,7 +7,7 @@ function AddLuckyWheelButton() {
     <div>
       {/* Button Add Prizes */}
       <div className="pull_right">
-        <Link to="/lucky_wheels/new_wheel" title="New LuckyWheel">
+        <Link to="/triip-admin/dashboard/admin_luckywheel/new_wheel" title="New LuckyWheel">
           <Icon icon="fluent:add-12-filled" style={{ fontSize: "20px" }} />
         </Link>
       </div>

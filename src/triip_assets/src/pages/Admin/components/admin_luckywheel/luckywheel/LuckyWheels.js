@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@iconify/react";
 
 import Table from "@mui/material/Table";
@@ -181,11 +181,11 @@ function LuckyWheels() {
                 </Table>
               </Grid>
               <div className="footter_edit">
-                <a href="">
+                <Link to="/triip-admin/dashboard/admin_luckywheel/2">
                   <button className="btn btn_edit_lkw">
                     <Icon icon="fa-solid:eye" className="footter_edit_icon" />
                   </button>
-                </a>
+                </Link>
               </div>
             </TableContainer>
           </div>
@@ -273,11 +273,11 @@ function LuckyWheels() {
                         <p>30/03/2022</p>
                       </TableCell>
                       <TableCell className="table_item" align="left">
-                        <a href="#">
+                        <Link to="/triip-admin/dashboard/admin_luckywheel/edit">
                           <button className="btn_actions btn_edit">
                             <Icon icon="clarity:note-edit-line" />
                           </button>
-                        </a>
+                        </Link>
                         <a href="#">
                           <button className="btn_actions btn_activate">
                             Activate

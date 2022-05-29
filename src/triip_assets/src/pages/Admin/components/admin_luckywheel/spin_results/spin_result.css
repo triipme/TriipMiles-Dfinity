@@ -1,0 +1,60 @@
+.state_container {
+  display: flex;
+}
+
+.state_list {
+  display: flex;
+  flex-direction: column;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-right: 100px;
+}
+.state_item {
+  display: flex;
+  margin-top: 20px;
+}
+.state_item [type="checkbox"] {
+  padding: 10px;
+  transform: scale(1.5);
+  margin-right: 10px;
+  border-radius: 3px;
+}
+.state_item label {
+  color: #626262;
+  font-size: 10.5px;
+  text-align: top;
+}
+.state_input {
+  display: flex;
+  flex-direction: row;
+}
+.input_item [type="text"] {
+  width: 300px;
+  height: 40px;
+  padding: 10px;
+  font-size: 14px;
+  color: #626262;
+  border-radius: 3px;
+}
+.input_item {
+  margin-right: 20px;
+}
+.radio label,
+.checkbox label {
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+  padding-left: 25px;
+  margin-right: 15px;
+  min-width: 17px;
+  min-height: 17px;
+  font-size: 13px;
+  line-height: 20px;
+  margin-bottom: 0;
+}
+.footer_filter {
+  display: flex;
+  justify-content: flex-end;
+}

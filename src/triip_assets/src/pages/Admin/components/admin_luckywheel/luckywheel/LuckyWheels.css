@@ -1,5 +1,4 @@
 .prizes_content {
-  padding-top: 60px;
   padding-bottom: 30px;
 }
 .prizes_container {
@@ -10,6 +9,7 @@
   background-color: #fff;
   padding: 20px;
   transition: all 1s;
+  border-radius: 5px;
 }
 
 .luckywheel_header {
@@ -39,6 +39,7 @@
   position: absolute;
   top: 0;
   right: 10px;
+  cursor: pointer;
 }
 
 .footter_edit {
@@ -78,4 +79,11 @@
 }
 .table_containe {
   line-height: 20px;
+}
+
+.btn_deactivate {
+  margin-left: 5px;
+  color: #fff;
+  background-color: #6d5cae;
+  border-color: #6d5cae;
 }

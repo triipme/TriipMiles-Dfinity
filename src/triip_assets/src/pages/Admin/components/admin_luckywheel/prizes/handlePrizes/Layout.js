@@ -3,51 +3,44 @@ import { useState } from "react";
 import AddPrizesButton from "./AddPrizesButton";
 import "./AddPrizes.css";
 
-function LayoutAddPrize() {
-  const LocaleForm = (index) => {
-    return (
-      <>
-        <div className="form_add-locale">
-          <div className="form_locale">
-            <label htmlFor="">LOCALE</label>
-            <select
-              className="form-control select required"
-              id="prize_add_locale"
-            >
-              <option value=""></option>
-              <option value="en">en</option>
-              <option value="vi">vi</option>
-            </select>
-          </div>
-          <div className="form_locale">
-            <label htmlFor="">TITLE</label>
-            <input type="text" />
-          </div>
-          <div className="form_locale">
-            <label htmlFor="">DESCRIPTION</label>
-            <input type="text" className="form_locale-decs" />
-          </div>
-          <div className="align_center">
-            <button
-              className="btn btn_remove"
-              onClick={() => handleRemove(index)}
-            >
-              Remove
-            </button>
-          </div>
+const LocaleForm = ({ index, handleRemove }) => {
+  return (
+    <>
+      <div className="form_add-locale">
+        <div className="form_locale">
+          <label htmlFor="">LOCALE</label>
+          <select className="form-control select required" id="prize_add_locale">
+            <option value=""></option>
+            <option value="en">en</option>
+            <option value="vi">vi</option>
+          </select>
         </div>
-      </>
-    );
-  };
+        <div className="form_locale">
+          <label htmlFor="">TITLE</label>
+          <input type="text" />
+        </div>
+        <div className="form_locale">
+          <label htmlFor="">DESCRIPTION</label>
+          <input type="text" className="form_locale-decs" />
+        </div>
+        <div className="align_center">
+          <button className="btn btn_remove" onClick={() => handleRemove(index)}>
+            Remove
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};
+function LayoutAddPrize() {
   const [addLocale, setAddLocale] = useState([]);
   const handleAddLocale = () => {
     setAddLocale([...addLocale, <LocaleForm />]);
   };
-  const handleRemove = (e) => {
+  const handleRemove = index => {
     const newLocale = [...addLocale];
-    newLocale.splice(e, 1);
+    newLocale.splice(index, 1);
     setAddLocale(newLocale);
-    console.log(e);
   };
   return (
     <>
@@ -61,32 +54,20 @@ function LayoutAddPrize() {
             <select
               className="form-control select required"
               name="prize[class_name]"
-              id="prize_class_name"
-            >
+              id="prize_class_name">
               <option value=""></option>
               <option value="PrizeService::Wasted">PrizeService::Wasted</option>
-              <option value="PrizeService::ExtraSpin">
-                PrizeService::ExtraSpin
-              </option>
-              <option value="PrizeService::TriipCredit">
-                PrizeService::TriipCredit
-              </option>
+              <option value="PrizeService::ExtraSpin">PrizeService::ExtraSpin</option>
+              <option value="PrizeService::TriipCredit">PrizeService::TriipCredit</option>
               <option value="PrizeService::DiscountVoucherPercentage">
                 PrizeService::DiscountVoucherPercentage
               </option>
-              <option value="PrizeService::FreeStaycation">
-                PrizeService::FreeStaycation
-              </option>
-              <option value="PrizeService::SaveYourOcean">
-                PrizeService::SaveYourOcean
-              </option>
+              <option value="PrizeService::FreeStaycation">PrizeService::FreeStaycation</option>
+              <option value="PrizeService::SaveYourOcean">PrizeService::SaveYourOcean</option>
             </select>
           </div>
           <div className="form_group">
-            <label
-              class="control-label integer optional"
-              htmlFor="prize_quantity"
-            >
+            <label class="control-label integer optional" htmlFor="prize_quantity">
               QUANTITY
             </label>
             <input
@@ -101,16 +82,11 @@ function LayoutAddPrize() {
             <label>Prize Icon</label>
           </div>
           <div className="form_group">
-            <input
-              className="photo_upload"
-              type="file"
-              name="prize[icon]"
-              id="prize_icon"
-            />
+            <input className="photo_upload" type="file" name="prize[icon]" id="prize_icon" />
           </div>
           {addLocale.map((locale, item, index) => (
             <div className="form_add-locale-content" key={item}>
-              {locale}
+              <LocaleForm index={index} handleRemove={handleRemove} />
             </div>
           ))}
           <div className="footer_form">

@@ -29,8 +29,18 @@ const sidebarConfig = [
     icon: getIcon("clarity:map-solid")
   },
   {
-    title: "Lucky Wheels",
+    title: "LuckyWheel - Prizes",
+    path: "/triip-admin/dashboard/admin_prizes",
+    icon: getIcon("clarity:map-solid")
+  },
+  {
+    title: "LuckyWheel - LuckyWheel",
     path: "/triip-admin/dashboard/admin_luckywheel",
+    icon: getIcon("clarity:map-solid")
+  },
+  {
+    title: "LuckyWheel - Spin Result",
+    path: "/triip-admin/dashboard/admin_spin-result",
     icon: getIcon("clarity:map-solid")
   }
   // {

@@ -1,0 +1,123 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+input,
+select {
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+.wrapper_handle_add {
+  padding: 20px;
+}
+.add_lkw_content {
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
+.form_group {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.form_group .form_group_item:first-child {
+  flex: 2;
+}
+.form_group .form_group_item:last-child {
+  flex: 1;
+}
+.form_group_item {
+  display: flex;
+  flex-direction: column;
+  margin-right: 16px;
+}
+.form_group_item:last-child {
+  margin-right: unset;
+}
+.form_group_item input[type="number"] {
+  width: unset;
+}
+.form_group_item input[type="text"] {
+  width: unset;
+  height: 36px;
+  border: 1px solid;
+  border-color: #efefef;
+  padding: 0 10px;
+}
+.form_group_item label {
+  color: unset;
+  opacity: unset;
+}
+.form_add {
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 0.25rem;
+  margin-bottom: 22px;
+}
+
+.form_add_header {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: red;
+  margin-bottom: 20px;
+}
+
+.form_add_prize_item {
+  display: flex;
+  flex-direction: row;
+  margin: 16px 0;
+}
+.form_add_item {
+  display: flex;
+  flex-direction: column;
+  margin-right: 15px;
+}
+
+.form_add_item input[type="number"] {
+  width: 208px;
+  text-align: right;
+}
+.form_add_item input[type="text"] {
+  width: unset;
+  height: 36px;
+  border: 1px solid;
+  border-color: #efefef;
+  padding: 0 10px;
+}
+.form_add_item select {
+  width: 208px;
+  height: 36px;
+  border: 1px solid;
+  border-color: #efefef;
+  padding: 0 10px;
+}
+
+.form_add_item label {
+  color: unset;
+}
+.form_add_prize_item .form_add_item:first-child {
+  width: 100px;
+}
+.btn_custom_delete {
+  color: #fff;
+  background-color: #f55753;
+  border-color: #f55753;
+  margin-top: 20px;
+  font-size: 20px;
+}
+.btn_custom_delete:hover {
+  background-color: #f77975;
+  border-color: #f77975;
+  color: #fff;
+}
+.form_button {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form_luckywheel_id {
+  font-size: 12.5px;
+  margin-bottom: 25px;
+}

@@ -140,7 +140,7 @@ function Prizes() {
                     <p>12/07/2019</p>
                   </TableCell>
                   <TableCell className="table_item" align="left">
-                    <Link to="/triip-admin/dashboard/admin_luckywheel/prizes/edit">
+                    <Link to="/triip-admin/dashboard/admin_prizes/prizes/edit">
                       <button className="btn_actions btn_edit">
                         <Icon icon="clarity:note-edit-line" />
                       </button>

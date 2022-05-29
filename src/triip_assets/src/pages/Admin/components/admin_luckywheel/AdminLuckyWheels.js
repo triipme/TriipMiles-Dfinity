@@ -11,7 +11,7 @@ function AdminLuckyWheels() {
     <div>
       <Routes>
         <Route path="/" exact element={<Prizes />}></Route>
-        <Route
+        {/* <Route
           path="/triip-admin/dashboard/admin_luckywheel/prizes"
           exact
           element={<LayoutAddPrize />}></Route>
@@ -23,7 +23,7 @@ function AdminLuckyWheels() {
           path="/triip-admin/dashboard/admin_luckywheel/lucky_wheels"
           exact
           element={<LuckyWheels />}></Route>
-        <Route path="/lucky_wheels/new_wheel" exact element={<AddLuckyWheelsItem />}></Route>
+        <Route path="/lucky_wheels/new_wheel" exact element={<AddLuckyWheelsItem />}></Route> */}
       </Routes>
       {/* <LayoutAddPrize /> */}
     </div>
