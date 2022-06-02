@@ -1,4 +1,6 @@
 import Principal "mo:base/Principal";
+import Time "mo:base/Time";
+import Nat64 "mo:base/Nat64";
 
 import User "model/User";
 import Admin "model/Admin";
@@ -7,6 +9,7 @@ import ProofTP "model/ProofTP";
 import Vetted "model/Vetted";
 import KYC "model/KYC";
 import MemoryCard "model/games/MemoryCard";
+import Ledger "model/Ledger";
 
 module {
   public type Admin = {
@@ -111,6 +114,7 @@ module {
     prize_id: ?Text;
     prize_name: Text;
     prize_type: Text;
+    prize_amount: Float;
     state: Text;
     remark: ?Text;
     created_at: Int;
@@ -123,6 +127,21 @@ module {
     icon : Text;
     remark : ?Text;
   };
+
+  /* ------------------------- Transaction ---------------------- */
+  public type TxRecord = {
+    uuid: Text;
+    caller : Principal;
+    refType : Text;
+    refId : Text;
+    blockIndex : ?Nat64;
+    toAddress : Text;
+    amount : Ledger.ICP;
+    fee : Ledger.ICP;
+    timestamp : Time.Time;
+    txError : ?Text;
+  };
+  /* ------------------------- Transaction ---------------------- */
 
   /* ------------------------- Error --------------------------- */
   public type Error = {

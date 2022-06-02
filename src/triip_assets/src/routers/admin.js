@@ -6,11 +6,11 @@ const DashboardLayout = lazy(() => import("../pages/Admin/layouts/dashboard"));
 const DashboardApp = lazy(() => import("../pages/Admin/pages/DashboardApp"));
 const User = lazy(() => import("../pages/Admin/pages/User"));
 const Kycs = lazy(() => import("../pages/Admin/pages/Kycs"));
-const Blog = lazy(() => import("../pages/Admin/pages/Blog"));
 const Login = lazy(() => import("../pages/Admin/pages/Login"));
 const Register = lazy(() => import("../pages/Admin/pages/Register"));
 const PrizeList = lazy(() => import("../pages/Admin/pages/prize/PrizeList"));
 const PrizeForm = lazy(() => import("../pages/Admin/pages/prize/Form"));
+const Transactions = lazy(() => import("../pages/Admin/pages/transactions/List"));
 
 export const admin = [
   {
@@ -39,15 +39,6 @@ export const admin = [
             element: (
               <AdminRequiredAuth>
                 <User />
-              </AdminRequiredAuth>
-            )
-          },
-
-          {
-            path: "blog",
-            element: (
-              <AdminRequiredAuth>
-                <Blog />
               </AdminRequiredAuth>
             )
           },
@@ -98,9 +89,17 @@ export const admin = [
                 <PrizeForm />
               </AdminRequiredAuth>
             )
+          },
+          {
+            path: "transactions",
+            element: (
+              <AdminRequiredAuth>
+                <Transactions />
+              </AdminRequiredAuth>
+            )
           }
         ]
-      }
+      },
     ]
   }
 ];
