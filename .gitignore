@@ -128,3 +128,4 @@ src/declarations
 src/triip_assets/assets/data
 
 lucky-wheel-cli.txt
+deploy_local_ledger.sh

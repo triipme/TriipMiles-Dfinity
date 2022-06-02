@@ -9,6 +9,7 @@ import Iter "mo:base/Iter";
 import List "mo:base/List";
 import Nat "mo:base/Nat";
 import Nat32 "mo:base/Nat32";
+import Nat64 "mo:base/Nat64";
 import Nat8 "mo:base/Nat8";
 import Option "mo:base/Option";
 import Principal "mo:base/Principal";
@@ -50,6 +51,7 @@ shared({caller = owner}) actor class Triip() = this {
       rewards : [(Text,Types.MemoryCardReward)] = [];
     }
   };
+  private stable var transactions : [(Text, Types.TxRecord)] = [];
 
   system func preupgrade() {
     Debug.print("Begin preupgrade");
@@ -69,6 +71,7 @@ shared({caller = owner}) actor class Triip() = this {
         rewards = Iter.toArray(state.games.memory_card.rewards.entries());
       }
     };
+    transactions := Iter.toArray(state.transactions.entries());
     Debug.print("End preupgrade");
   };
 
@@ -110,11 +113,14 @@ shared({caller = owner}) actor class Triip() = this {
     for ((k, v) in Iter.fromArray(games.memory_card.rewards)) {
       state.games.memory_card.rewards.put(k, v);
     };
+    for ((k, v) in Iter.fromArray(transactions)) {
+      state.transactions.put(k, v);
+    };
     Debug.print("End postupgrade");
   };
 
   type Response<Ok> = Result.Result<Ok, Types.Error>;
-  private let ledger : Ledger.Interface = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
+  private let ledger : Ledger.Interface = actor(Env.LEDGER_ID);
 
   public query func accountId() : async Text {
     AId.toText(aId());
@@ -129,7 +135,7 @@ shared({caller = owner}) actor class Triip() = this {
   };
 
   private func principalToAid(p : Principal) : AId.AccountIdentifier {
-    AId.fromPrincipal(p,null)
+    AId.fromPrincipal(p, null)
   };
 
   public func balance() : async Ledger.ICP {
@@ -154,15 +160,59 @@ shared({caller = owner}) actor class Triip() = this {
       };
       case (#ok(a)) a;
     };
-
+    let now = Time.now();
     await ledger.transfer({
       memo            = 1;
       amount          = amount;
       fee             = { e8s = 10_000 };
       from_subaccount = null;
       to              = toAId;
-      created_at_time = null;
+      created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(now)) };
     });
+  };
+
+  func recordTransaction(
+    caller : Principal,
+    amount : Ledger.ICP, to : Text,
+    refType : Text, refId : Text,
+    transferResult : Ledger.TransferResult,
+    prevId : ?Text
+  ) : async () {
+    var blockIndex : ?Nat64 = null;
+    var txError : ?Text = null;
+    switch (transferResult) {
+      case (#Ok(bIndex)) {
+        Debug.print("Paid reward to principal " # debug_show to # " in block " # debug_show bIndex);
+        blockIndex := ?bIndex;
+      };
+      case (#Err(error)) {
+        Debug.print("Unexpected transfer error: " # debug_show error);
+        txError := ?debug_show error;
+      };
+    };
+
+    let uuid : Text = Option.get(prevId, await GeneralUtils.createUUID());
+    let record : Types.TxRecord = {
+      uuid = uuid;
+      caller = caller;
+      refType = refType;
+      refId = refId;
+      blockIndex = blockIndex;
+      toAddress = to;
+      amount = amount;
+      fee = { e8s = 10_000 };
+      timestamp = Time.now();
+      txError = txError;
+    };
+    switch (prevId) {
+      case null {
+        state.transactions.put(uuid, record);
+      };
+      case (? id) {
+        let replaced = state.transactions.replace(id, record);
+        ();
+      };
+    };
   };
 
   //Admin
@@ -335,31 +385,28 @@ shared({caller = owner}) actor class Triip() = this {
       status = status;
       created_at = proof.created_at;
     };
-    let vetted_data : Types.Vetted = {
+    let vettedData : Types.Vetted = {
       staff  = caller;
       updated_at = Time.now() / 10**9;
     };
-    let proof_replace = state.proofs.replace(id_proof, proof_update);
-    let vetted = state.vetted.put(id_proof, vetted_data);
-    let kycOfUser : Bool = await isKYCedUser(proof.uid);
+    let replacedProof = state.proofs.replace(id_proof, proof_update);
+    let vettedProof = state.vetted.put(id_proof, vettedData);
     if(Text.equal(status, "approved")) {
-      let profile = state.profiles.get(proof.uid);
-      switch (profile) {
+      switch (state.profiles.get(proof.uid)) {
         case (null) #err(#NotFound);
-        case (? v) {
-          switch (kycOfUser) {
+        case (? profile) {
+          switch (await isKYCedUser(proof.uid)) {
             case (false) {
               #err(#NonKYC);
             };
             case (true) {
-              switch (await transfer({ e8s = 3300 }, Option.get(v.wallets, [""])[0])) {
-                case (#Err(transfer)) {
-                  #err(#NotFound);
-                };
-                case (#Ok(transfer)) {
-                  #ok(());
-                };
-              };
+              let amount : Ledger.ICP = { e8s = 3_300 };
+              let toAddress = Option.get(profile.wallets, [""])[0];
+              let res = await transfer(amount, toAddress);
+              await recordTransaction(
+                caller, amount, toAddress, "ProofOfTravelPlan", id_proof, res, null
+              );
+              #ok(());
             };
           }
         }
@@ -367,6 +414,43 @@ shared({caller = owner}) actor class Triip() = this {
     } else {
       #ok(());
     }
+  };
+
+  public shared query({ caller }) func listTransactions() : async Response<[Types.TxRecord]> {
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
+    #ok(Iter.toArray(state.transactions.vals()));
+  };
+
+  public shared ({caller}) func retryTransaction(uuid : Text) : async Response<(?Types.TxRecord)> {
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
+    let record = state.transactions.get(uuid);
+    switch (record) {
+      case null {
+        #err(#NotFound);
+      };
+      case (? transaction) {
+        if (transaction.blockIndex == null) {
+          let res = await transfer(
+            transaction.amount, transaction.toAddress
+          );
+          await recordTransaction(
+            caller, transaction.amount, transaction.toAddress,
+            transaction.refType, transaction.refId, res, ?uuid
+          );
+        };
+        #ok(state.transactions.get(uuid));
+      };
+    };
   };
 
   /* ------------------------------------------------------------------------------------------------------- */
@@ -463,28 +547,24 @@ shared({caller = owner}) actor class Triip() = this {
         is_received = true;
         created_at = Time.now();
       };
-      let kycOfUser : Bool = await isKYCedUser(caller);
-      let rsReadUser : ?Types.Profile = state.profiles.get(caller);
-      switch (rsReadUser) {
+
+      switch (state.profiles.get(caller)) {
         case null{
           #err(#NotFound);
         };
-        case (?v) {
-          switch (kycOfUser) {
+        case (?profile) {
+          state.travelplans.put(travel_plan.idtp, plan);
+          switch (await isKYCedUser(caller)) {
             case (false) {
-              state.travelplans.put(travel_plan.idtp, plan);
               #ok((travel_plan.idtp, "non-KYC"));
             };
             case (true) {
-              switch (await transfer({ e8s = 100 }, Option.get(v.wallets, [""])[0])) {
-                case (#Err(transfer)) {
-                  #err(#NotFound);
-                };
-                case (#Ok(transfer)) {
-                  state.travelplans.put(travel_plan.idtp, plan);
-                  #ok((travel_plan.idtp,""));
-                };
-              };
+              let toAddress = Option.get(profile.wallets, [""])[0];
+              let res = await transfer({ e8s = 100 }, toAddress);
+              await recordTransaction(
+                caller, { e8s = 100 }, toAddress, "TravelPlan", travel_plan.idtp, res, null
+              );
+              #ok((travel_plan.idtp,""));
             };
           };
         };
@@ -1216,6 +1296,7 @@ shared({caller = owner}) actor class Triip() = this {
                       prize_id = prize.uuid;
                       prize_name = prize.name;
                       prize_type = prize.prize_type;
+                      prize_amount = prize.quantity;
                       state = "completed";
                       remark = ?prize.description;
                       created_at : Int = Time.now();
@@ -1231,16 +1312,12 @@ shared({caller = owner}) actor class Triip() = this {
                     if (prize.prize_type == "TriipCredit") {
                       // Reward ICP to User
                       let amount = Int64.toNat64(Float.toInt64(prize.quantity));
-                      Debug.print(debug_show(amount));
-                      switch (await transfer({e8s = amount},Option.get(profile.wallets,[""])[0])) {
-                        case (#Err(transfer)) {
-                          state.spinresults.delete(uuid);
-                          #err(#Unavailable);
-                        };
-                        case (#Ok(transfer)) {
-                          #ok(result_formated);
-                        };
-                      };
+                      let toAddress = Option.get(profile.wallets,[""])[0];
+                      let res = await transfer({ e8s = amount }, toAddress);
+                      await recordTransaction(
+                        caller, { e8s = amount }, toAddress, "LuckyWheelPrize", uuid, res, null
+                      );
+                      #ok(result_formated);
                     } else {
                       #ok(result_formated);
                     };
@@ -1444,7 +1521,7 @@ shared({caller = owner}) actor class Triip() = this {
   public query({caller}) func gameGcListAll() : async Response<[(Types.MemoryCardPlayer)]>{
     if(Principal.toText(caller) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };     
+    };
     let is_admin = isAdmin(caller);
     switch (is_admin) {
       case (null) #err(#AdminRoleRequired);
@@ -1458,48 +1535,43 @@ shared({caller = owner}) actor class Triip() = this {
     #ok(state.games.memory_card.rewards.get(id));
   };
   public shared({caller}) func gameGcReward(
-    player_id : Text, 
+    playerId : Text, 
     reward : Float, 
     uid : Principal
   ) : async Response<()>{
     if(Principal.toText(caller) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
-    let is_admin = isAdmin(caller);
-    let reward_format : Nat64 = Int64.toNat64(Float.toInt64(reward * 10**8));
-    switch (is_admin) {
-      case (null) #err(#AdminRoleRequired);
-      case (? v) {
-        let record_reward = {
-          reward : Nat64 = reward_format;
-          createdAt = Moment.now();
-        };
-        state.games.memory_card.rewards.put(player_id, record_reward); //put to state rewards
-        // let kycOfUser : Bool = await isKYCedUser(uid); //check user is user Kyc-ed
-        // switch (kycOfUser) {
-        //   case (false) {
-        //     #err(#NonKYC);
-        //   };
-        //   case (true) {
-        let rsReadUser = state.profiles.get(uid); // get address Wallet of top1
-        switch (rsReadUser) {
-          case null{
-            #err(#NotFound);
-          };
-          case (? v) {
-            switch (await transfer({ e8s = reward_format }, Option.get(v.wallets, [""])[0])) {
-              case (#Err(transfer)) {
-                #err(#NotFound);
-              };
-              case (#Ok(transfer)) {
-                #ok(());
-              };
-            };
-          };
-        }
-      //   };
-      // };
-      }
-    }
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
+    let rewardAmount : Nat64 = Int64.toNat64(Float.toInt64(reward * 10**8));
+
+    let recordReward = {
+      reward : Nat64 = rewardAmount;
+      createdAt = Moment.now();
+    };
+    state.games.memory_card.rewards.put(playerId, recordReward); //put to state rewards
+    // let kycOfUser : Bool = await isKYCedUser(uid); //check user is user Kyc-ed
+    // switch (kycOfUser) {
+    //   case (false) {
+    //     #err(#NonKYC);
+    //   };
+    //   case (true) {
+    switch (state.profiles.get(uid)) {
+      case null{
+        #err(#NotFound);
+      };
+      case (? profile) {
+        let toAddress = Option.get(profile.wallets, [""])[0];
+        let res = await transfer({ e8s = rewardAmount }, toAddress);
+        await recordTransaction(
+          caller, { e8s = rewardAmount }, toAddress, "GameCardReward", playerId, res, null
+        );
+        #ok(());
+      };
+    };
+    //   };
+    // };
   };
 }

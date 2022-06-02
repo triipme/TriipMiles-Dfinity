@@ -1,12 +1,10 @@
 import Text "mo:base/Text";
-import Trie "mo:base/Trie";
-import Prelude "mo:base/Prelude";
 import TrieMap "mo:base/TrieMap";
 import Principal "mo:base/Principal";
 
 import Types "Types";
 
-module{
+module {
   private type Map<K,V> = TrieMap.TrieMap<K,V>;
   public type State = {
     admin : Map<Principal,Types.Admin>;
@@ -22,12 +20,13 @@ module{
         rewards : Map<Text,Types.MemoryCardReward>;
       }
     };
-    prizes: Map<Text,Types.Prize>;
-    wheels : Map<Text,Types.LuckyWheel>;
-    spinresults : Map<Text,Types.SpinResult>
+    prizes: Map<Text, Types.Prize>;
+    wheels : Map<Text, Types.LuckyWheel>;
+    spinresults : Map<Text, Types.SpinResult>;
+    transactions : Map<Text, Types.TxRecord>;
   };
-  
-  public func empty() : State { 
+
+  public func empty() : State {
     {
       admin = TrieMap.TrieMap<Principal,Types.Admin>(Principal.equal, Principal.hash);
       profiles = TrieMap.TrieMap<Principal,Types.Profile>(Principal.equal, Principal.hash);
@@ -42,9 +41,10 @@ module{
           rewards = TrieMap.TrieMap<Text,Types.MemoryCardReward>(Text.equal, Text.hash);
         }
       };
-      prizes = TrieMap.TrieMap<Text,Types.Prize>(Text.equal,Text.hash);
-      wheels = TrieMap.TrieMap<Text,Types.LuckyWheel>(Text.equal,Text.hash);
-      spinresults = TrieMap.TrieMap<Text,Types.SpinResult>(Text.equal,Text.hash);
+      prizes = TrieMap.TrieMap<Text, Types.Prize>(Text.equal, Text.hash);
+      wheels = TrieMap.TrieMap<Text, Types.LuckyWheel>(Text.equal, Text.hash);
+      spinresults = TrieMap.TrieMap<Text, Types.SpinResult>(Text.equal, Text.hash);
+      transactions = TrieMap.TrieMap<Text, Types.TxRecord>(Text.equal, Text.hash);
     };
   };
-}
+};
