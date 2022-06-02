@@ -34,24 +34,24 @@ shared({caller = owner}) actor class Triip() = this {
   /*------------------------ App state--------------------------- */
   var state : State.State = State.empty();
 
-  private stable var profiles : [(Principal,Types.Profile)] = [];
-  private stable var travelplans : [(Text,Types.TravelPlan)] = [];
-  private stable var proofs : [(Text,Types.ProofTP)] = [];
-  private stable var admin : [(Principal,Types.Admin)] = [];
-  private stable var vetted : [(Text,Types.Vetted)] = [];
-  private stable var kycs : [(Principal,Types.KYCs)] = [];
+  private stable var profiles : [(Principal, Types.Profile)] = [];
+  private stable var travelplans : [(Text, Types.TravelPlan)] = [];
+  private stable var proofs : [(Text, Types.ProofTP)] = [];
+  private stable var admin : [(Principal, Types.Admin)] = [];
+  private stable var vetted : [(Text, Types.Vetted)] = [];
+  private stable var kycs : [(Principal, Types.KYCs)] = [];
   private stable var prizes : [(Text, Types.Prize)] = [];
   private stable var wheels : [(Text, Types.LuckyWheel)] = [];
   private stable var spinresults : [(Text, Types.SpinResult)] = [];
   private stable var games = {
     memory_card = {
-      levels : [(Text,Types.MemoryCardLevel)] = [];
-      players : [(Text,Types.MemoryCardPlayer)] = [];
-      rewards : [(Text,Types.MemoryCardReward)] = [];
+      levels : [(Text, Types.MemoryCardLevel)] = [];
+      players : [(Text, Types.MemoryCardPlayer)] = [];
+      rewards : [(Text, Types.MemoryCardReward)] = [];
     };
     memory_card_engine = {
-      players : [(Text,Types.MemoryCardEnginePlayer)] = [];
-      rewards : [(Text,Types.MemoryCardEngineReward)] = [];
+      players : [(Text, Types.MemoryCardEnginePlayer)] = [];
+      rewards : [(Text, Types.MemoryCardEngineReward)] = [];
     }
   };
 
@@ -1597,8 +1597,8 @@ shared({caller = owner}) actor class Triip() = this {
       }
     }
   };
-  public query func gameGcEngineListOfYesterday() : async Response<[?(Text,Types.MemoryCardEnginePlayer)]>{
-    var listTop : [?(Text,Types.MemoryCardEnginePlayer)] = [];
+  public query func gameGcEngineListOfYesterday() : async Response<[?(Text, Types.MemoryCardEnginePlayer)]>{
+    var listTop : [?(Text, Types.MemoryCardEnginePlayer)] = [];
     for((K, V) in state.games.memory_card_engine.players.entries()) {
       if(
         Moment.between(V.createdAt)
