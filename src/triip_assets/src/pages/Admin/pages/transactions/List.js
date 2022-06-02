@@ -31,6 +31,7 @@ const Transactions = () => {
       {
         name: 'Block Index',
         selector: row => row.blockIndex,
+        format: row => row.blockIndex?.toString(),
         sortable: true,
         wrap: true,
       },
@@ -91,7 +92,7 @@ const Transactions = () => {
         selector: row => row.uuid,
         sortable: false,
         cell: row => (
-          row?.txError && (<Button
+          row.txError?.length > 0 && (<Button
             onClick={() =>
               handleRetry(row.uuid)
             }
