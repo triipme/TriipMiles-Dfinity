@@ -1,4 +1,7 @@
 import GameLayout from "@/pages/Admin/pages/Game";
+import GamesLayout from "@/pages/Admin/pages/games/Layout";
+import Memory from "@/pages/Admin/pages/games/Memory";
+import MemoryEngine from "@/pages/Admin/pages/games/MemoryEngine";
 import React, { lazy } from "react";
 import { AdminRequiredAuth, NormalRequiredAuth } from "../containers";
 const Admin = lazy(() => import("../pages/Admin/index"));
@@ -9,6 +12,8 @@ const Kycs = lazy(() => import("../pages/Admin/pages/Kycs"));
 const Blog = lazy(() => import("../pages/Admin/pages/Blog"));
 const Login = lazy(() => import("../pages/Admin/pages/Login"));
 const Register = lazy(() => import("../pages/Admin/pages/Register"));
+const PrizeList = lazy(() => import("../pages/Admin/pages/prize/PrizeList"));
+const PrizeForm = lazy(() => import("../pages/Admin/pages/prize/Form"));
 
 export const admin = [
   {
@@ -64,7 +69,21 @@ export const admin = [
               <AdminRequiredAuth>
                 <GameLayout />
               </AdminRequiredAuth>
-            )
+            ),
+            children: [
+              {
+                index: true,
+                element: <GamesLayout />
+              },
+              {
+                path: "engine",
+                element: <MemoryEngine />
+              },
+              {
+                path: "vocalbulary",
+                element: <Memory />
+              }
+            ]
           },
 
           {
@@ -79,6 +98,23 @@ export const admin = [
           {
             path: "register",
             element: <Register />
+          },
+
+          {
+            path: "prizes",
+            element: (
+              <AdminRequiredAuth>
+                <PrizeList />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "prizes/new",
+            element: (
+              <AdminRequiredAuth>
+                <PrizeForm />
+              </AdminRequiredAuth>
+            )
           }
         ]
       }

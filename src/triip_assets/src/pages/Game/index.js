@@ -6,6 +6,7 @@ import {
   CardContent,
   CardMedia,
   Grid,
+  Stack,
   Typography,
   useMediaQuery,
   useTheme
@@ -20,6 +21,13 @@ const games = [
     image:
       "https://media.istockphoto.com/vectors/memory-game-for-preschool-children-vector-id1092896082?k=20&m=1092896082&s=612x612&w=0&h=svAq2MxT5E9viByMj4r0JGzejZ_FM4qa93NExdDSqQk=",
     redirect: "/game/magic_memory"
+  },
+  {
+    name: "Magic Memory Engine",
+    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
+    image:
+      "https://media.istockphoto.com/vectors/memory-game-for-preschool-children-vector-id1092896082?k=20&m=1092896082&s=612x612&w=0&h=svAq2MxT5E9viByMj4r0JGzejZ_FM4qa93NExdDSqQk=",
+    redirect: "/game/magic_memory_engine"
   },
   {
     name: "Lucky Wheel",
@@ -38,32 +46,26 @@ function Game() {
     navigate(games[game_i].redirect);
   }
   return (
-    <Box sx={{ height: "calc(100vh - 70px)", display: "grid", placeItems: "center" }}>
-      <Grid container spacing={3}>
+    <Box
+      sx={{
+        height: matches ? "auto" : "calc(100vh - 70px)",
+        display: "grid",
+        placeItems: "center"
+      }}>
+      <Stack direction={matches ? "column" : "row"}>
         {games.map((game, index) => (
-          <Grid
-            item
-            key={index}
-            xs={12}
-            md={6}
-            display="flex"
-            justifyContent={matches ? "center" : index === 0 ? "end" : "start"}>
-            <Card sx={{ maxWidth: 240 }}>
-              <Box sx={{ cursor: "pointer" }} onClick={() => onPressGame(index)}>
-                <CardMedia component="img" height="140" image={game.image} alt={game.name} />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {game.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {game.description}
-                  </Typography>
-                </CardContent>
-              </Box>
-            </Card>
-          </Grid>
+          <Card sx={{ maxWidth: 240, mr: matches ? 0 : 2, my: matches ? 2 : 0 }}>
+            <Box sx={{ cursor: "pointer" }} onClick={() => onPressGame(index)}>
+              <CardMedia component="img" height="140" image={game.image} alt={game.name} />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  {game.name}
+                </Typography>
+              </CardContent>
+            </Box>
+          </Card>
         ))}
-      </Grid>
+      </Stack>
     </Box>
   );
 }

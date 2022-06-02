@@ -2,20 +2,20 @@ import Array "mo:base/Array";
 import Debug "mo:base/Debug";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
+import UUIDGenerator "mo:uuid/UUID";
+import AsyncSource "mo:uuid/async/SourceV4";
 
 import Types "../../../triip_models/Types";
 import State "../../../triip_models/State";
 import MemoryCard "../../../triip_models/model/games/MemoryCard";
 
-import UUID "../../plugins/uuid";
-
-actor class MemoryCardController(){
+module MemoryCardController {
   type Level = MemoryCard.Level;
   type LevelObj = (Text,Level);
   type Player = MemoryCard.Player;
 
-  public func addLevel() : async [LevelObj]{
-    let uuid : UUID.UUID = await UUID.UUID([0,0,0,0,0,0]);
+  public func initLevels() : async [LevelObj]{
+    var ae = AsyncSource.Source();
     var volcabularies = [
       { volcabulary = [
           ("М'ясо (m'yaso)","Meat"),
@@ -61,9 +61,10 @@ actor class MemoryCardController(){
       ]}
     ];
     var levels : [LevelObj] = [];
-    for((V) in Iter.fromArray(volcabularies)){
-      let uuid_text : Text = await uuid.newAsync();
-      levels := Array.append<LevelObj>(levels,[(uuid_text,V)])
+    for((v) in Iter.fromArray(volcabularies)){
+      let id = await ae.new();
+      let uuid : Text = UUIDGenerator.toText(id);
+      levels := Array.append<LevelObj>(levels, [(uuid, v)])
     };
     return levels;
   };

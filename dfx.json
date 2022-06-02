@@ -1,15 +1,8 @@
 {
   "canisters": {
-    "triip_models": {
-      "main": "src/triip_models/main.mo",
-      "type": "motoko"
-    },
     "triip": {
       "main": "src/triip/main.mo",
-      "type": "motoko",
-      "dependencies": [
-        "triip_models"
-      ]
+      "type": "motoko"
     },
     "triip_token": {
       "main": "src/triip_token/token.mo",

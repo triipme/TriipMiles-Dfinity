@@ -52,7 +52,7 @@ export default function DashboardApp() {
     })();
   }, []);
   return (
-    <Page title="Dashboard | Minimal-UI">
+    <Page title="Dashboard | Triip Admin">
       <Container maxWidth="xl">
         <Grid container spacing={3}>
           <Grid item sm={12} justifyContent="center">

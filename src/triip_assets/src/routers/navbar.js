@@ -11,6 +11,15 @@ const StayPage = lazy(() => import("../pages/Stay"));
 const GamePage = lazy(() => import("../pages/Game"));
 const GameLayout = lazy(() => import("../pages/Game/layout"));
 const MagicMemory = lazy(() => import("../pages/Game/games/MemoryCard/magic_memory"));
+const MagicMemoryEngine = lazy(() =>
+  import("@/pages/Game/games/MemoryCardEngine/magic_memory_engine")
+);
+const MagicMemoryEngineLayout = lazy(() =>
+  import("@/pages/Game/games/MemoryCardEngine/magic_memory_engine.layout")
+);
+const MCEngineTop = lazy(() =>
+  import("@/pages/Game/games/MemoryCardEngine/magic_memory_engine.top")
+);
 const LucKyWheel = lazy(() => import("../pages/Game/games/lucky_wheel"));
 const ARPage = lazy(() => import("../pages/AR"));
 const Geolocation = lazy(() => import("../pages/AR/Geolocation"));
@@ -61,6 +70,14 @@ export const navbar = [
         children: [
           { index: true, element: <MCLevels /> },
           { path: "play", element: <Play /> }
+        ]
+      },
+      {
+        path: "magic_memory_engine",
+        element: <MagicMemoryEngineLayout />,
+        children: [
+          { index: true, element: <MCEngineTop /> },
+          { path: "play", element: <MagicMemoryEngine /> }
         ]
       },
       { path: "lucky_wheel", element: <LucKyWheel /> }
