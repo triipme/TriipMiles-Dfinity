@@ -1,4 +1,6 @@
 import Principal "mo:base/Principal";
+import Time "mo:base/Time";
+import Nat64 "mo:base/Nat64";
 
 import Admin "model/Admin";
 import KYC "model/KYC";
@@ -8,6 +10,7 @@ import ProofTP "model/ProofTP";
 import TravelPlan "model/TravelPlan";
 import User "model/User";
 import Vetted "model/Vetted";
+import Ledger "model/Ledger";
 
 module {
   public type Admin = {
@@ -111,15 +114,16 @@ module {
 
   /* ------------------------- Spin Result --------------------------- */
   public type SpinResult = {
-    uid : Text;
-    lucky_wheel_id : ?Text;
-    prize_id : ?Text;
-    prize_name : Text;
-    prize_type : Text;
-    state : Text;
-    remark : ?Text;
-    created_at : Int;
-    updated_at : ?Int;
+    uid: Text;
+    lucky_wheel_id: ?Text;
+    prize_id: ?Text;
+    prize_name: Text;
+    prize_type: Text;
+    prize_amount: Float;
+    state: Text;
+    remark: ?Text;
+    created_at: Int;
+    updated_at: ?Int;
   };
 
   public type SpinResultSerializer = {
@@ -128,6 +132,21 @@ module {
     icon : Text;
     remark : ?Text;
   };
+
+  /* ------------------------- Transaction ---------------------- */
+  public type TxRecord = {
+    uuid: Text;
+    caller : Principal;
+    refType : Text;
+    refId : Text;
+    blockIndex : ?Nat64;
+    toAddress : Text;
+    amount : Ledger.ICP;
+    fee : Ledger.ICP;
+    timestamp : Time.Time;
+    txError : ?Text;
+  };
+  /* ------------------------- Transaction ---------------------- */
 
   /* ------------------------- Error --------------------------- */
   public type Error = {

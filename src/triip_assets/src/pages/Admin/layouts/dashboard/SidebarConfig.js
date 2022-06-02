@@ -31,6 +31,11 @@ const sidebarConfig = [
     title: "Game",
     path: "/triip-admin/dashboard/game",
     icon: getIcon("arcticons:memo-game")
+  },
+  {
+    title: "Transactions",
+    path: "/triip-admin/dashboard/transactions",
+    icon: getIcon("icon-park-outline:transaction")
   }
 ];
 

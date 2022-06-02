@@ -1,7 +1,6 @@
 import Prelude "mo:base/Prelude";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
-import Trie "mo:base/Trie";
 import TrieMap "mo:base/TrieMap";
 
 import Types "Types";
@@ -28,10 +27,11 @@ module{
     };
     prizes: Map<Text, Types.Prize>;
     wheels : Map<Text, Types.LuckyWheel>;
-    spinresults : Map<Text, Types.SpinResult>
+    spinresults : Map<Text, Types.SpinResult>;
+    transactions : Map<Text, Types.TxRecord>;
   };
-  
-  public func empty() : State { 
+
+  public func empty() : State {
     {
       admin = TrieMap.TrieMap<Principal, Types.Admin>(Principal.equal, Principal.hash);
       profiles = TrieMap.TrieMap<Principal, Types.Profile>(Principal.equal, Principal.hash);
@@ -53,6 +53,7 @@ module{
       prizes = TrieMap.TrieMap<Text, Types.Prize>(Text.equal, Text.hash);
       wheels = TrieMap.TrieMap<Text, Types.LuckyWheel>(Text.equal, Text.hash);
       spinresults = TrieMap.TrieMap<Text, Types.SpinResult>(Text.equal, Text.hash);
+      transactions = TrieMap.TrieMap<Text, Types.TxRecord>(Text.equal, Text.hash);
     };
   };
-}
+};
