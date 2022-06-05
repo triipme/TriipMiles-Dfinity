@@ -16,14 +16,14 @@ import { useNavigate } from "react-router";
 const games = [
   {
     name: "Magic Memory",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
+    description: "Improve focus, memory and knowledge",
     image:
       "https://media.istockphoto.com/vectors/memory-game-for-preschool-children-vector-id1092896082?k=20&m=1092896082&s=612x612&w=0&h=svAq2MxT5E9viByMj4r0JGzejZ_FM4qa93NExdDSqQk=",
     redirect: "/game/magic_memory"
   },
   {
     name: "Lucky Wheel",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
+    description: "Test your luck and receive prizes",
     image:
       "https://media.istockphoto.com/vectors/wheel-of-fortune-vector-illustration-of-a-flat-empty-colorful-wheel-vector-id1150678397?k=20&m=1150678397&s=612x612&w=0&h=tn90Ky0b1G7R4NrmgxFx7FkahFUhzn9ZBTfUFdB3SRc=",
     redirect: "/game/lucky_wheel"
@@ -54,6 +54,9 @@ function Game() {
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
                     {game.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {game.description}
                   </Typography>
                 </CardContent>
               </Box>
