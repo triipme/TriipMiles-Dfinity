@@ -65,7 +65,7 @@ export const navbar = [
     children: [
       { index: true, element: <GamePage /> },
       {
-        path: "magic_memory",
+        path: "magic-memory-language",
         element: <MagicMemory />,
         children: [
           { index: true, element: <MCLevels /> },
@@ -73,7 +73,7 @@ export const navbar = [
         ]
       },
       {
-        path: "magic_memory_engine",
+        path: "magic-memory-photo",
         element: <MagicMemoryEngineLayout />,
         children: [
           { index: true, element: <MCEngineTop /> },
