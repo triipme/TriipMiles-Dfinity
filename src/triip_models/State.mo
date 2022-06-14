@@ -16,7 +16,9 @@ module{
     kycs : Map<Principal, Types.KYCs>;
     games : {
       memory_card : {
-        levels : Map<Text, Types.MemoryCardLevel>;
+        games : Map<Text, Types.MemoryCardGame>;
+        stages : Map<Text, Types.MemoryCardStage>;
+        cards : Map<Text, Types.MemoryCard>;
         players : Map<Text, Types.MemoryCardPlayer>;
         rewards : Map<Text, Types.MemoryCardReward>;
       };
@@ -41,7 +43,9 @@ module{
       kycs = TrieMap.TrieMap<Principal, Types.KYCs>(Principal.equal, Principal.hash);
       games = {
         memory_card = {
-          levels = TrieMap.TrieMap<Text, Types.MemoryCardLevel>(Text.equal, Text.hash);
+          games = TrieMap.TrieMap<Text, Types.MemoryCardGame>(Text.equal, Text.hash);
+          stages = TrieMap.TrieMap<Text, Types.MemoryCardStage>(Text.equal, Text.hash);
+          cards = TrieMap.TrieMap<Text, Types.MemoryCard>(Text.equal, Text.hash);
           players = TrieMap.TrieMap<Text, Types.MemoryCardPlayer>(Text.equal, Text.hash);
           rewards = TrieMap.TrieMap<Text, Types.MemoryCardReward>(Text.equal, Text.hash);
         };

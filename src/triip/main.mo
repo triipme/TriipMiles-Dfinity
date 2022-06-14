@@ -25,7 +25,7 @@ import Env ".env";
 import GeneralUtils "./utils/general";
 import Ledger "../triip_models/model/Ledger";
 import LuckyWheel "./luckyWheel";
-import MemoryCardController "./controllers/games/memory_card";
+// import MemoryCardController "./controllers/games/memory_card";
 import Moment "./utils/moment";
 import ProofTP "../triip_models/model/ProofTP";
 import State "../triip_models/State";
@@ -46,7 +46,9 @@ shared({caller = owner}) actor class Triip() = this {
   private stable var spinresults : [(Text, Types.SpinResult)] = [];
   private stable var games = {
     memory_card = {
-      levels : [(Text, Types.MemoryCardLevel)] = [];
+      games : [(Text, Types.MemoryCardGame)] = [];
+      stages : [(Text, Types.MemoryCardStage)] = [];
+      cards : [(Text, Types.MemoryCard)] = [];
       players : [(Text, Types.MemoryCardPlayer)] = [];
       rewards : [(Text, Types.MemoryCardReward)] = [];
     };
@@ -70,7 +72,9 @@ shared({caller = owner}) actor class Triip() = this {
     spinresults := Iter.toArray(state.spinresults.entries());
     games := {
       memory_card = {
-        levels = Iter.toArray(state.games.memory_card.levels.entries());
+        games = Iter.toArray(state.games.memory_card.games.entries());
+        stages = Iter.toArray(state.games.memory_card.stages.entries());
+        cards = Iter.toArray(state.games.memory_card.cards.entries());
         players = Iter.toArray(state.games.memory_card.players.entries());
         rewards = Iter.toArray(state.games.memory_card.rewards.entries());
       };
@@ -112,8 +116,14 @@ shared({caller = owner}) actor class Triip() = this {
     for ((k, v) in Iter.fromArray(spinresults)) {
       state.spinresults.put(k, v);
     };
-    for ((k, v) in Iter.fromArray(games.memory_card.levels)) {
-      state.games.memory_card.levels.put(k, v);
+    for ((k, v) in Iter.fromArray(games.memory_card.games)) {
+      state.games.memory_card.games.put(k, v);
+    };
+    for ((k, v) in Iter.fromArray(games.memory_card.stages)) {
+      state.games.memory_card.stages.put(k, v);
+    };
+    for ((k, v) in Iter.fromArray(games.memory_card.cards)) {
+      state.games.memory_card.cards.put(k, v);
     };
     for ((k, v) in Iter.fromArray(games.memory_card.players)) {
       state.games.memory_card.players.put(k, v);
@@ -1373,335 +1383,335 @@ shared({caller = owner}) actor class Triip() = this {
     };
     #ok((list));
   };
-  /* MemoryCard */
-  //Adding a level to the memory card game.
-  public shared({caller}) func gameGcAddLevel() : async Response<()>{
-    if(Principal.toText(caller) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };
-    let is_admin = isAdmin(caller);
-    switch (is_admin) {
-      case (null) #err(#AdminRoleRequired);
-      case (? v) {
-        let levelsSize : Nat = Iter.size(state.games.memory_card.levels.keys());
-        if(Nat.equal(levelsSize, 0)) {
-          let levels = await MemoryCardController.initLevels();
-          for ((K, V) in Iter.fromArray(levels)) {
-            state.games.memory_card.levels.put(K, V);
-          };
-        };
-        #ok(());
-      };
-    };
-  };
-  public query func gameGcGetLevel(key : Text) : async Response<Types.MemoryCardLevel>{
-    let level : ?Types.MemoryCardLevel = state.games.memory_card.levels.get(key);
-    switch (level) {
-      case null{
-        #err(#NotFound);
-      };
-      case (?currentLevel) {
-        #ok((currentLevel));
-      };
-    }
-  };
-  public query func gameGcGetAllLevel() : async Response<[Text]>{
-    #ok((Iter.toArray(state.games.memory_card.levels.keys())));
-  };
+  // /* MemoryCard */
+  // //Adding a level to the memory card game.
+  // public shared({caller}) func gameGcAddLevel() : async Response<()>{
+  //   if(Principal.toText(caller) == "2vxsx-fae") {
+  //     throw Error.reject("NotAuthorized");  //isNotAuthorized
+  //   };
+  //   let is_admin = isAdmin(caller);
+  //   switch (is_admin) {
+  //     case (null) #err(#AdminRoleRequired);
+  //     case (? v) {
+  //       let levelsSize : Nat = Iter.size(state.games.memory_card.levels.keys());
+  //       if(Nat.equal(levelsSize, 0)) {
+  //         let levels = await MemoryCardController.initLevels();
+  //         for ((K, V) in Iter.fromArray(levels)) {
+  //           state.games.memory_card.levels.put(K, V);
+  //         };
+  //       };
+  //       #ok(());
+  //     };
+  //   };
+  // };
+  // public query func gameGcGetLevel(key : Text) : async Response<Types.MemoryCardLevel>{
+  //   let level : ?Types.MemoryCardLevel = state.games.memory_card.levels.get(key);
+  //   switch (level) {
+  //     case null{
+  //       #err(#NotFound);
+  //     };
+  //     case (?currentLevel) {
+  //       #ok((currentLevel));
+  //     };
+  //   }
+  // };
+  // public query func gameGcGetAllLevel() : async Response<[Text]>{
+  //   #ok((Iter.toArray(state.games.memory_card.levels.keys())));
+  // };
 
-  //check player is exist in current_day
-  public query({caller}) func gameGcGetPlayer(player_id : ?Text) : async ?(Text, Types.MemoryCardPlayer) {
-    if(Principal.toText(caller) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };
-    switch (player_id) {
-      case null{
-        let players = state.games.memory_card.players.entries();
-        var p : ?(Text, Types.MemoryCardPlayer) = null;
-        for((K, player) in players) {
-          if(
-            Int.greater(Moment.diff(?player.createdAt), 0) and
-            Principal.equal(player.uid, caller)
-          ) {
-            p := ?(K, player);
-          }
-        };
-        return p;
-      };
-      case (? id) {
-        let player = state.games.memory_card.players.get(id);
-        switch (player) {
-          case null return null;
-          case (?p) return ?(id, p);
-        }
-      };
-    }
-  };
-  private func gameGcPutPlayer(
-    uid : Principal, 
-    turn : Nat,
-    timing_play : Float, 
-    level : Text
-  ) : async () {
-    let uuid = await GeneralUtils.createUUID();
-    let player : Types.MemoryCardPlayer = {
-      uid;
-      history = [{
-        level;
-        turn;
-        timing_play;
-      }];
-      createdAt = Moment.now();
-      updatedAt = Moment.now();
-    };
-    state.games.memory_card.players.put(uuid, player);
-  };
-  private func gameGcReplacePlayer(
-    player_id : Text,
-    turn : Nat, 
-    timing_play : Float, 
-    level : Text, 
-    old_data : Types.MemoryCardPlayer
-  ) : async () {
-    let newHistory = Array.append(old_data.history, [{
-      level;
-      turn;
-      timing_play;
-    }]);
-    let replacePlayer : Types.MemoryCardPlayer = {
-      uid = old_data.uid;
-      history = newHistory;
-      createdAt = old_data.createdAt;
-      updatedAt = Moment.now();
-    };
-    let rs = state.games.memory_card.players.replace(player_id, replacePlayer)
-  };
+  // //check player is exist in current_day
+  // public query({caller}) func gameGcGetPlayer(player_id : ?Text) : async ?(Text, Types.MemoryCardPlayer) {
+  //   if(Principal.toText(caller) == "2vxsx-fae") {
+  //     throw Error.reject("NotAuthorized");  //isNotAuthorized
+  //   };
+  //   switch (player_id) {
+  //     case null{
+  //       let players = state.games.memory_card.players.entries();
+  //       var p : ?(Text, Types.MemoryCardPlayer) = null;
+  //       for((K, player) in players) {
+  //         if(
+  //           Int.greater(Moment.diff(?player.createdAt), 0) and
+  //           Principal.equal(player.uid, caller)
+  //         ) {
+  //           p := ?(K, player);
+  //         }
+  //       };
+  //       return p;
+  //     };
+  //     case (? id) {
+  //       let player = state.games.memory_card.players.get(id);
+  //       switch (player) {
+  //         case null return null;
+  //         case (?p) return ?(id, p);
+  //       }
+  //     };
+  //   }
+  // };
+  // private func gameGcPutPlayer(
+  //   uid : Principal, 
+  //   turn : Nat,
+  //   timing_play : Float, 
+  //   level : Text
+  // ) : async () {
+  //   let uuid = await GeneralUtils.createUUID();
+  //   let player : Types.MemoryCardPlayer = {
+  //     uid;
+  //     history = [{
+  //       level;
+  //       turn;
+  //       timing_play;
+  //     }];
+  //     createdAt = Moment.now();
+  //     updatedAt = Moment.now();
+  //   };
+  //   state.games.memory_card.players.put(uuid, player);
+  // };
+  // private func gameGcReplacePlayer(
+  //   player_id : Text,
+  //   turn : Nat, 
+  //   timing_play : Float, 
+  //   level : Text, 
+  //   old_data : Types.MemoryCardPlayer
+  // ) : async () {
+  //   let newHistory = Array.append(old_data.history, [{
+  //     level;
+  //     turn;
+  //     timing_play;
+  //   }]);
+  //   let replacePlayer : Types.MemoryCardPlayer = {
+  //     uid = old_data.uid;
+  //     history = newHistory;
+  //     createdAt = old_data.createdAt;
+  //     updatedAt = Moment.now();
+  //   };
+  //   let rs = state.games.memory_card.players.replace(player_id, replacePlayer)
+  // };
 
-  public shared({caller = uid}) func gameGcSetPlayer({ 
-    player_id : ?Text; 
-    turn : Nat; 
-    timing_play : Float; 
-    level : Text
-  }) : async Response<()>{
-    if(Principal.toText(uid) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };
-    switch (player_id) {
-      case null {
-        //first time - level 1
-        await gameGcPutPlayer(uid, turn, timing_play, level);
-        #ok(());
-      };
-      case (? id) {
-        let playerGet = await gameGcGetPlayer(?id);
-        switch (playerGet) {
-          case null {
-            #err(#NotFound);
-          };
-          case (? (K, old_data)) {
-            //level 2,3
-            await gameGcReplacePlayer(id, turn, timing_play, level, old_data);
-            #ok(());
-          }
-        }
-      }
-    };
-  };
-  public query func gameGcListOfDay() : async Response<[?Types.MemoryCardPlayer]>{
-    var listTop : [?Types.MemoryCardPlayer] = [];
-    for((K, V) in state.games.memory_card.players.entries()) {
-      if(
-        Int.greater(Moment.diff(?V.createdAt), 0) and
-        // Nat.lessOrEqual(Iter.size(Iter.fromArray(listTop)),10) and
-        Iter.size(Iter.fromArray(V.history)) == 3
-      ) {
-        listTop := Array.append(listTop, [?V]);
-      }
-    };
-    #ok(listTop);
-  };
-  public query func gameGcListOfYesterday() : async Response<[?(Text, Types.MemoryCardPlayer)]>{
-    var listTop : [?(Text,Types.MemoryCardPlayer)] = [];
-    for((K, V) in state.games.memory_card.players.entries()) {
-      if(
-        Moment.between(V.createdAt) and
-        Iter.size(Iter.fromArray(V.history)) == 3
-      ) {
-        listTop := Array.append(listTop, [?(K, V)]);
-      }
-    };
-    #ok(listTop);
-  };
-  public query({caller}) func gameGcListAll() : async Response<[(Types.MemoryCardPlayer)]>{
-    if(Principal.toText(caller) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };
-    let is_admin = isAdmin(caller);
-    switch (is_admin) {
-      case (null) #err(#AdminRoleRequired);
-      case (? v) {
-        #ok(Iter.toArray(state.games.memory_card.players.vals()));
-      }
-    }
-  };
-  public query func gameGcCheckReward(id : Text) : async Response<?Types.MemoryCardReward>{
-    #ok(state.games.memory_card.rewards.get(id));
-  };
-  public shared({caller}) func gameGcReward(
-    playerId : Text, 
-    reward : Float, 
-    uid : Principal
-  ) : async Response<()>{
-    if(Principal.toText(caller) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };
-    if(isAdmin(caller) == null) {
-      return #err(#AdminRoleRequired);
-    };
-    let rewardAmount : Nat64 = Int64.toNat64(Float.toInt64(reward * 10**8));
+  // public shared({caller = uid}) func gameGcSetPlayer({ 
+  //   player_id : ?Text; 
+  //   turn : Nat; 
+  //   timing_play : Float; 
+  //   level : Text
+  // }) : async Response<()>{
+  //   if(Principal.toText(uid) == "2vxsx-fae") {
+  //     throw Error.reject("NotAuthorized");  //isNotAuthorized
+  //   };
+  //   switch (player_id) {
+  //     case null {
+  //       //first time - level 1
+  //       await gameGcPutPlayer(uid, turn, timing_play, level);
+  //       #ok(());
+  //     };
+  //     case (? id) {
+  //       let playerGet = await gameGcGetPlayer(?id);
+  //       switch (playerGet) {
+  //         case null {
+  //           #err(#NotFound);
+  //         };
+  //         case (? (K, old_data)) {
+  //           //level 2,3
+  //           await gameGcReplacePlayer(id, turn, timing_play, level, old_data);
+  //           #ok(());
+  //         }
+  //       }
+  //     }
+  //   };
+  // };
+  // public query func gameGcListOfDay() : async Response<[?Types.MemoryCardPlayer]>{
+  //   var listTop : [?Types.MemoryCardPlayer] = [];
+  //   for((K, V) in state.games.memory_card.players.entries()) {
+  //     if(
+  //       Int.greater(Moment.diff(?V.createdAt), 0) and
+  //       // Nat.lessOrEqual(Iter.size(Iter.fromArray(listTop)),10) and
+  //       Iter.size(Iter.fromArray(V.history)) == 3
+  //     ) {
+  //       listTop := Array.append(listTop, [?V]);
+  //     }
+  //   };
+  //   #ok(listTop);
+  // };
+  // public query func gameGcListOfYesterday() : async Response<[?(Text, Types.MemoryCardPlayer)]>{
+  //   var listTop : [?(Text,Types.MemoryCardPlayer)] = [];
+  //   for((K, V) in state.games.memory_card.players.entries()) {
+  //     if(
+  //       Moment.between(V.createdAt) and
+  //       Iter.size(Iter.fromArray(V.history)) == 3
+  //     ) {
+  //       listTop := Array.append(listTop, [?(K, V)]);
+  //     }
+  //   };
+  //   #ok(listTop);
+  // };
+  // public query({caller}) func gameGcListAll() : async Response<[(Types.MemoryCardPlayer)]>{
+  //   if(Principal.toText(caller) == "2vxsx-fae") {
+  //     throw Error.reject("NotAuthorized");  //isNotAuthorized
+  //   };
+  //   let is_admin = isAdmin(caller);
+  //   switch (is_admin) {
+  //     case (null) #err(#AdminRoleRequired);
+  //     case (? v) {
+  //       #ok(Iter.toArray(state.games.memory_card.players.vals()));
+  //     }
+  //   }
+  // };
+  // public query func gameGcCheckReward(id : Text) : async Response<?Types.MemoryCardReward>{
+  //   #ok(state.games.memory_card.rewards.get(id));
+  // };
+  // public shared({caller}) func gameGcReward(
+  //   playerId : Text, 
+  //   reward : Float, 
+  //   uid : Principal
+  // ) : async Response<()>{
+  //   if(Principal.toText(caller) == "2vxsx-fae") {
+  //     throw Error.reject("NotAuthorized");  //isNotAuthorized
+  //   };
+  //   if(isAdmin(caller) == null) {
+  //     return #err(#AdminRoleRequired);
+  //   };
+  //   let rewardAmount : Nat64 = Int64.toNat64(Float.toInt64(reward * 10**8));
 
-    let recordReward = {
-      reward : Nat64 = rewardAmount;
-      createdAt = Moment.now();
-    };
-    state.games.memory_card.rewards.put(playerId, recordReward); //put to state rewards
-    // let kycOfUser : Bool = await isKYCedUser(uid); //check user is user Kyc-ed
-    // switch (kycOfUser) {
-    //   case (false) {
-    //     #err(#NonKYC);
-    //   };
-    //   case (true) {
-    switch (state.profiles.get(uid)) {
-      case null{
-        #err(#NotFound);
-      };
-      case (? profile) {
-        let toAddress = Option.get(profile.wallets, [""])[0];
-        let res = await transfer({ e8s = rewardAmount }, toAddress);
-        await recordTransaction(
-          caller, { e8s = rewardAmount }, toAddress, "GameCardReward", playerId, res, null
-        );
-        #ok(());
-      };
-    };
-    //   };
-    // };
-  };
-  //Game memory card Engine
-  private func gameGcEnginePutPlayer(
-    uid : Principal, 
-    turn : Nat,
-    timing_play : Float, 
-  ) : async (){
-    let uuid = await GeneralUtils.createUUID();
-    let player : Types.MemoryCardEnginePlayer = {
-      uid;
-      turn;
-      timing_play;
-      createdAt = Moment.now();
-      updatedAt = Moment.now();
-    };
-    state.games.memory_card_engine.players.put(uuid, player);
-  };
-  public query({caller}) func gameGcEngineGetPlayer() : async ?(Text, Types.MemoryCardEnginePlayer) {
-    if(Principal.toText(caller) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };
-    let players = state.games.memory_card_engine.players.entries();
-    var p : ?(Text, Types.MemoryCardEnginePlayer) = null;
-    for((K, player) in players) {
-      if(
-        Int.greater(Moment.diff(?player.createdAt), 0) and
-        Principal.equal(player.uid, caller)
-      ) {
-        p := ?(K, player);
-      }
-    };
-    return p;
-  };
-  public shared({caller = uid}) func gameGcEngineSetPlayer({
-    turn : Nat; 
-    timing_play : Float; 
-  }) : async Response<()>{
-    if(Principal.toText(uid) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };
-    await gameGcEnginePutPlayer(uid, turn, timing_play);
-    #ok(());
-  };
-  public func gameGcEngineCheckReward(id : Text) : async Response<?Types.MemoryCardEngineReward>{
-    #ok(state.games.memory_card_engine.rewards.get(id));
-  };
-  public shared({caller}) func gameGcEngineReward(
-    player_id : Text, 
-    reward : Float, 
-    uid : Principal
-  ) : async Response<()>{
-    if(Principal.toText(caller) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };
-    let is_admin = isAdmin(caller);
-    let reward_format : Nat64 = Int64.toNat64(Float.toInt64(reward * 10**8));
-    switch (is_admin) {
-      case (null) #err(#AdminRoleRequired);
-      case (? v) {
-        let record_reward = {
-          reward : Nat64 = reward_format;
-          createdAt = Moment.now();
-        };
-        state.games.memory_card_engine.rewards.put(player_id, record_reward); //put to state rewards
-        let rsReadUser = state.profiles.get(uid); // get address Wallet of top1
-        switch (rsReadUser) {
-          case null{
-            #err(#NotFound);
-          };
-          case (? v) {
-            switch (await transfer({ e8s = reward_format }, Option.get(v.wallets, [""])[0])) {
-              case (#Err(transfer)) {
-                #err(#NotFound);
-              };
-              case (#Ok(transfer)) {
-                #ok(());
-              };
-            };
-          };
-        }
-      }
-    }
-  };
-  public query func gameGcEngineListOfYesterday() : async Response<[?(Text, Types.MemoryCardEnginePlayer)]>{
-    var listTop : [?(Text, Types.MemoryCardEnginePlayer)] = [];
-    for((K, V) in state.games.memory_card_engine.players.entries()) {
-      if(
-        Moment.between(V.createdAt)
-      ) {
-        listTop := Array.append(listTop, [?(K, V)]);
-      }
-    };
-    #ok(listTop);
-  };
-  public query func gameGcEngineListOfDay() : async Response<[?Types.MemoryCardEnginePlayer]>{
-    var listTop : [?Types.MemoryCardEnginePlayer] = [];
-    for((K, V) in state.games.memory_card_engine.players.entries()) {
-      if(
-        Int.greater(Moment.diff(?V.createdAt), 0)
-        // Nat.lessOrEqual(Iter.size(Iter.fromArray(listTop)),10) and
-      ) {
-        listTop := Array.append(listTop, [?V]);
-      }
-    };
-    #ok(listTop);
-  };
-  public query({caller}) func gameGcEngineListAll() : async Response<[(Types.MemoryCardEnginePlayer)]>{
-    if(Principal.toText(caller) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };     
-    let is_admin = isAdmin(caller);
-    switch (is_admin) {
-      case (null) #err(#AdminRoleRequired);
-      case (? v) {
-        #ok(Iter.toArray(state.games.memory_card_engine.players.vals()));
-      }
-    }
-  };
+  //   let recordReward = {
+  //     reward : Nat64 = rewardAmount;
+  //     createdAt = Moment.now();
+  //   };
+  //   state.games.memory_card.rewards.put(playerId, recordReward); //put to state rewards
+  //   // let kycOfUser : Bool = await isKYCedUser(uid); //check user is user Kyc-ed
+  //   // switch (kycOfUser) {
+  //   //   case (false) {
+  //   //     #err(#NonKYC);
+  //   //   };
+  //   //   case (true) {
+  //   switch (state.profiles.get(uid)) {
+  //     case null{
+  //       #err(#NotFound);
+  //     };
+  //     case (? profile) {
+  //       let toAddress = Option.get(profile.wallets, [""])[0];
+  //       let res = await transfer({ e8s = rewardAmount }, toAddress);
+  //       await recordTransaction(
+  //         caller, { e8s = rewardAmount }, toAddress, "GameCardReward", playerId, res, null
+  //       );
+  //       #ok(());
+  //     };
+  //   };
+  //   //   };
+  //   // };
+  // };
+  // //Game memory card Engine
+  // private func gameGcEnginePutPlayer(
+  //   uid : Principal, 
+  //   turn : Nat,
+  //   timing_play : Float, 
+  // ) : async (){
+  //   let uuid = await GeneralUtils.createUUID();
+  //   let player : Types.MemoryCardEnginePlayer = {
+  //     uid;
+  //     turn;
+  //     timing_play;
+  //     createdAt = Moment.now();
+  //     updatedAt = Moment.now();
+  //   };
+  //   state.games.memory_card_engine.players.put(uuid, player);
+  // };
+  // public query({caller}) func gameGcEngineGetPlayer() : async ?(Text, Types.MemoryCardEnginePlayer) {
+  //   if(Principal.toText(caller) == "2vxsx-fae") {
+  //     throw Error.reject("NotAuthorized");  //isNotAuthorized
+  //   };
+  //   let players = state.games.memory_card_engine.players.entries();
+  //   var p : ?(Text, Types.MemoryCardEnginePlayer) = null;
+  //   for((K, player) in players) {
+  //     if(
+  //       Int.greater(Moment.diff(?player.createdAt), 0) and
+  //       Principal.equal(player.uid, caller)
+  //     ) {
+  //       p := ?(K, player);
+  //     }
+  //   };
+  //   return p;
+  // };
+  // public shared({caller = uid}) func gameGcEngineSetPlayer({
+  //   turn : Nat; 
+  //   timing_play : Float; 
+  // }) : async Response<()>{
+  //   if(Principal.toText(uid) == "2vxsx-fae") {
+  //     throw Error.reject("NotAuthorized");  //isNotAuthorized
+  //   };
+  //   await gameGcEnginePutPlayer(uid, turn, timing_play);
+  //   #ok(());
+  // };
+  // public func gameGcEngineCheckReward(id : Text) : async Response<?Types.MemoryCardEngineReward>{
+  //   #ok(state.games.memory_card_engine.rewards.get(id));
+  // };
+  // public shared({caller}) func gameGcEngineReward(
+  //   player_id : Text, 
+  //   reward : Float, 
+  //   uid : Principal
+  // ) : async Response<()>{
+  //   if(Principal.toText(caller) == "2vxsx-fae") {
+  //     throw Error.reject("NotAuthorized");  //isNotAuthorized
+  //   };
+  //   let is_admin = isAdmin(caller);
+  //   let reward_format : Nat64 = Int64.toNat64(Float.toInt64(reward * 10**8));
+  //   switch (is_admin) {
+  //     case (null) #err(#AdminRoleRequired);
+  //     case (? v) {
+  //       let record_reward = {
+  //         reward : Nat64 = reward_format;
+  //         createdAt = Moment.now();
+  //       };
+  //       state.games.memory_card_engine.rewards.put(player_id, record_reward); //put to state rewards
+  //       let rsReadUser = state.profiles.get(uid); // get address Wallet of top1
+  //       switch (rsReadUser) {
+  //         case null{
+  //           #err(#NotFound);
+  //         };
+  //         case (? v) {
+  //           switch (await transfer({ e8s = reward_format }, Option.get(v.wallets, [""])[0])) {
+  //             case (#Err(transfer)) {
+  //               #err(#NotFound);
+  //             };
+  //             case (#Ok(transfer)) {
+  //               #ok(());
+  //             };
+  //           };
+  //         };
+  //       }
+  //     }
+  //   }
+  // };
+  // public query func gameGcEngineListOfYesterday() : async Response<[?(Text, Types.MemoryCardEnginePlayer)]>{
+  //   var listTop : [?(Text, Types.MemoryCardEnginePlayer)] = [];
+  //   for((K, V) in state.games.memory_card_engine.players.entries()) {
+  //     if(
+  //       Moment.between(V.createdAt)
+  //     ) {
+  //       listTop := Array.append(listTop, [?(K, V)]);
+  //     }
+  //   };
+  //   #ok(listTop);
+  // };
+  // public query func gameGcEngineListOfDay() : async Response<[?Types.MemoryCardEnginePlayer]>{
+  //   var listTop : [?Types.MemoryCardEnginePlayer] = [];
+  //   for((K, V) in state.games.memory_card_engine.players.entries()) {
+  //     if(
+  //       Int.greater(Moment.diff(?V.createdAt), 0)
+  //       // Nat.lessOrEqual(Iter.size(Iter.fromArray(listTop)),10) and
+  //     ) {
+  //       listTop := Array.append(listTop, [?V]);
+  //     }
+  //   };
+  //   #ok(listTop);
+  // };
+  // public query({caller}) func gameGcEngineListAll() : async Response<[(Types.MemoryCardEnginePlayer)]>{
+  //   if(Principal.toText(caller) == "2vxsx-fae") {
+  //     throw Error.reject("NotAuthorized");  //isNotAuthorized
+  //   };     
+  //   let is_admin = isAdmin(caller);
+  //   switch (is_admin) {
+  //     case (null) #err(#AdminRoleRequired);
+  //     case (? v) {
+  //       #ok(Iter.toArray(state.games.memory_card_engine.players.vals()));
+  //     }
+  //   }
+  // };
 }

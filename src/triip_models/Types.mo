@@ -63,7 +63,9 @@ module {
 
   /* ------------------------- Games --------------------------- */
   // MemoryCard
-  public type MemoryCardLevel = MemoryCard.Level;
+  public type MemoryCardGame = MemoryCard.MemoryCard;
+  public type MemoryCardStage = MemoryCard.Stage;
+  public type MemoryCard = MemoryCard.Card;
   public type MemoryCardPlayer = MemoryCard.Player;
   public type MemoryCardReward = MemoryCard.Reward;
   
