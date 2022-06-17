@@ -25,7 +25,17 @@ const sidebarConfig = [
   {
     title: "Prizes",
     path: "/triip-admin/dashboard/prizes",
+    icon: getIcon("clarity:map-solid")
+  },
+  {
+    title: "Lucky Wheels",
+    path: "/triip-admin/dashboard/wheels",
     icon: getIcon("noto:wheel")
+  },
+  {
+    title: "Spin Results",
+    path: "/triip-admin/dashboard/spinresults",
+    icon: getIcon("arcticons:rewards")
   },
   {
     title: "Memory Game",

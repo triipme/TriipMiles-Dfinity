@@ -1,6 +1,9 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Icon } from "@iconify/react";
+import { Link } from "react-router-dom";
+import moment from "moment";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -69,6 +72,9 @@ const PrizeList = () => {
                   <TableCell className="table_title" align="left">
                     CREATED AT
                   </TableCell>
+                  <TableCell className="table_title" align="left">
+                    ACTIONS
+                  </TableCell>
                 </TableRow>
               </TableHead>
               {/* Table Content Item */}
@@ -93,7 +99,7 @@ const RenderPrize = ({ prize }) => {
         {prize?.uuid}
       </TableCell>
       <TableCell key={`name-${prize?.uuid}`} className="table_item" align="left">
-        <p className="locale_en" style={{ marginBottom: "20px" }}>
+        <p className="locale_en" >
           {prize?.name}
         </p>
       </TableCell>
@@ -113,7 +119,19 @@ const RenderPrize = ({ prize }) => {
         {prize?.description}
       </TableCell>
       <TableCell key={`date-${prize?.uuid}`} className="table_item" align="left">
-        {prize?.created_at}
+        {moment.unix(parseInt(prize?.created_at[0] / BigInt(1e9))).format("LL")}
+      </TableCell>
+      <TableCell key={`actions-${prize?.uuid}`} className="table_item" align="left">
+        <Link to={`/triip-admin/dashboard/prizes/edit/${prize?.uuid}`} title="Edit Prize">
+          <button className="btn_actions btn_edit">
+            <Icon icon="clarity:note-edit-line" />
+          </button>
+        </Link>
+        <a href="#">
+          <button className="btn_actions btn_delete">
+            <Icon icon="ep:delete" />
+          </button>
+        </a>
       </TableCell>
     </TableRow>
   )

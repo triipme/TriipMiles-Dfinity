@@ -867,10 +867,6 @@ shared({caller = owner}) actor class Triip() = this {
     state.prizes.put(uuid, new_prize);
   };
 
-  private func replacePrize(uuid : Text, prize : Types.Prize) : async () {
-    let updated_prize = state.prizes.replace(uuid, prize);
-  };
-
   public shared({caller}) func createPrize(prize : Types.Prize) : async Response<Text> {
     if(Principal.toText(caller) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
@@ -926,7 +922,16 @@ shared({caller = owner}) actor class Triip() = this {
     let read_prize = state.prizes.get(uuid);
     switch (read_prize) {
       case (?V) {
-        await replacePrize(uuid, prize);
+        let new_prize : Types.Prize = {
+          uuid = ?uuid;
+          prize_type = prize.prize_type;
+          name = prize.name;
+          icon = prize.icon;
+          quantity = prize.quantity;
+          description = prize.description;
+          created_at : ?Int = Option.get(null, ?Time.now());
+        };
+        let updated_prize = state.prizes.replace(uuid, new_prize);
         #ok(());
       };
       case (null) {
@@ -952,6 +957,19 @@ shared({caller = owner}) actor class Triip() = this {
         #err(#NotFound);
       };
     };
+  };
+  public shared({caller}) func deleteAllPrizes() : async Response<Text>{
+    var list : [Types.Prize] = [];
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
+    for((_K,V) in state.prizes.entries()){
+      let deleted_wheel = state.prizes.delete(_K);
+    };
+    #ok(("ok"));
   };
 
   // Lucky Wheel
@@ -1005,19 +1023,20 @@ shared({caller = owner}) actor class Triip() = this {
     };
   };
 
-  public shared query({caller}) func listWheels() : async Response<[(Text, Types.LuckyWheel)]>{
-    var list : [(Text, Types.LuckyWheel)] = [];
+  public shared query({caller}) func listWheels() : async Response<[Types.LuckyWheel]>{
+    var list : [Types.LuckyWheel] = [];
     if(Principal.toText(caller) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
     if(isAdmin(caller) == null) {
       return #err(#AdminRoleRequired);
     };
-    for((K,V) in state.wheels.entries()) {
-      list := Array.append<(Text, Types.LuckyWheel)>(list, [(K, V)]);
+    for((_K,V) in state.wheels.entries()){
+      list := Array.append<Types.LuckyWheel>(list,[V]);
     };
     #ok((list));
   };
+  
 
   public shared query({caller}) func readWheel(uuid: Text) : async Response<(Types.LuckyWheel)>{
     if(Principal.toText(caller) == "2vxsx-fae") {
@@ -1083,6 +1102,19 @@ shared({caller = owner}) actor class Triip() = this {
         #err(#NotFound);
       };
     };
+  };
+  public shared({caller}) func deleteAllWheels() : async Response<Text>{
+    var list : [Types.LuckyWheel] = [];
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
+    for((_K,V) in state.wheels.entries()){
+      let deleted_wheel = state.wheels.delete(_K);
+    };
+    #ok(("ok"));
   };
 
   public shared({caller}) func activateWheel(uuid: Text) : async Response<()>{
@@ -1213,125 +1245,138 @@ shared({caller = owner}) actor class Triip() = this {
   };
 
   public shared({caller}) func spinLuckyWheel() : async Response<Types.SpinResultSerializer> {
-    if(Principal.toText(caller) == "2vxsx-fae") {
+    let uid = Principal.toText(caller);
+    if(uid == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
-
     let kycOfUser : Bool = await isKYCedUser(caller);
-    switch (kycOfUser) {
-      case (false) {
-        #err(#NonKYC);
+    let readUser = state.profiles.get(caller);
+
+    switch (readUser){
+      case null {
+        #err(#NotFound);
       };
-      case (true) {
-        let profile = state.profiles.get(caller);
-        switch (profile) {
-          case (null) #err(#NotFound);
-          case (?profile) {
-            var activated_wheel = LuckyWheel.activatedWheel(state);
-            switch (activated_wheel) {
-              case (? wheel) {
-                let remaining_spin_times = LuckyWheel.remainingSpinTimes(
-                  Principal.toText(caller), state, wheel.max_spin_times);
-                if(remaining_spin_times == 0) {
-                  return #err(#Unavailable);
-                };
-                let uid = Principal.toText(caller);
-                let prizes = LuckyWheel.availablePrizes(uid, wheel.wheel_prizes, state, wheel.uuid);
-                var tempArray : [Float] = [];
-                // Getting percentages from wheel's prizes and append each of them into a temp array
-                for (prize in prizes.vals()) {
-                  tempArray := Array.append<Float>(tempArray,[prize.percentage]);
-                };
+      case (? v){
+        switch (kycOfUser) {
+          case (false) {
+            #err(#NonKYC);
+          };
+          case (true) {
+            let profile = state.profiles.get(caller);
+            switch (profile) {
+              case (null) #err(#NotFound);
+              case (?profile) {
+                var activated_wheel = LuckyWheel.activatedWheel(state);
+                switch (activated_wheel) {
+                  case (? wheel) {
+                    let remaining_spin_times = LuckyWheel.remainingSpinTimes(
+                      Principal.toText(caller), state, wheel.max_spin_times);
+                    if(remaining_spin_times == 0) {
+                      return #err(#Unavailable);
+                    };
+                    let uid = Principal.toText(caller);
+                    let prizes = LuckyWheel.availablePrizes(uid, wheel.wheel_prizes, state, wheel.uuid);
+                    var tempArray : [Float] = [];
+                    // Getting percentages from wheel's prizes and append each of them into a temp array
+                    for (prize in prizes.vals()) {
+                      tempArray := Array.append<Float>(tempArray,[prize.percentage]);
+                    };
 
-                // Creating array that contains cumulative weights 
-                var i = 1;
-                var weight = tempArray[0];
-                var cumulativeWeights : [Float] = [];
-                cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
+                    // Creating array that contains cumulative weights 
+                    var i = 1;
+                    var weight = tempArray[0];
+                    var cumulativeWeights : [Float] = [];
+                    cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
 
-                // and caculating weights based on its values
-                while(i < tempArray.size()) {
-                  weight += tempArray[i];
-                  cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
-                  i += 1;
-                };
-                let maxCumulativeWeight = cumulativeWeights[cumulativeWeights.size() - 1];
+                    // and caculating weights based on its values
+                    while(i < tempArray.size()) {
+                      weight += tempArray[i];
+                      cumulativeWeights := Array.append<Float>(cumulativeWeights,[weight]);
+                      i += 1;
+                    };
+                    let maxCumulativeWeight = cumulativeWeights[cumulativeWeights.size() - 1];
 
-                let randomNumber = await GeneralUtils.getRandomNumber(1.0);
-                // Getting the random percentage in a range of [0...sum(weights)]
-                let randomPercentage = maxCumulativeWeight * randomNumber;
+                    let randomNumber = await GeneralUtils.getRandomNumber(1.0);
+                    // Getting the random percentage in a range of [0...sum(weights)]
+                    let randomPercentage = maxCumulativeWeight * randomNumber;
 
-                var itemIndex = 0;
-                // Picking the random item based on its weight
-                // The items with higher weight will be picked more often
-                var lucky_prize : ?Types.LuckyWheelPrize = null;
-                while(itemIndex < cumulativeWeights.size()) {
-                  if(cumulativeWeights[itemIndex] >= randomPercentage) {
-                    lucky_prize := ?prizes[itemIndex];
-                    itemIndex += cumulativeWeights.size();
+                    var itemIndex = 0;
+                    // Picking the random item based on its weight
+                    // The items with higher weight will be picked more often
+                    var lucky_prize : ?Types.LuckyWheelPrize = null;
+                    while(itemIndex < cumulativeWeights.size()) {
+                      if(cumulativeWeights[itemIndex] >= randomPercentage) {
+                        lucky_prize := ?prizes[itemIndex];
+                        itemIndex += cumulativeWeights.size();
+                      };
+                      itemIndex += 1;
+                    };
+
+                    let prize = switch (lucky_prize) {
+                      case (null) {
+                        LuckyWheel.defaultWastedPrize(state);
+                      };
+                      case (?lp) {
+                        state.prizes.get(lp.prize_id);
+                      };
+                    };
+
+                    switch (prize) {
+                      case (null) {
+                        #err(#Unavailable);
+                      };
+                      case (?prize) {
+                        // Get prize key to store spin result and award to user
+                        let uuid = await GeneralUtils.createUUID();
+                        Debug.print(debug_show(prize));
+                        let spin_result : Types.SpinResult = {
+                          uid = uid;
+                          lucky_wheel_id = wheel.uuid;
+                          prize_id = prize.uuid;
+                          prize_name = prize.name;
+                          prize_type = prize.prize_type;
+                          prize_amount = prize.quantity;
+                          state = "completed";
+                          remark = ?prize.description;
+                          created_at : Int = Time.now();
+                          updated_at : ?Int = Option.get(null,?Time.now()); 
+                        };
+                        state.spinresults.put(uuid, spin_result);
+                        let result_formated : Types.SpinResultSerializer = {
+                          uuid = uuid;
+                          username = v.user.username;
+                          prize_name = prize.name;
+                          icon = prize.icon;
+                          remark = ?prize.description;
+                          state = spin_result.state;
+                          created_at = spin_result.created_at;
+                          updated_at = spin_result.updated_at;
+                        };
+                        if (prize.prize_type == "TriipCredit") {
+                          // Reward ICP to User
+                          let amount = Int64.toNat64(Float.toInt64(prize.quantity));
+                          let toAddress = Option.get(profile.wallets,[""])[0];
+                          let res = await transfer({ e8s = amount }, toAddress);
+                          await recordTransaction(
+                            caller, { e8s = amount }, toAddress, "LuckyWheelPrize", uuid, res, null
+                          );
+                          #ok(result_formated);
+                        } else {
+                          #ok(result_formated);
+                        };
+                      };
+                    };
                   };
-                  itemIndex += 1;
-                };
-
-                let prize = switch (lucky_prize) {
-                  case (null) {
-                    LuckyWheel.defaultWastedPrize(state);
-                  };
-                  case (?lp) {
-                    state.prizes.get(lp.prize_id);
-                  };
-                };
-
-                switch (prize) {
                   case (null) {
                     #err(#Unavailable);
                   };
-                  case (?prize) {
-                    // Get prize key to store spin result and award to user
-                    let uuid = await GeneralUtils.createUUID();
-                    Debug.print(debug_show(prize));
-                    let spin_result : Types.SpinResult = {
-                      uid = uid;
-                      lucky_wheel_id = wheel.uuid;
-                      prize_id = prize.uuid;
-                      prize_name = prize.name;
-                      prize_type = prize.prize_type;
-                      prize_amount = prize.quantity;
-                      state = "completed";
-                      remark = ?prize.description;
-                      created_at : Int = Time.now();
-                      updated_at : ?Int = Option.get(null,?Time.now()); 
-                    };
-                    state.spinresults.put(uuid, spin_result);
-                    let result_formated : Types.SpinResultSerializer = {
-                      uuid = uuid;
-                      prize_name = prize.name;
-                      icon = prize.icon;
-                      remark = ?prize.description;
-                    };
-                    if (prize.prize_type == "TriipCredit") {
-                      // Reward ICP to User
-                      let amount = Int64.toNat64(Float.toInt64(prize.quantity));
-                      let toAddress = Option.get(profile.wallets,[""])[0];
-                      let res = await transfer({ e8s = amount }, toAddress);
-                      await recordTransaction(
-                        caller, { e8s = amount }, toAddress, "LuckyWheelPrize", uuid, res, null
-                      );
-                      #ok(result_formated);
-                    } else {
-                      #ok(result_formated);
-                    };
-                  };
                 };
-              };
-              case (null) {
-                #err(#Unavailable);
               };
             };
           };
         };
       };
-    };
+    }
   };
 
   // Spin Result
@@ -1341,23 +1386,36 @@ shared({caller = owner}) actor class Triip() = this {
     if(uid=="2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
-    for((id, result) in state.spinresults.entries()) {
-      if(result.uid == uid) {
-        let prize = state.prizes.get(Option.get(result.prize_id, ""));
-        let icon = switch (prize) {
-          case null { "https://triip.imgix.net/triipme/prize/icon/12/triipmiles.jpg"; };
-          case (? prize) { prize.icon; };
+    let readUser = state.profiles.get(caller);
+    switch (readUser) {
+      case null { 
+        #err(#NotFound); 
+      };
+      case (? v) { 
+        for((id, result) in state.spinresults.entries()) {
+          if(result.uid == uid) {
+            let prize = state.prizes.get(Option.get(result.prize_id, ""));
+            let icon = switch (prize) {
+              case null { "https://triip.imgix.net/triipme/prize/icon/12/triipmiles.jpg"; };
+              case (? prize) { prize.icon; };
+            };
+            let result_serializer : Types.SpinResultSerializer = {
+              uuid = id;
+              username = v.user.username;
+              prize_name = result.prize_name;
+              icon = icon;
+              remark = result.remark;
+              state = result.state;
+              created_at = result.created_at;
+              updated_at = result.updated_at;
+            };
+            list := Array.append<Types.SpinResultSerializer>(list, [result_serializer]);
+          };
         };
-        let result_serializer : Types.SpinResultSerializer = {
-          uuid = id;
-          prize_name = result.prize_name;
-          icon = icon;
-          remark = result.remark;
-        };
-        list := Array.append<Types.SpinResultSerializer>(list, [result_serializer]);
+        #ok((list));
       };
     };
-    #ok((list));
+    
   };
   /* MemoryCard */
   //Adding a level to the memory card game.

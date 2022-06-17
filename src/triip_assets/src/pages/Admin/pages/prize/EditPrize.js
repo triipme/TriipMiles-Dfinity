@@ -1,7 +1,18 @@
 import React from "react";
-import { useState } from "react";
-import AddPrizesButton from "./AddPrizesButton";
-import "./AddPrizes.css";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import {
+  ButtonPrimary,
+  InputText
+} from "../../../../components";
+
+import { ERRORS } from "../../../../utils/constants";
+
+import AddPrizeBtn from "./AddPrizeBtn";
+import "./AddPrize.css";
 function EditPrize() {
   const LocaleForm = (index) => {
     return (
@@ -38,6 +49,91 @@ function EditPrize() {
       </>
     );
   };
+
+  const prizeTypes = ["Wasted", "ExtraSpin", "TriipCredit"];
+  const params = useParams();
+  console.log(params.prize_id);
+
+  const [prize, setPrize] = useState([]);
+  const { actor } = useSelector(state => state.user);
+  async function getPrize() {
+    try {
+      if (!!actor?.readPrize) {
+        const result = await actor.readPrize(params.prize_id);
+        if ("ok" in result) {
+          setPrize(result.ok);
+        } else {
+          throw result.err;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    getPrize();
+  }, []);
+
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    formState: { isSubmitting }
+  } = useForm({
+    defaultValues: {
+      prize_type: "",
+      name: "",
+      quantity: "",
+      icon: "",
+      description: ""
+    }
+  });
+
+  const prizeData = () => {
+    const {
+      prize_type,
+      name,
+      quantity,
+      icon,
+      description
+    } = getValues();
+    return {
+      uuid: [params.prize_id],
+      prize_type: prize_type,
+      name: name,
+      quantity: parseFloat(quantity),
+      icon: icon,
+      description: description,
+      created_at: [0]
+    };
+  };
+
+  const onSubmit = async () => {
+    if (!!actor?.updatePrize) {
+      try {
+        const result = await actor?.updatePrize(params.prize_id, prizeData());
+        if ("ok" in result) {
+          toast.success("Success !.");
+        } else {
+          console.log(result);
+          throw result?.err;
+        }
+      } catch (error) {
+        toast.error(
+          {
+            "NotAuthorized": "Please sign in!.",
+            "AdminRoleRequired": "Required admin role.",
+            "AlreadyExisting": "UUID is existed."
+          }[Object.keys(error)[0]],
+          { duration: 5000 }
+        );
+        console.log(error);
+      }
+    } else {
+      toast.error("Please sign in!.");
+    }
+  };
+
   const [addLocale, setAddLocale] = useState([]);
   const handleAddLocale = () => {
     setAddLocale([...addLocale, <LocaleForm />]);
@@ -60,75 +156,39 @@ function EditPrize() {
   return (
     <>
       <div className="wrapper">
-        <AddPrizesButton />
-
+        <AddPrizeBtn />
         <div className="content">
           <div className="content_edit_prize">
-            <div className="edit_prize_form">
-              <div className="form_group">
-                <label htmlFor="">
-                  <abbr title="required">*</abbr> CLASS NAME
-                </label>
-                <select
-                  className="form-control select required"
-                  name="prize[class_name]"
-                  id="prize_class_name"
-                  value="PrizeService::SaveYourOcean"
-                >
-                  <option value=""></option>
-                  <option value="PrizeService::Wasted">
-                    PrizeService::Wasted
-                  </option>
-                  <option value="PrizeService::ExtraSpin">
-                    PrizeService::ExtraSpin
-                  </option>
-                  <option value="PrizeService::TriipCredit">
-                    PrizeService::TriipCredit
-                  </option>
-                  <option value="PrizeService::DiscountVoucherPercentage">
-                    PrizeService::DiscountVoucherPercentage
-                  </option>
-                  <option value="PrizeService::FreeStaycation">
-                    PrizeService::FreeStaycation
-                  </option>
-                  <option value="PrizeService::SaveYourOcean">
-                    PrizeService::SaveYourOcean
-                  </option>
-                </select>
-              </div>
-              <div className="form_group">
-                <label
-                  class="control-label integer optional"
-                  htmlFor="prize_quantity"
-                >
-                  QUANTITY
-                </label>
-                <input
-                  className="form-control numeric integer optional"
-                  type="number"
-                  step="1"
-                  name="prize[quantity]"
-                  id="prize_quantity"
-                  value="1"
-                />
-              </div>
-              <div className="form_group">
-                <label>Prize Icon</label>
-              </div>
-              <div className="form_group">
-                <input
-                  className="photo_upload"
-                  type="file"
-                  name="prize[icon]"
-                  id="prize_icon"
-                />
-              </div>
+            <div className="edit_prize_form" style={{width: "30%"}}>
+              <InputText
+                control={control}
+                placeHolder="CLASS NAME"
+                label="CLASS NAME"
+                name="prize_type"
+                helperTextError={ERRORS}
+                autocompleteOptions={prizeTypes}
+              />
+              <InputText
+                control={control}
+                placeHolder="QUANTITY"
+                label="QUANTITY"
+                name="quantity"
+                helperTextError={ERRORS}
+              />
+              <InputText
+                control={control}
+                placeHolder="Icon"
+                label="Prize Icon"
+                name="icon"
+                helperTextError={ERRORS}
+              />
             </div>
             <div className="edit_prize_img">
               <img
                 className="prize_edit-img"
-                src="https://triip-staging.imgix.net/triipme/staging/prize/icon/38/Asset_1.png"
-                alt="T-Shirt"
+                src={prize.icon}
+                // "https://triip-staging.imgix.net/triipme/staging/prize/icon/38/Asset_1.png"
+                alt={prize.name}
               />
             </div>
           </div>
@@ -145,16 +205,22 @@ function EditPrize() {
                 <option value="vi">vi</option>
               </select>
             </div>
-            <div className="form_locale">
-              <label htmlFor="">TITLE</label>
-              <input type="text" value="Triip T-Shirt" />
+            <div style={{width: "100%", marginRight: "15px"}}>
+              <InputText
+                control={control}
+                placeHolder="TITLE"
+                label="TITLE"
+                name="name"
+                helperTextError={ERRORS}
+              />
             </div>
-            <div className="form_locale">
-              <label htmlFor="">DESCRIPTION</label>
-              <input
-                type="text"
-                className="form_locale-decs"
-                value="You got a Triip T-Shirt"
+            <div style={{width: "100%", marginRight: "15px"}}>
+              <InputText
+                control={control}
+                placeHolder="DESCRIPTION"
+                label="DESCRIPTION"
+                name="description"
+                helperTextError={ERRORS}
               />
             </div>
             <div className="align_center">
@@ -166,7 +232,7 @@ function EditPrize() {
               </button>
             </div>
           </div>
-          <div className="form_add-locale" id="index2">
+          {/* <div className="form_add-locale" id="index2">
             <div className="form_locale">
               <label htmlFor="">LOCALE</label>
               <select
@@ -179,16 +245,22 @@ function EditPrize() {
                 <option value="vi">vi</option>
               </select>
             </div>
-            <div className="form_locale">
-              <label htmlFor="">TITLE</label>
-              <input type="text" value="Triip T-Shirt" />
+            <div style={{width: "100%", marginRight: "15px"}}>
+              <InputText
+                control={control}
+                placeHolder="TITLE"
+                label="TITLE"
+                name="title"
+                helperTextError={ERRORS}
+              />
             </div>
-            <div className="form_locale">
-              <label htmlFor="">DESCRIPTION</label>
-              <input
-                type="text"
-                className="form_locale-decs"
-                value="You got a Triip T-Shirt"
+            <div style={{width: "100%", marginRight: "15px"}}>
+              <InputText
+                control={control}
+                placeHolder="DESCRIPTION"
+                label="DESCRIPTION"
+                name="description"
+                helperTextError={ERRORS}
               />
             </div>
             <div className="align_center">
@@ -199,7 +271,7 @@ function EditPrize() {
                 Remove
               </button>
             </div>
-          </div>
+          </div> */}
           {addLocale.map((locale, index) => (
             <div className="form_add-locale-content" key={index}>
               {locale}
@@ -212,8 +284,15 @@ function EditPrize() {
               </button>
             </div>
             <div>
-              <button className="btn btn_submit">Submit</button>
-              <button className="btn btn_cancel">Cancel</button>
+              <div>
+                <ButtonPrimary
+                  loading={isSubmitting}
+                  sx={{ mt: 2 }}
+                  title="Submit"
+                  onClick={handleSubmit(onSubmit)}
+                />
+              </div>
+              {/* <button className="btn btn_cancel">Cancel</button> */}
             </div>
           </div>
         </div>
