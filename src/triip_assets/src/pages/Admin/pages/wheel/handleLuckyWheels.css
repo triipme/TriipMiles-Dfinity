@@ -131,3 +131,10 @@
   .delete_prize{
     background: yellowgreen;
   }
+
+  .wheel_form_input{
+    padding: 18px;
+    font-size: 18px;
+    width: 75%;
+    border-radius: 10px;
+  }

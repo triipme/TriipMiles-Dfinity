@@ -320,11 +320,11 @@ const RenderWheel = ({ wheel }) => {
         </p>
       </TableCell>
       <TableCell className="table_item" align="left">
-        <a href="#">
+        <Link to={`/triip-admin/dashboard/wheels/edit/${wheel?.uuid}`} title="Edit Wheel">
           <button className="btn_actions btn_edit">
             <Icon icon="clarity:note-edit-line" />
           </button>
-        </a>
+        </Link>
         <a href="#">
           <button className="btn_actions btn_delete">
             <Icon icon="ep:delete" />

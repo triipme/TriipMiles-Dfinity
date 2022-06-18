@@ -149,10 +149,7 @@ function EditPrize() {
     const alreadyLocale = document.querySelector("#index1");
     alreadyLocale.remove();
   };
-  const handleRemoveChild1 = () => {
-    const alreadyLocale = document.querySelector("#index2");
-    alreadyLocale.remove();
-  };
+
   return (
     <>
       <div className="wrapper">
@@ -232,46 +229,6 @@ function EditPrize() {
               </button>
             </div>
           </div>
-          {/* <div className="form_add-locale" id="index2">
-            <div className="form_locale">
-              <label htmlFor="">LOCALE</label>
-              <select
-                className="form-control select required"
-                id="prize_add_locale"
-                value="vi"
-              >
-                <option value=""></option>
-                <option value="en">en</option>
-                <option value="vi">vi</option>
-              </select>
-            </div>
-            <div style={{width: "100%", marginRight: "15px"}}>
-              <InputText
-                control={control}
-                placeHolder="TITLE"
-                label="TITLE"
-                name="title"
-                helperTextError={ERRORS}
-              />
-            </div>
-            <div style={{width: "100%", marginRight: "15px"}}>
-              <InputText
-                control={control}
-                placeHolder="DESCRIPTION"
-                label="DESCRIPTION"
-                name="description"
-                helperTextError={ERRORS}
-              />
-            </div>
-            <div className="align_center">
-              <button
-                className="btn btn_remove"
-                onClick={() => handleRemoveChild1()}
-              >
-                Remove
-              </button>
-            </div>
-          </div> */}
           {addLocale.map((locale, index) => (
             <div className="form_add-locale-content" key={index}>
               {locale}
@@ -292,7 +249,6 @@ function EditPrize() {
                   onClick={handleSubmit(onSubmit)}
                 />
               </div>
-              {/* <button className="btn btn_cancel">Cancel</button> */}
             </div>
           </div>
         </div>

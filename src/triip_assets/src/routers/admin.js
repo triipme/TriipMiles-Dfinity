@@ -13,6 +13,7 @@ const PrizeForm = lazy(() => import("../pages/Admin/pages/prize/Form"));
 const EditPrize = lazy(() => import("../pages/Admin/pages/prize/EditPrize"));
 const WheelList = lazy(() => import("../pages/Admin/pages/wheel/WheelList"));
 const WheelForm = lazy(() => import("../pages/Admin/pages/wheel/Form"));
+const EditWheel = lazy(() => import("../pages/Admin/pages/wheel/EditWheel"));
 const SpinResultList = lazy(() => import("../pages/Admin/pages/spinResult/SpinResultList"));
 const Transactions = lazy(() => import("../pages/Admin/pages/transactions/List"));
 
@@ -115,6 +116,14 @@ export const admin = [
             element: (
               <AdminRequiredAuth>
                 <WheelForm />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "wheels/edit/:wheel_id",
+            element: (
+              <AdminRequiredAuth>
+                <EditWheel />
               </AdminRequiredAuth>
             )
           },

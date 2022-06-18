@@ -1,6 +1,6 @@
 import React from "react";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -24,8 +24,30 @@ import { ERRORS } from "../../../../utils/constants";
 import NewPrizeForm from "./NewPrizeForm";
 import Prize from "./Prize";
 
-function Form() {
+function EditWheel() {
   const { actor } = useSelector(state => state.user);
+  const [wheel, setWheel] = useState([]);
+  async function getWheel() {
+    try {
+      if (!!actor?.readWheel) {
+        const result = await actor.readWheel(params.wheel_id);
+        if ("ok" in result) {
+          setWheel(result.ok);
+        } else {
+          throw result.err;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    getWheel();
+  }, []);
+  const params = useParams();
+  console.log(params.wheel_id)
+  console.log(wheel.wheel_prizes)
+
   const [prizes, setPrizes] = useState([{ 
     prize_id: "",
     prize_name: "",
@@ -35,7 +57,7 @@ function Form() {
     cap_per_day: ""
     },
   ]);
-
+  console.log(prizes)
   const create = newPrize => {
     console.log(newPrize);
     setPrizes([...prizes, newPrize]);
@@ -85,9 +107,9 @@ function Form() {
     };
   };     
   const onSubmit = async () => {
-    if (!!actor?.createWheel) {
+    if (!!actor?.updateWheel) {
       try {
-        const result = await actor?.createWheel(wheelData());
+        const result = await actor?.updateWheel(params.wheel_id, wheelData());
         if ("ok" in result) {
           toast.success("Success !.");
         } else {
@@ -206,4 +228,4 @@ function Form() {
   );
 }
 
-export default Form;
+export default EditWheel;

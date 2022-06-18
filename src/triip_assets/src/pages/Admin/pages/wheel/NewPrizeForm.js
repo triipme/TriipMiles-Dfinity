@@ -1,36 +1,12 @@
 import React from "react";
-import uuid from "uuid";
-import ReactDOM from "react-dom";
-import { useState, useEffect, useRef, useReducer} from "react";
+import { useState, useEffect, useReducer} from "react";
 import { useSelector } from "react-redux";
-import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import { Icon } from "@iconify/react";
-import { Link } from "react-router-dom";
-
-import AddLuckyWheelBtn from "./AddLuckyWheelBtn";
 import "../prize/AddPrize.css";
 import "./NewPrizeForm.css";
 
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import Page from "../../components/Page";
-import {
-  ButtonPrimary,
-  InputText
-} from "../../../../components";
-import { ERRORS } from "../../../../utils/constants";
-
-function NewPrizeForm({ task, createPrize }) {
+function NewPrizeForm({ createPrize }) {
   const { actor } = useSelector(state => state.user);
   const [prizeList, setPrizeList] = useState([]);
-
   const [userInput, setUserInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -97,32 +73,24 @@ function NewPrizeForm({ task, createPrize }) {
 
   return (
     <>
-        <form className="form_add_prize" onSubmit={handleSubmit}>
-          <div className="input_wrapper">
-            <label className="input_label" htmlFor="prize_id">PRIZE ID</label>
-            <input className="prize_form_input"
-                value={userInput.prize_id}
-                onChange={handleChange}
-                id="prize_id"
-                name="prize_id"
-                required
-              />
-          </div>
-
+      <form className="form_add_prize" onSubmit={handleSubmit}>
+        <div className="input_wrapper">
+          <label className="input_label" htmlFor="prize_id">PRIZE ID</label>
+          <input className="prize_form_input"
+              value={userInput.prize_id}
+              onChange={handleChange}
+              id="prize_id"
+              name="prize_id"
+              required
+            />
+        </div>
         <div className="input_wrapper">
         <label className="input_label" htmlFor="prize_id">PRIZE NAME</label>
-          {/* <input className="prize_form_input"
-            // value={userInput.prize_name}
-            // onChange={handleChange}
-            // id="prize_name"
-            // name="prize_name"
-            // required
-          /> */}
-            
-          <select id="prize_name" name="prize_name" onChange={handleChange} className="prize_form_input">
+          <select id="prize_name" name="prize_name" onChange={handleChange}  className="prize_form_input">
+            <option value="" selected disabled hidden>Choose here</option>
             {prizeNameList.map((prizeName, index) => (
               <option 
-                value={() => {userInput.prizeName = prizeName}}
+                value={prizeName}
                 key={index}
               >
                 {prizeName}
@@ -130,7 +98,6 @@ function NewPrizeForm({ task, createPrize }) {
             ))}
           </select>
         </div>
-
         <div className="input_wrapper">
           <label className="input_label" htmlFor="prize_id">PERCENTAGE</label>
           <input className="prize_form_input"
@@ -141,7 +108,6 @@ function NewPrizeForm({ task, createPrize }) {
             required
           />
         </div>
-
         <div className="input_wrapper">
           <label className="input_label" htmlFor="prize_id">CAP PER USER PER MONTH</label>
           <input className="prize_form_input"
@@ -152,7 +118,6 @@ function NewPrizeForm({ task, createPrize }) {
             required
           />
         </div>
-
         <div className="input_wrapper">
           <label className="input_label" htmlFor="prize_id">CAP PER MONTH</label>
           <input className="prize_form_input"
@@ -163,7 +128,6 @@ function NewPrizeForm({ task, createPrize }) {
             required
           />
         </div>
-
         <div className="input_wrapper">
           <label className="input_label" htmlFor="prize_id">CAP PER DAY</label>
           <input className="prize_form_input"
@@ -177,60 +141,8 @@ function NewPrizeForm({ task, createPrize }) {
         <div className="input_wrapper">
           <button className="add_prize_btn" >Add Prize</button>
         </div>
-        </form>
+      </form>
     </>
-    // <form className="form_add_prize_item" onSubmit={handleSubmit}>
-    //   <div className="form_add_item">
-    //     <input
-    //       value={userInput.prize_name}
-    //       onChange={handleChange}
-    //       id="prize_name"
-    //       type="text"
-    //       name="prize_name"
-    //       placeholder="PRIZE NAME"
-    //       required
-    //     />
-    //   </div>
-
-    //   <div className="form_add_item">
-    //     <input
-    //       value={userInput.percentage}
-    //       onChange={handleChange}
-    //       id="percentage"
-    //       
-    //       name="percentage"
-    //       placeholder="PERCENTAGE"
-    //       required
-    //     />
-    //   </div>
-
-    //   <div className="form_add_item">
-    //     <input
-    //       value={userInput.cap_per_user_per_month}
-    //       onChange={handleChange}
-    //       id="cap_per_user_per_month"
-    //       type="number"
-    //       name="cap_per_user_per_month"
-    //       placeholder="CAP PER USER PER MONTH"
-    //       required
-    //     />
-    //   </div>
-
-    //   <div className="form_add_item">
-    //     <input
-    //       value={userInput.cap_per_month}
-    //       onChange={handleChange}
-    //       id="cap_per_month"
-    //       type="number"
-    //       name="cap_per_month"
-    //       placeholder="CAP PER MONTH"
-    //       required
-    //     />
-    //   </div>
-
-    //   <button className="btn btn_submit">Add Prize</button>
-    // </form>
-    
   );
 }
 
