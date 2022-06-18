@@ -76,7 +76,7 @@ function MagicMemoryEngine() {
     shuffleCards();
   }, []);
   if (!!state?.player_id) {
-    return <Navigate to="/game/magic_memory" />;
+    return <Navigate to="/game/magic-memory-language" />;
   }
   return (
     <div className="App">

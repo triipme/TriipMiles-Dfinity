@@ -16,22 +16,22 @@ import { useNavigate } from "react-router";
 
 const games = [
   {
-    name: "Magic Memory",
+    name: "Magic Memory Language",
     description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
     image:
       "https://media.istockphoto.com/vectors/memory-game-for-preschool-children-vector-id1092896082?k=20&m=1092896082&s=612x612&w=0&h=svAq2MxT5E9viByMj4r0JGzejZ_FM4qa93NExdDSqQk=",
-    redirect: "/game/magic_memory"
+    redirect: "/game/magic-memory-language"
   },
   {
-    name: "Magic Memory Engine",
+    name: "Magic Memory Photo",
     description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
     image:
       "https://media.istockphoto.com/vectors/memory-game-for-preschool-children-vector-id1092896082?k=20&m=1092896082&s=612x612&w=0&h=svAq2MxT5E9viByMj4r0JGzejZ_FM4qa93NExdDSqQk=",
-    redirect: "/game/magic_memory_engine"
+    redirect: "/game/magic-memory-photo"
   },
   {
     name: "Lucky Wheel",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
+    description: "Test your luck and receive prizes",
     image:
       "https://media.istockphoto.com/vectors/wheel-of-fortune-vector-illustration-of-a-flat-empty-colorful-wheel-vector-id1150678397?k=20&m=1150678397&s=612x612&w=0&h=tn90Ky0b1G7R4NrmgxFx7FkahFUhzn9ZBTfUFdB3SRc=",
     redirect: "/game/lucky_wheel"

@@ -26,7 +26,7 @@ const MCEngineTop = () => {
     initialEffect();
   }, []);
   const handlePlay = () => {
-    navigate("/game/magic_memory_engine/play", { state: { player_id: player?.[0]?.[0] } });
+    navigate("/game/magic-memory-photo/play", { state: { player_id: player?.[0]?.[0] } });
   };
   const rows = useMemo(() => {
     return list?.map((l, l_i) => {
@@ -39,13 +39,28 @@ const MCEngineTop = () => {
       };
     });
   }, [list]);
-
   const columns = useMemo(
     () => [
-      { field: "id", headerName: "#", sortable: false },
+      {
+        field: "id",
+        headerName: "#",
+        sortable: false,
+        width: 10,
+        renderCell: params => (
+          <Avatar
+            sx={{
+              bgcolor: params.value === 0 ? "yellow" : "transparent",
+              color: params.value === 0 ? "white" : "black",
+              width: 24,
+              height: 24
+            }}>
+            {params.value + 1}
+          </Avatar>
+        )
+      },
       { field: "col1", headerName: "Name", width: 100, sortable: false },
       { field: "col2", headerName: "Total turn", sortable: false },
-      { field: "col3", headerName: "Total time(s)", sortable: false },
+      { field: "col3", headerName: "Total time(s)", width: 110, sortable: false },
       { field: "col4" }
     ],
     []
@@ -54,13 +69,24 @@ const MCEngineTop = () => {
   return (
     <Box sx={{ height: "calc(100vh - 70px)", display: "grid", placeItems: "center" }}>
       <Stack alignItems="center">
-        <div style={{ height: 300, width: 350 }}>
+        <Typography variant="h3" mb={3}>
+          Leader Board
+        </Typography>
+        <div style={{ height: 300 }}>
           <DataGrid
             rows={rows ?? []}
             columns={columns}
             pageSize={10}
+            sx={{ width: { md: 400, xs: 330 } }}
             rowsPerPageOptions={[10]}
             disableColumnMenu
+            components={{
+              NoRowsOverlay: () => (
+                <Typography sx={{ height: "100%", display: "grid", placeItems: "center" }}>
+                  Be the first player today
+                </Typography>
+              )
+            }}
             pagination
             initialState={{
               columns: {
@@ -77,7 +103,7 @@ const MCEngineTop = () => {
         <ButtonPrimary
           disabled={!!player?.[0]?.[0]}
           title={`Play`}
-          sx={{ width: 100, mb: 1 }}
+          sx={{ width: 100, mt: 3 }}
           onClick={handlePlay}
         />
       </Stack>
