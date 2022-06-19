@@ -4,9 +4,49 @@ import { useSelector } from "react-redux";
 import "../prize/AddPrize.css";
 import "./NewPrizeForm.css";
 
+const PrizeNameOption = ({ name, id }) => {
+  const { actor } = useSelector(state => state.user);
+  const [prizeList, setPrizeList] = useState([]);
+  const [prizeId, setPrizeId] = useState([]);
+  async function getPrizes() {
+    try {
+      if (!!actor?.listPrizes) {
+        const list = await actor.listPrizes();
+        if ("ok" in list) {
+          setPrizeList(list.ok);
+        } else {
+          throw list.err;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    getPrizes();
+  }, []);
+
+  prizeList?.map((prize, _key) => {
+    if(prize.uuid[0] == id){
+      return prizeId;
+    }
+  });  
+
+  return (
+    <option>
+      {prizeList?.map((prize, _key) => {
+        if(prize.uuid[0] == id){
+          return prizeId;
+        }
+      })}
+    </option>
+  )
+};
+
 function NewPrizeForm({ createPrize }) {
   const { actor } = useSelector(state => state.user);
   const [prizeList, setPrizeList] = useState([]);
+  const [prizeId, setPrizeId] = useState("");
   const [userInput, setUserInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -37,23 +77,23 @@ function NewPrizeForm({ createPrize }) {
     getPrizes();
   }, []);
 
-  const prizeNameList = []
-  prizeList?.map((prize, _key) => (
-    prizeNameList.push(prize.name)
-  ));  
-
   const handleChange = evt => {
     const value = evt.target.value;
+    prizeList?.map((prize, _key) => {
+      if(prize.name === value){
+        setPrizeId(prize.uuid[0]);
+      }
+    }); 
     setUserInput({
       ...userInput,
       [evt.target.name]: value
     });
   };
-
+   
   const handleSubmit = evt => {
     evt.preventDefault();
     const newPrize = { 
-      prize_id: userInput.prize_id,
+      prize_id: prizeId,
       prize_name: userInput.prize_name,
       percentage: parseFloat(userInput.percentage),
       cap_per_user_per_month: parseInt(userInput.cap_per_user_per_month),
@@ -77,23 +117,23 @@ function NewPrizeForm({ createPrize }) {
         <div className="input_wrapper">
           <label className="input_label" htmlFor="prize_id">PRIZE ID</label>
           <input className="prize_form_input"
-              value={userInput.prize_id}
-              onChange={handleChange}
-              id="prize_id"
-              name="prize_id"
-              required
-            />
+            value={prizeId}
+            //onChange={handleChange}
+            id="prize_id"
+            name="prize_id"
+            required
+          />
         </div>
         <div className="input_wrapper">
         <label className="input_label" htmlFor="prize_id">PRIZE NAME</label>
-          <select id="prize_name" name="prize_name" onChange={handleChange}  className="prize_form_input">
+          <select id="prize_name" name="prize_name" onChange={handleChange} className="prize_form_input">
             <option value="" selected disabled hidden>Choose here</option>
-            {prizeNameList.map((prizeName, index) => (
+            {prizeList.map((prize, index) => (
               <option 
-                value={prizeName}
-                key={index}
+                value={prize.name}
+                key={prize.uuid[0]}
               >
-                {prizeName}
+                {prize.name}
               </option>
             ))}
           </select>

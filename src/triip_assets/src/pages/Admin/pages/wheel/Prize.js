@@ -17,7 +17,7 @@ function Prize({ prize, remove }) {
 
   return (
     <TableRow key={`table_key-${prizeData?.prize_id}`} style={{ verticalAlign: "center"}} >
-      <TableCell key={`prize_id-${prizeData?.prize_id}`} className="table_item" align="left" style={{borderBottom:"none"}}>
+      <TableCell key={`prize_id-${prizeData?.prize_id}`} className="table_item" align="left" style={{borderBottom:"none",width:"20%"}}>
         {prizeData.prize_id}
       </TableCell>
       <TableCell key={`prize_name-${prizeData?.prize_id}`} className="table_item" align="left" style={{borderBottom:"none"}}>
