@@ -45,17 +45,13 @@ shared({caller = owner}) actor class Triip() = this {
   private stable var wheels : [(Text, Types.LuckyWheel)] = [];
   private stable var spinresults : [(Text, Types.SpinResult)] = [];
   private stable var games = {
-    memory_card = {
-      games : [(Text, Types.MemoryCardGame)] = [];
-      stages : [(Text, Types.MemoryCardStage)] = [];
-      cards : [(Text, Types.MemoryCard)] = [];
-      players : [(Text, Types.MemoryCardPlayer)] = [];
-      rewards : [(Text, Types.MemoryCardReward)] = [];
-    };
     memory_card_engine = {
+      games : [(Text, Types.MemoryCardEngineGame)] = [];
+      stages : [(Text, Types.MemoryCardEngineStage)] = [];
+      cards : [(Text, Types.MemoryCardEngine)] = [];
       players : [(Text, Types.MemoryCardEnginePlayer)] = [];
       rewards : [(Text, Types.MemoryCardEngineReward)] = [];
-    }
+    };
   };
   private stable var transactions : [(Text, Types.TxRecord)] = [];
 
@@ -71,14 +67,10 @@ shared({caller = owner}) actor class Triip() = this {
     wheels := Iter.toArray(state.wheels.entries());
     spinresults := Iter.toArray(state.spinresults.entries());
     games := {
-      memory_card = {
-        games = Iter.toArray(state.games.memory_card.games.entries());
-        stages = Iter.toArray(state.games.memory_card.stages.entries());
-        cards = Iter.toArray(state.games.memory_card.cards.entries());
-        players = Iter.toArray(state.games.memory_card.players.entries());
-        rewards = Iter.toArray(state.games.memory_card.rewards.entries());
-      };
       memory_card_engine = {
+        games = Iter.toArray(state.games.memory_card_engine.games.entries());
+        stages = Iter.toArray(state.games.memory_card_engine.stages.entries());
+        cards = Iter.toArray(state.games.memory_card_engine.cards.entries());
         players = Iter.toArray(state.games.memory_card_engine.players.entries());
         rewards = Iter.toArray(state.games.memory_card_engine.rewards.entries());
       };
@@ -116,20 +108,14 @@ shared({caller = owner}) actor class Triip() = this {
     for ((k, v) in Iter.fromArray(spinresults)) {
       state.spinresults.put(k, v);
     };
-    for ((k, v) in Iter.fromArray(games.memory_card.games)) {
-      state.games.memory_card.games.put(k, v);
+    for ((k, v) in Iter.fromArray(games.memory_card_engine.games)) {
+      state.games.memory_card_engine.games.put(k, v);
     };
-    for ((k, v) in Iter.fromArray(games.memory_card.stages)) {
-      state.games.memory_card.stages.put(k, v);
+    for ((k, v) in Iter.fromArray(games.memory_card_engine.stages)) {
+      state.games.memory_card_engine.stages.put(k, v);
     };
-    for ((k, v) in Iter.fromArray(games.memory_card.cards)) {
-      state.games.memory_card.cards.put(k, v);
-    };
-    for ((k, v) in Iter.fromArray(games.memory_card.players)) {
-      state.games.memory_card.players.put(k, v);
-    };
-    for ((k, v) in Iter.fromArray(games.memory_card.rewards)) {
-      state.games.memory_card.rewards.put(k, v);
+    for ((k, v) in Iter.fromArray(games.memory_card_engine.cards)) {
+      state.games.memory_card_engine.cards.put(k, v);
     };
     for ((k, v) in Iter.fromArray(games.memory_card_engine.players)) {
       state.games.memory_card_engine.players.put(k, v);
@@ -1383,7 +1369,21 @@ shared({caller = owner}) actor class Triip() = this {
     };
     #ok((list));
   };
-  // /* MemoryCard */
+  /* MemoryCard */
+
+  public shared({caller}) func memoryCardEngineAddGame(data : Text) : async Response<()>{
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    let is_admin = isAdmin(caller);
+    switch (is_admin) {
+      case (null) #err(#AdminRoleRequired);
+      case (? admin) {
+        Debug.print(debug_show(data));
+        #ok();
+      };
+    };
+  };
   // //Adding a level to the memory card game.
   // public shared({caller}) func gameGcAddLevel() : async Response<()>{
   //   if(Principal.toText(caller) == "2vxsx-fae") {

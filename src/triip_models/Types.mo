@@ -4,7 +4,6 @@ import Nat64 "mo:base/Nat64";
 
 import Admin "model/Admin";
 import KYC "model/KYC";
-import MemoryCard "model/games/MemoryCard";
 import MemoryCardEngine "model/games/MemoryCardEngine";
 import ProofTP "model/ProofTP";
 import TravelPlan "model/TravelPlan";
@@ -63,13 +62,9 @@ module {
 
   /* ------------------------- Games --------------------------- */
   // MemoryCard
-  public type MemoryCardGame = MemoryCard.MemoryCard;
-  public type MemoryCardStage = MemoryCard.Stage;
-  public type MemoryCard = MemoryCard.Card;
-  public type MemoryCardPlayer = MemoryCard.Player;
-  public type MemoryCardReward = MemoryCard.Reward;
-  
-  // MemoryCard
+  public type MemoryCardEngineGame = MemoryCardEngine.MemoryCardEngine;
+  public type MemoryCardEngineStage = MemoryCardEngine.Stage;
+  public type MemoryCardEngine = MemoryCardEngine.Card;
   public type MemoryCardEnginePlayer = MemoryCardEngine.Player;
   public type MemoryCardEngineReward = MemoryCardEngine.Reward;
 

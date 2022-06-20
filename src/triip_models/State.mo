@@ -15,17 +15,13 @@ module{
     vetted : Map<Text, Types.Vetted>;
     kycs : Map<Principal, Types.KYCs>;
     games : {
-      memory_card : {
-        games : Map<Text, Types.MemoryCardGame>;
-        stages : Map<Text, Types.MemoryCardStage>;
-        cards : Map<Text, Types.MemoryCard>;
-        players : Map<Text, Types.MemoryCardPlayer>;
-        rewards : Map<Text, Types.MemoryCardReward>;
-      };
       memory_card_engine : {
+        games : Map<Text, Types.MemoryCardEngineGame>;
+        stages : Map<Text, Types.MemoryCardEngineStage>;
+        cards : Map<Text, Types.MemoryCardEngine>;
         players : Map<Text, Types.MemoryCardEnginePlayer>;
         rewards : Map<Text, Types.MemoryCardEngineReward>;
-      }
+      };
     };
     prizes: Map<Text, Types.Prize>;
     wheels : Map<Text, Types.LuckyWheel>;
@@ -42,17 +38,13 @@ module{
       vetted = TrieMap.TrieMap<Text, Types.Vetted>(Text.equal, Text.hash);
       kycs = TrieMap.TrieMap<Principal, Types.KYCs>(Principal.equal, Principal.hash);
       games = {
-        memory_card = {
-          games = TrieMap.TrieMap<Text, Types.MemoryCardGame>(Text.equal, Text.hash);
-          stages = TrieMap.TrieMap<Text, Types.MemoryCardStage>(Text.equal, Text.hash);
-          cards = TrieMap.TrieMap<Text, Types.MemoryCard>(Text.equal, Text.hash);
-          players = TrieMap.TrieMap<Text, Types.MemoryCardPlayer>(Text.equal, Text.hash);
-          rewards = TrieMap.TrieMap<Text, Types.MemoryCardReward>(Text.equal, Text.hash);
-        };
         memory_card_engine = {
+          games = TrieMap.TrieMap<Text, Types.MemoryCardEngineGame>(Text.equal, Text.hash);
+          stages = TrieMap.TrieMap<Text, Types.MemoryCardEngineStage>(Text.equal, Text.hash);
+          cards = TrieMap.TrieMap<Text, Types.MemoryCardEngine>(Text.equal, Text.hash);
           players = TrieMap.TrieMap<Text, Types.MemoryCardEnginePlayer>(Text.equal, Text.hash);
           rewards = TrieMap.TrieMap<Text, Types.MemoryCardEngineReward>(Text.equal, Text.hash);
-        }
+        };
       };
       prizes = TrieMap.TrieMap<Text, Types.Prize>(Text.equal, Text.hash);
       wheels = TrieMap.TrieMap<Text, Types.LuckyWheel>(Text.equal, Text.hash);

@@ -20,18 +20,11 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 const games = [
   {
-    name: "Magic Memory Language",
+    name: "Magic Memory Engine",
     description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
     image:
       "https://media.istockphoto.com/vectors/memory-game-for-preschool-children-vector-id1092896082?k=20&m=1092896082&s=612x612&w=0&h=svAq2MxT5E9viByMj4r0JGzejZ_FM4qa93NExdDSqQk=",
-    redirect: "vocalbulary"
-  },
-  {
-    name: "Magic Memory Photo",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
-    image:
-      "https://media.istockphoto.com/vectors/memory-game-for-preschool-children-vector-id1092896082?k=20&m=1092896082&s=612x612&w=0&h=svAq2MxT5E9viByMj4r0JGzejZ_FM4qa93NExdDSqQk=",
-    redirect: "engine"
+    redirect: "memory-card-engine"
   }
 ];
 
