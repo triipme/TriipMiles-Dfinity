@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { Stack, Box, Typography } from "@mui/material";
+import { Stack, Box, Typography, Avatar } from "@mui/material";
 import { ButtonPrimary } from "@/components";
 import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
