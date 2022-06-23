@@ -67,6 +67,19 @@ module {
   public type MemoryCardEngine = MemoryCardEngine.Card;
   public type MemoryCardEnginePlayer = MemoryCardEngine.Player;
   public type MemoryCardEngineReward = MemoryCardEngine.Reward;
+  public type MemoryCardEnginePatternItemImport = {
+    gameId : Nat;
+    gameName : Text;
+    gameSlug : Text;
+    gameDescription : Text;
+    gameStatus : Bool;
+    stageId : Nat;
+    stageName : Text;
+    stageOrder : Nat;
+    cardId : Nat;
+    cardType : Text;
+    cardData : Text;
+  };
 
   /* ------------------------- Prize --------------------------- */ // new feature
   public type Prize = {

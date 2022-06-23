@@ -8,15 +8,21 @@ import { ButtonPrimary, InputText } from "@/components";
 import { useForm } from "react-hook-form";
 import { ERRORS } from "@/utils/constants";
 import AddGame from "./AddGame";
+import AllGame from "./AllGame";
+import AllStage from "./AllStage";
+import AllCard from "./AllCard";
 
 const MemoryEngine = () => {
   return (
     <Page title="Memory Game Engine | Triip Admin">
       <Box>
         <AddGame />
-        <TopOfYesterday />
+        <AllGame />
+        <AllStage />
+        <AllCard />
+        {/* <TopOfYesterday />
         <ListOfDay />
-        <ListAll />
+        <ListAll /> */}
       </Box>
     </Page>
   );

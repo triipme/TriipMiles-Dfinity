@@ -13,7 +13,8 @@ module {
   public type Card = {
     stageId : Text;
     cardType : Text; //"text" or "image"
-    data : [Text];
+    // data : [Text];
+    data : Text;
   };
   public type Player = {
     uid: Principal;

@@ -1371,7 +1371,7 @@ shared({caller = owner}) actor class Triip() = this {
   };
   /* MemoryCard */
 
-  public shared({caller}) func memoryCardEngineAddGame(data : Text) : async Response<()>{
+  public shared({caller}) func memoryCardEngineImportExcel(data : [Types.MemoryCardEnginePatternItemImport]) : async Response<()>{
     if(Principal.toText(caller) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
@@ -1379,11 +1379,85 @@ shared({caller = owner}) actor class Triip() = this {
     switch (is_admin) {
       case (null) #err(#AdminRoleRequired);
       case (? admin) {
-        Debug.print(debug_show(data));
+        for(V in Iter.fromArray(data)){
+          switch(state.games.memory_card_engine.games.get(Nat.toText(V.gameId))){
+            case null {
+              let games : Types.MemoryCardEngineGame = {
+                name = V.gameName;
+                slug = V.gameSlug;
+                description = V.gameDescription;
+                status = V.gameStatus;
+              };
+              // state.games.memory_card_engine.games.put(V.gameId, games);
+              state.games.memory_card_engine.games.put(Nat.toText(V.gameId), games);
+            };
+            case (? v){};
+          };
+          switch(state.games.memory_card_engine.stages.get(Nat.toText(V.stageId))) {
+            case null {
+              let stages : Types.MemoryCardEngineStage = {
+                // gameId = V.gameId;
+                gameId = Nat.toText(V.gameId);
+                name = V.stageName;
+                order = V.stageOrder;
+              };
+              // state.games.memory_card_engine.stages.put(V.stageId, stages);
+              state.games.memory_card_engine.stages.put(Nat.toText(V.stageId), stages);
+            };
+            case (? v){};
+          };
+          let cards : Types.MemoryCardEngine = {
+            stageId = Nat.toText(V.stageId);
+            cardType = V.cardType;
+            data = V.cardData;
+          };
+          // state.games.memory_card_engine.cards.put(V.cardId, cards);
+          state.games.memory_card_engine.cards.put(Nat.toText(V.cardId), cards);
+        };
+        Debug.print(debug_show(Iter.toArray(state.games.memory_card_engine.games.entries())));
+        Debug.print(debug_show(Iter.toArray(state.games.memory_card_engine.stages.entries())));
+        Debug.print(debug_show(Iter.toArray(state.games.memory_card_engine.cards.entries())));
         #ok();
       };
     };
   };
+  public query({caller}) func memoryCardEngineAllGames() : async Response<[(Text,Types.MemoryCardEngineGame)]>{
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    let is_admin = isAdmin(caller);
+    switch (is_admin) {
+      case (null) #err(#AdminRoleRequired);
+      case (? admin) {
+        #ok(Iter.toArray(state.games.memory_card_engine.games.entries()));
+      }
+    }
+  };
+  public query({caller}) func memoryCardEngineAllStages() : async Response<[(Text,Types.MemoryCardEngineStage)]>{
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    let is_admin = isAdmin(caller);
+    switch (is_admin) {
+      case (null) #err(#AdminRoleRequired);
+      case (? admin) {
+        #ok(Iter.toArray(state.games.memory_card_engine.stages.entries()));
+      }
+    }
+  };
+  public query({caller}) func memoryCardEngineAllCards() : async Response<[(Text,Types.MemoryCardEngine)]>{
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    let is_admin = isAdmin(caller);
+    switch (is_admin) {
+      case (null) #err(#AdminRoleRequired);
+      case (? admin) {
+        #ok(Iter.toArray(state.games.memory_card_engine.cards.entries()));
+      }
+    }
+  };
+
   // //Adding a level to the memory card game.
   // public shared({caller}) func gameGcAddLevel() : async Response<()>{
   //   if(Principal.toText(caller) == "2vxsx-fae") {
