@@ -1,11 +1,8 @@
 import {
   Box,
-  Button,
   Card,
-  CardActionArea,
   CardContent,
   CardMedia,
-  Grid,
   Stack,
   Typography,
   useMediaQuery,
@@ -17,14 +14,14 @@ import { useNavigate } from "react-router";
 const games = [
   {
     name: "Magic Memory Language",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
+    description: "Improve focus, memory and knowledge",
     image:
       "https://media.istockphoto.com/vectors/memory-game-for-preschool-children-vector-id1092896082?k=20&m=1092896082&s=612x612&w=0&h=svAq2MxT5E9viByMj4r0JGzejZ_FM4qa93NExdDSqQk=",
     redirect: "/game/magic-memory-language"
   },
   {
     name: "Magic Memory Photo",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor, veniam!",
+    description: "Improve focus, memory and knowledge",
     image:
       "https://media.istockphoto.com/vectors/memory-game-for-preschool-children-vector-id1092896082?k=20&m=1092896082&s=612x612&w=0&h=svAq2MxT5E9viByMj4r0JGzejZ_FM4qa93NExdDSqQk=",
     redirect: "/game/magic-memory-photo"
@@ -60,6 +57,9 @@ function Game() {
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {game.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {game.description}
                 </Typography>
               </CardContent>
             </Box>
