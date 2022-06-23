@@ -28,7 +28,7 @@ const sidebarConfig = [
     icon: getIcon("noto:wheel")
   },
   {
-    title: "Memory Game",
+    title: "Game",
     path: "/triip-admin/dashboard/game",
     icon: getIcon("arcticons:memo-game")
   },
