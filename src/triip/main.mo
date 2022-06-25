@@ -1685,7 +1685,7 @@ shared({caller = owner}) actor class Triip() = this {
     for((K, V) in state.games.memory_card_engine.players.entries()) {
       if(
         Int.greater(Moment.diff(?V.createdAt), 0)
-        // Nat.lessOrEqual(Iter.size(Iter.fromArray(listTop)),10) and
+        // Nat.lessOrEqual(Iter.size(Iter.fromArray(listTop)),10)
       ) {
         listTop := Array.append(listTop, [?V]);
       }

@@ -65,12 +65,13 @@ const ListAll = () => {
   );
 
   return (
-    <Box height={400} width="100%">
+    <Box width="100%">
       <Typography variant="h1" align="center">
         Player List
       </Typography>
       <DataGrid
         rows={rows ?? []}
+        autoHeight
         columns={columns}
         pageSize={10}
         rowsPerPageOptions={[10]}
@@ -144,8 +145,9 @@ const ListOfDay = () => {
       <Typography variant="h1" align="center">
         Top of Today
       </Typography>
-      <Box height={400} width="100%">
+      <Box width="100%">
         <DataGrid
+          autoHeight
           rows={rows ?? []}
           columns={columns}
           pageSize={10}
@@ -169,7 +171,7 @@ const ListOfDay = () => {
 const TopOfYesterday = () => {
   const { actor } = useSelector(state => state.user);
   const [top, setTop] = useState();
-  const [disableReward, setDisableReward] = useState(false);
+  const [disableReward, setDisableReward] = useState(true);
   const [loading, setLoading] = useState(false);
   const {
     control,
@@ -209,7 +211,6 @@ const TopOfYesterday = () => {
       checkReward(top?.[0]);
     }
   }, [top]);
-  console.log("top", top);
   const handleReward = async data => {
     try {
       if (!!actor?.gameGcReward) {
@@ -272,9 +273,9 @@ function compare(a, b) {
     const sum_time = totalTime(array);
     return sum_turn + sum_time;
   };
-  if (score(a[0][0][1].history) < score(b[0][0][1].history)) {
+  if (score(a[1][0][0][1].history) < score(b[1][0][0][1].history)) {
     return -1;
-  } else if (score(a[0][0][1].history) > score(b[0][0][1].history)) {
+  } else if (score(a[1][0][0][1].history) > score(b[1][0][0][1].history)) {
     return 1;
   } else {
     return 0;
