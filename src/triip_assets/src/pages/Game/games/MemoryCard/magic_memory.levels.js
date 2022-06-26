@@ -164,8 +164,8 @@ const MCLevels = () => {
             <ButtonPrimary
               key={level}
               disabled={player?.[0]?.[1].history.some(h => h.level === level)}
-              title={`Level ${index}`}
-              sx={{ width: 100, mr: index === levels.length ? 0 : 1 }}
+              title={`Ukrainian Level ${index}`}
+              sx={{ width: 100, mr: index === levels.length ? 0 : 1, textAlign: "center" }}
               onClick={() => handleLevel(level)}
             />
           ))}
