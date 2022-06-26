@@ -12,9 +12,13 @@ function SingleCard({ card, handleChoice, flipped, disabled }) {
   return (
     <div className="card" style={{ border: `2px solid ${theme.palette.primary.main}` }}>
       <div className={flipped ? "flipped" : "default"} style={{ justifyContent: "center" }}>
-        <p className="front" style={{ fontSize: 18 }}>
-          {card?.result ?? card?.word}
-        </p>
+        {"src" in card ? (
+          <img className="front" src={card.src} alt="card" />
+        ) : (
+          <p className="front" style={{ fontSize: 18 }}>
+            {card?.result ?? card?.word}
+          </p>
+        )}
         <img className="back" src="/img/cover.png" onClick={handleClick} alt="cover" />
       </div>
     </div>

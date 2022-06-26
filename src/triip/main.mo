@@ -35,20 +35,24 @@ shared({caller = owner}) actor class Triip() = this {
   /*------------------------ App state--------------------------- */
   var state : State.State = State.empty();
 
-  private stable var profiles : [(Principal,Types.Profile)] = [];
-  private stable var travelplans : [(Text,Types.TravelPlan)] = [];
-  private stable var proofs : [(Text,Types.ProofTP)] = [];
-  private stable var admin : [(Principal,Types.Admin)] = [];
-  private stable var vetted : [(Text,Types.Vetted)] = [];
-  private stable var kycs : [(Principal,Types.KYCs)] = [];
+  private stable var profiles : [(Principal, Types.Profile)] = [];
+  private stable var travelplans : [(Text, Types.TravelPlan)] = [];
+  private stable var proofs : [(Text, Types.ProofTP)] = [];
+  private stable var admin : [(Principal, Types.Admin)] = [];
+  private stable var vetted : [(Text, Types.Vetted)] = [];
+  private stable var kycs : [(Principal, Types.KYCs)] = [];
   private stable var prizes : [(Text, Types.Prize)] = [];
   private stable var wheels : [(Text, Types.LuckyWheel)] = [];
   private stable var spinresults : [(Text, Types.SpinResult)] = [];
   private stable var games = {
     memory_card = {
-      levels : [(Text,Types.MemoryCardLevel)] = [];
-      players : [(Text,Types.MemoryCardPlayer)] = [];
-      rewards : [(Text,Types.MemoryCardReward)] = [];
+      levels : [(Text, Types.MemoryCardLevel)] = [];
+      players : [(Text, Types.MemoryCardPlayer)] = [];
+      rewards : [(Text, Types.MemoryCardReward)] = [];
+    };
+    memory_card_engine = {
+      players : [(Text, Types.MemoryCardEnginePlayer)] = [];
+      rewards : [(Text, Types.MemoryCardEngineReward)] = [];
     }
   };
   private stable var transactions : [(Text, Types.TxRecord)] = [];
@@ -69,7 +73,11 @@ shared({caller = owner}) actor class Triip() = this {
         levels = Iter.toArray(state.games.memory_card.levels.entries());
         players = Iter.toArray(state.games.memory_card.players.entries());
         rewards = Iter.toArray(state.games.memory_card.rewards.entries());
-      }
+      };
+      memory_card_engine = {
+        players = Iter.toArray(state.games.memory_card_engine.players.entries());
+        rewards = Iter.toArray(state.games.memory_card_engine.rewards.entries());
+      };
     };
     transactions := Iter.toArray(state.transactions.entries());
     Debug.print("End preupgrade");
@@ -112,6 +120,12 @@ shared({caller = owner}) actor class Triip() = this {
     };
     for ((k, v) in Iter.fromArray(games.memory_card.rewards)) {
       state.games.memory_card.rewards.put(k, v);
+    };
+    for ((k, v) in Iter.fromArray(games.memory_card_engine.players)) {
+      state.games.memory_card_engine.players.put(k, v);
+    };
+    for ((k, v) in Iter.fromArray(games.memory_card_engine.rewards)) {
+      state.games.memory_card_engine.rewards.put(k, v);
     };
     for ((k, v) in Iter.fromArray(transactions)) {
       state.transactions.put(k, v);
@@ -1612,7 +1626,6 @@ shared({caller = owner}) actor class Triip() = this {
     }
   };
   public query func gameGcCheckReward(id : Text) : async Response<?Types.MemoryCardReward>{
-    Debug.print(id);
     #ok(state.games.memory_card.rewards.get(id));
   };
   public shared({caller}) func gameGcReward(
@@ -1654,5 +1667,122 @@ shared({caller = owner}) actor class Triip() = this {
     };
     //   };
     // };
+  };
+  //Game memory card Engine
+  private func gameGcEnginePutPlayer(
+    uid : Principal, 
+    turn : Nat,
+    timing_play : Float, 
+  ) : async (){
+    let uuid = await GeneralUtils.createUUID();
+    let player : Types.MemoryCardEnginePlayer = {
+      uid;
+      turn;
+      timing_play;
+      createdAt = Moment.now();
+      updatedAt = Moment.now();
+    };
+    state.games.memory_card_engine.players.put(uuid, player);
+  };
+  public query({caller}) func gameGcEngineGetPlayer() : async ?(Text, Types.MemoryCardEnginePlayer) {
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    let players = state.games.memory_card_engine.players.entries();
+    var p : ?(Text, Types.MemoryCardEnginePlayer) = null;
+    for((K, player) in players) {
+      if(
+        Int.greater(Moment.diff(?player.createdAt), 0) and
+        Principal.equal(player.uid, caller)
+      ) {
+        p := ?(K, player);
+      }
+    };
+    return p;
+  };
+  public shared({caller = uid}) func gameGcEngineSetPlayer({
+    turn : Nat; 
+    timing_play : Float; 
+  }) : async Response<()>{
+    if(Principal.toText(uid) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    await gameGcEnginePutPlayer(uid, turn, timing_play);
+    #ok(());
+  };
+  public func gameGcEngineCheckReward(id : Text) : async Response<?Types.MemoryCardEngineReward>{
+    #ok(state.games.memory_card_engine.rewards.get(id));
+  };
+  public shared({caller}) func gameGcEngineReward(
+    player_id : Text, 
+    reward : Float, 
+    uid : Principal
+  ) : async Response<()>{
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    let is_admin = isAdmin(caller);
+    let reward_format : Nat64 = Int64.toNat64(Float.toInt64(reward * 10**8));
+    switch (is_admin) {
+      case (null) #err(#AdminRoleRequired);
+      case (? v) {
+        let record_reward = {
+          reward : Nat64 = reward_format;
+          createdAt = Moment.now();
+        };
+        state.games.memory_card_engine.rewards.put(player_id, record_reward); //put to state rewards
+        let rsReadUser = state.profiles.get(uid); // get address Wallet of top1
+        switch (rsReadUser) {
+          case null{
+            #err(#NotFound);
+          };
+          case (? v) {
+            switch (await transfer({ e8s = reward_format }, Option.get(v.wallets, [""])[0])) {
+              case (#Err(transfer)) {
+                #err(#NotFound);
+              };
+              case (#Ok(transfer)) {
+                #ok(());
+              };
+            };
+          };
+        }
+      }
+    }
+  };
+  public query func gameGcEngineListOfYesterday() : async Response<[?(Text, Types.MemoryCardEnginePlayer)]>{
+    var listTop : [?(Text, Types.MemoryCardEnginePlayer)] = [];
+    for((K, V) in state.games.memory_card_engine.players.entries()) {
+      if(
+        Moment.between(V.createdAt)
+      ) {
+        listTop := Array.append(listTop, [?(K, V)]);
+      }
+    };
+    #ok(listTop);
+  };
+  public query func gameGcEngineListOfDay() : async Response<[?Types.MemoryCardEnginePlayer]>{
+    var listTop : [?Types.MemoryCardEnginePlayer] = [];
+    for((K, V) in state.games.memory_card_engine.players.entries()) {
+      if(
+        Int.greater(Moment.diff(?V.createdAt), 0)
+        // Nat.lessOrEqual(Iter.size(Iter.fromArray(listTop)),10) and
+      ) {
+        listTop := Array.append(listTop, [?V]);
+      }
+    };
+    #ok(listTop);
+  };
+  public query({caller}) func gameGcEngineListAll() : async Response<[(Types.MemoryCardEnginePlayer)]>{
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };     
+    let is_admin = isAdmin(caller);
+    switch (is_admin) {
+      case (null) #err(#AdminRoleRequired);
+      case (? v) {
+        #ok(Iter.toArray(state.games.memory_card_engine.players.vals()));
+      }
+    }
   };
 }

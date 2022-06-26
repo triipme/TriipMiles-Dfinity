@@ -1,4 +1,7 @@
 import GameLayout from "@/pages/Admin/pages/Game";
+import GamesLayout from "@/pages/Admin/pages/games/Layout";
+import Memory from "@/pages/Admin/pages/games/Memory";
+import MemoryEngine from "@/pages/Admin/pages/games/MemoryEngine";
 import React, { lazy } from "react";
 import { AdminRequiredAuth, NormalRequiredAuth } from "../containers";
 const Admin = lazy(() => import("../pages/Admin/index"));
@@ -62,7 +65,21 @@ export const admin = [
               <AdminRequiredAuth>
                 <GameLayout />
               </AdminRequiredAuth>
-            )
+            ),
+            children: [
+              {
+                index: true,
+                element: <GamesLayout />
+              },
+              {
+                path: "engine",
+                element: <MemoryEngine />
+              },
+              {
+                path: "vocalbulary",
+                element: <Memory />
+              }
+            ]
           },
 
           {

@@ -81,7 +81,7 @@ function Play() {
   }
 
   if (!!!state?.lv_id) {
-    return <Navigate to="/game/magic_memory" />;
+    return <Navigate to="/game/magic-memory-language" />;
   }
   const ref = useRef(null);
   return (

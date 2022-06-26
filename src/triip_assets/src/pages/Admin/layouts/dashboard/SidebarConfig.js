@@ -38,7 +38,7 @@ const sidebarConfig = [
     icon: getIcon("arcticons:rewards")
   },
   {
-    title: "Memory Game",
+    title: "Game",
     path: "/triip-admin/dashboard/game",
     icon: getIcon("arcticons:memo-game")
   },
