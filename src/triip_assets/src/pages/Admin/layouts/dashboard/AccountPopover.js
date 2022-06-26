@@ -1,9 +1,8 @@
 import { Icon } from "@iconify/react";
 import React, { useRef, useState } from "react";
-import homeFill from "@iconify/icons-eva/home-fill";
-import personFill from "@iconify/icons-eva/person-fill";
-import settings2Fill from "@iconify/icons-eva/settings-2-fill";
-import { Link as RouterLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AuthClient } from "@dfinity/auth-client";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 // material
 import { alpha } from "@mui/material/styles";
 import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from "@mui/material";
@@ -12,30 +11,33 @@ import MenuPopover from "../../components/MenuPopover";
 //
 import account from "../../_mocks_/account";
 import { useSelector } from "react-redux";
+import { logoutUser } from '../../../../slice/user/userSlice';
 
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
-  {
-    label: "Home",
-    icon: homeFill,
-    linkTo: "/"
-  },
-  {
-    label: "Profile",
-    icon: personFill,
-    linkTo: "#"
-  },
-  {
-    label: "Settings",
-    icon: settings2Fill,
-    linkTo: "#"
-  }
+  // {
+  //   label: "Home",
+  //   icon: homeFill,
+  //   linkTo: "/"
+  // },
+  // {
+  //   label: "Profile",
+  //   icon: personFill,
+  //   linkTo: "#"
+  // },
+  // {
+  //   label: "Settings",
+  //   icon: settings2Fill,
+  //   linkTo: "#"
+  // }
 ];
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const { admin: info } = useSelector(state => state.admin.info);
@@ -45,6 +47,13 @@ export default function AccountPopover() {
   };
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleLogout = async () => {
+    const client = await AuthClient.create();
+    await client.logout();
+    dispatch(logoutUser());
+    navigate("/");
   };
 
   return (
@@ -109,7 +118,7 @@ export default function AccountPopover() {
         ))}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
-          <Button fullWidth color="inherit" variant="outlined">
+          <Button fullWidth color="inherit" variant="outlined" onClick={handleLogout}>
             Logout
           </Button>
         </Box>

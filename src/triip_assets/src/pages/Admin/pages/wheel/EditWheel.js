@@ -1,95 +1,110 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-
+import _ from "lodash";
 import "../prize/AddPrize.css";
 import "./handleLuckyWheels.css";
-
-import Table from "@mui/material/Table";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-
+import {
+  Autocomplete,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableFooter,
+  Paper,
+  Grid,
+  TextField,
+  Stack
+} from "@mui/material";
 import {
   ButtonPrimary,
   InputText
 } from "../../../../components";
 import { ERRORS } from "../../../../utils/constants";
-import NewPrizeForm from "./NewPrizeForm";
-import Prize from "./Prize";
+import { Icon } from "@iconify/react";
+import Page from "../../components/Page";
+import { Loading } from "../../../../components";
 
 function EditWheel() {
+  const { wheelId } = useParams();
   const { actor } = useSelector(state => state.user);
-  const [wheel, setWheel] = useState([]);
-  async function getWheel() {
-    try {
-      if (!!actor?.readWheel) {
-        const result = await actor.readWheel(params.wheel_id);
-        if ("ok" in result) {
-          setWheel(result.ok);
-        } else {
-          throw result.err;
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  useEffect(() => {
-    getWheel();
-  }, []);
-  const params = useParams();
-  console.log(params.wheel_id)
-  console.log(wheel.wheel_prizes)
+  const [prizes, setPrizes] = useState([]);
+  const [prizeList, setPrizeList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [wheel, setWheel] = useState();
 
-  const [prizes, setPrizes] = useState([{ 
-    prize_id: "",
-    prize_name: "",
-    percentage: "",
-    cap_per_user_per_month: "",
-    cap_per_month: "",
-    cap_per_day: ""
-    },
-  ]);
-  console.log(prizes)
-  const create = newPrize => {
-    console.log(newPrize);
+  const addPrize = () => {
+    const newPrize = {
+      prize_id: {},
+      percentage: null,
+      cap_per_user_per_month: null,
+      cap_per_month: null,
+      cap_per_day: null,
+      deleted: false
+    }
     setPrizes([...prizes, newPrize]);
   };
 
-  const remove = id => {
-    setPrizes(prizes.filter(prize => prize.prize_id != id));
+  const removePrize = index => {
+    const list = _.map(prizes, (item, i) => {
+      if (i == index) {
+        return _.merge(item, {deleted: true});
+      } else {
+        return item;
+      }
+    });
+    setPrizes(list);
   };
 
   const {
     control,
+    reset,
     handleSubmit,
     formState: { isSubmitting },
     getValues,
-  } = useForm({
-    defaultValues: {
-      name: "",
-      max_spin_times: "",
-      max_buy_spin_times: "",
-      price_of_spin: "",
-      wheel_prizes: []
-    }});
-  const [, ...prizeDataList] = prizes;
-  console.log(prizeDataList);
+  } = useForm();
 
-  const prizeList = prizeDataList.map(prize => (
-    <Prize
-      key={prize.prize_id}
-      prize={prize}
-      remove={remove}
-    />
-  ));
+  useEffect(() => {
+    const loadData = async () => {
+      let listPrizes = [];
+      let result = await actor.listPrizes();
+      if ('ok' in result) {
+        listPrizes = _.map(result.ok, item => { return {label: item.name, id: item.uuid[0]} })
+        setPrizeList(listPrizes);
+      }
+      result = await actor.readWheel(wheelId);
+      if ('ok' in result) {
+        const wheelPrizes = _.map(result.ok.wheel_prizes, prize => {
+          return {
+            prize_id: _.find(listPrizes, ['id', prize.prize_id]),
+            percentage: parseFloat(prize.percentage) * 100,
+            cap_per_user_per_month: parseInt(prize.cap_per_user_per_month),
+            cap_per_month: parseInt(prize.cap_per_month),
+            cap_per_day: parseInt(prize.cap_per_day),
+            deleted: false
+          }
+        });
+        const item = {
+          name: result.ok.name,
+          max_spin_times: parseInt(result.ok.max_spin_times),
+          max_buy_spin_times: parseInt(result.ok.max_buy_spin_times),
+          price_of_spin: parseFloat(result.ok.price_of_spin),
+          wheel_prizes: wheelPrizes
+        }
+        setWheel(item);
+        reset(item);
+        setPrizes(wheelPrizes);
+      }
+      setLoading(false);
+    }
+    loadData();
+  }, [actor, wheelId]);
 
   const wheelData = () => {
     const {
@@ -97,23 +112,33 @@ function EditWheel() {
       max_spin_times,
       max_buy_spin_times,
       price_of_spin,
+      wheel_prizes,
     } = getValues();
+
     return {
       name: name,
       max_spin_times: parseInt(max_spin_times),
       max_buy_spin_times: parseInt(max_buy_spin_times),
       price_of_spin: parseFloat(price_of_spin),
-      wheel_prizes: prizeDataList,                             
+      wheel_prizes: _.filter(wheel_prizes, (_prize, index) => !prizes[index].deleted).map(item => {
+        return {
+          prize_id: item.prize_id.id,
+          percentage: parseFloat(item.percentage) / 100,
+          cap_per_user_per_month: parseInt(item.cap_per_user_per_month),
+          cap_per_month: parseInt(item.cap_per_month),
+          cap_per_day: parseInt(item.cap_per_day)
+        }
+      }),
     };
-  };     
+  };
+
   const onSubmit = async () => {
     if (!!actor?.updateWheel) {
       try {
-        const result = await actor?.updateWheel(params.wheel_id, wheelData());
+        const result = await actor?.updateWheel(wheelId, wheelData());
         if ("ok" in result) {
           toast.success("Success !.");
         } else {
-          console.log(result);
           throw result?.err;
         }
       } catch (error) {
@@ -121,18 +146,25 @@ function EditWheel() {
           {
             "NotAuthorized": "Please sign in!.",
             "AdminRoleRequired": "Required admin role.",
-            "AlreadyExisting": "UUID is existed."
+            "AlreadyExisting": "UUID is existed.",
+            "Failed": "Total percentage is not equal 100%."
           }[Object.keys(error)[0]],
           { duration: 5000 }
         );
-        console.log(error);
       }
     } else {
       toast.error("Please sign in!.");
     }
   };
+
+  if (loading) {
+    return (
+      <Loading />
+    )
+  }
+
   return (
-    <>
+    <Page title="New Lucky Wheel | Triip Admin">
       <div className="add_lkw_content">
         <div className="form_group">
           <div style={{width: "70%",marginRight: "15px"}}>
@@ -185,10 +217,7 @@ function EditWheel() {
               <TableHead>
                 <TableRow>
                   <TableCell className="prize_table_title" align="left">
-                    PRIZE ID
-                  </TableCell>
-                  <TableCell className="prize_table_title" align="left">
-                    PRIZE NAME
+                    PRIZE
                   </TableCell>
                   <TableCell className="prize_table_title" align="left">
                     PERCENTAGE
@@ -206,25 +235,108 @@ function EditWheel() {
                   </TableCell>
                 </TableRow>
               </TableHead>
-              {prizeList}
+              {prizes.map((prize, index) => {
+                if (prize.deleted) {
+                  return;
+                }
+                return (<TableBody className="table_container" key={`table_key-${index}`}>
+                  <TableRow style={{ verticalAlign: "center"}} >
+                    <TableCell key={`prize_name-${index}`} className="table_item" align="left" style={{borderBottom:"none",width:"20%"}}>
+                      <Controller
+                        name={`wheel_prizes[${index}][prize_id]`}
+                        control={control}
+                        defaultValue={prize.prize_id}
+                        render={({ field: { onChange, value } }) => (
+                          <div className="flex-1 mb-24">
+                            <Autocomplete
+                              className="mt-8 mb-16"
+                              freeSolo
+                              options={prizeList}
+                              value={value}
+                              onChange={(_event, newValue) => {
+                                onChange(newValue);
+                              }}
+                              getOptionLabel={(option) => option.label || ""}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  placeholder="Prize"
+                                  label="Prize"
+                                  variant="outlined"
+                                />
+                              )}
+                            />
+                          </div>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell key={`percentage-${index}`} className="table_item" align="left" style={{borderBottom:"none"}}>
+                      <InputText
+                        control={control}
+                        placeHolder="Percentage"
+                        label="Percentage"
+                        name={`wheel_prizes[${index}][percentage]`}
+                        helperTextError={ERRORS}
+                      />
+                    </TableCell>
+                    <TableCell key={`cap_per_user_per_month-${index}`} className="table_item" align="left" style={{borderBottom:"none"}}>
+                      <InputText
+                        control={control}
+                        placeHolder="Cap per user per month"
+                        label="Cap per user per month"
+                        name={`wheel_prizes[${index}][cap_per_user_per_month]`}
+                        helperTextError={ERRORS}
+                      />
+                    </TableCell>
+                    <TableCell key={`cap_per_month-${index}`} className="table_item" align="left" style={{borderBottom:"none"}}>
+                      <InputText
+                        control={control}
+                        placeHolder="Cap per month"
+                        label="Cap per month"
+                        name={`wheel_prizes[${index}][cap_per_month]`}
+                        helperTextError={ERRORS}
+                      />
+                    </TableCell>
+                    <TableCell key={`cap_per_day-${index}`} className="table_item" align="left" style={{borderBottom:"none"}}>
+                      <InputText
+                        control={control}
+                        placeHolder="Cap per day"
+                        label="Cap per day"
+                        name={`wheel_prizes[${index}][cap_per_day]`}
+                        helperTextError={ERRORS}
+                      />
+                    </TableCell>
+                    <TableCell key={`delete_btn-${index}`} className="table_item" align="left" style={{borderBottom:"none"}}>
+                      <button style={{ margin:"0", backgroundColor:"#ed2e6ed4", color:"#fff" }} className="btn" onClick={() => removePrize(index)} >
+                        <Icon style={{ fontSize:"18px" }} icon="ep:delete" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>)
+              })}
+              <TableFooter>
+                <TableRow>
+                  <TableCell>
+                    <Button variant="contained" onClick={addPrize}>Add Prize</Button>
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
             </Table>
           </Grid>
         </TableContainer>
-        <div style={{marginTop:"2%"}}>
-          <NewPrizeForm createPrize={create} />
-        </div>
         <div className="form_button">
-          <div>
+          <Stack direction="row" spacing={2}>
+            <Button variant="contained" href="/triip-admin/dashboard/wheels" color="inherit">Cancel</Button>
             <ButtonPrimary
               loading={isSubmitting}
               sx={{ mt: 2 }}
               title="Submit"
               onClick={handleSubmit(onSubmit)}
             />
-          </div>      
+          </Stack>
         </div>
       </div>
-    </>
+    </Page>
   );
 }
 

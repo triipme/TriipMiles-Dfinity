@@ -10,6 +10,10 @@ const initialState = {
   remainingSpinTimes: 0,
 };
 
+export const logoutUser = () => async (dispatch, _getState) => {
+  return dispatch(resetUser());
+};
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -31,7 +35,8 @@ export const userSlice = createSlice({
         ...state,
         actor: action.payload
       };
-    }
+    },
+    resetUser: (_state, _action) => initialState,
   },
   extraReducers: builder => {
     builder
@@ -62,5 +67,5 @@ export const userSlice = createSlice({
   }
 });
 
-export const { login, actorMain, profile } = userSlice.actions;
+export const { login, actorMain, profile, resetUser } = userSlice.actions;
 export default userSlice.reducer;

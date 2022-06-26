@@ -16,6 +16,7 @@ import Grid from "@mui/material/Grid";
 import Page from "../../components/Page";
 import "./Prize.css";
 import AddPrizeBtn from "./AddPrizeBtn";
+import NumberFormat from 'react-number-format';
 
 const PrizeList = () => {
   const [prizeList, setPrizeList] = useState([]);
@@ -79,11 +80,9 @@ const PrizeList = () => {
               </TableHead>
               {/* Table Content Item */}
 
-              <TableBody className="table_container">
-                {prizeList?.map((prize, _key) => (
-                  <RenderPrize prize={prize} />
-                ))}
-              </TableBody>
+              {prizeList?.map((prize, key) => (
+                <RenderPrize prize={prize} key={key} />
+              ))}
             </Table>
           </Grid>
         </TableContainer>
@@ -94,46 +93,51 @@ const PrizeList = () => {
 
 const RenderPrize = ({ prize }) => {
   return (
-    <TableRow key={prize?.uuid} style={{ verticalAlign: "center" }}>
-      <TableCell key={`uuid-${prize?.uuid}`} className="table_item" align="left">
-        {prize?.uuid}
-      </TableCell>
-      <TableCell key={`name-${prize?.uuid}`} className="table_item" align="left">
-        <p className="locale_en" >
-          {prize?.name}
-        </p>
-      </TableCell>
-      <TableCell key={`icon-${prize?.uuid}`} className="table_item" align="left">
-        <div style={{ maxWidth: "108px" }}>
-          <img
-            style={{ width: "85px" }}
-            src={prize?.icon}
-            alt="img"
+    <TableBody className="table_container">
+      <TableRow key={prize?.uuid} style={{ verticalAlign: "center" }}>
+        <TableCell key={`uuid-${prize?.uuid}`} className="table_item" align="left">
+          {prize?.uuid}
+        </TableCell>
+        <TableCell key={`name-${prize?.uuid}`} className="table_item" align="left">
+          <p className="locale_en" >
+            {prize?.name}
+          </p>
+        </TableCell>
+        <TableCell key={`icon-${prize?.uuid}`} className="table_item" align="left">
+          <div style={{ maxWidth: "108px" }}>
+            <img
+              style={{ width: "85px" }}
+              src={prize?.icon}
+              alt="img"
+            />
+          </div>
+        </TableCell>
+        <TableCell key={`quantity-${prize?.uuid}`} className="table_item" align="left">
+          <NumberFormat
+            value={prize?.quantity} displayType={'text'}
+            thousandSeparator={true}
           />
-        </div>
-      </TableCell>
-      <TableCell key={`quantity-${prize?.uuid}`} className="table_item" align="left">
-        {prize?.quantity}
-      </TableCell>
-      <TableCell key={`desc-${prize?.uuid}`} className="table_item" align="left">
-        {prize?.description}
-      </TableCell>
-      <TableCell key={`date-${prize?.uuid}`} className="table_item" align="left">
-        {moment.unix(parseInt(prize?.created_at[0] / BigInt(1e9))).format("LL")}
-      </TableCell>
-      <TableCell key={`actions-${prize?.uuid}`} className="table_item" align="left">
-        <Link to={`/triip-admin/dashboard/prizes/edit/${prize?.uuid}`} title="Edit Prize">
-          <button className="btn_actions btn_edit">
-            <Icon icon="clarity:note-edit-line" />
-          </button>
-        </Link>
-        <a href="#">
-          <button className="btn_actions btn_delete">
-            <Icon icon="ep:delete" />
-          </button>
-        </a>
-      </TableCell>
-    </TableRow>
+        </TableCell>
+        <TableCell key={`desc-${prize?.uuid}`} className="table_item" align="left">
+          {prize?.description}
+        </TableCell>
+        <TableCell key={`date-${prize?.uuid}`} className="table_item" align="left">
+          {moment.unix(parseInt(prize?.created_at[0] / BigInt(1e9))).format("LL")}
+        </TableCell>
+        <TableCell key={`actions-${prize?.uuid}`} className="table_item" align="left">
+          <Link to={`/triip-admin/dashboard/prizes/edit/${prize?.uuid}`} title="Edit Prize">
+            <button className="btn_actions btn_edit">
+              <Icon icon="clarity:note-edit-line" />
+            </button>
+          </Link>
+          <a href="#">
+            <button className="btn_actions btn_delete">
+              <Icon icon="ep:delete" />
+            </button>
+          </a>
+        </TableCell>
+      </TableRow>
+    </TableBody>
   )
 };
 

@@ -96,7 +96,7 @@ export const admin = [
             )
           },
           {
-            path: "prizes/edit/:prize_id",
+            path: "prizes/edit/:prizeId",
             element: (
               <AdminRequiredAuth>
                 <EditPrize />
@@ -120,7 +120,7 @@ export const admin = [
             )
           },
           {
-            path: "wheels/edit/:wheel_id",
+            path: "wheels/edit/:wheelId",
             element: (
               <AdminRequiredAuth>
                 <EditWheel />

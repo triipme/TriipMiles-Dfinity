@@ -973,16 +973,12 @@ shared({caller = owner}) actor class Triip() = this {
   };
 
   // Lucky Wheel
-  // public func test() : async Response<?Types.LuckyWheel> {}
-  public shared({caller}) func checkTotalPercent(wheel : Types.LuckyWheel) : async Float {
-    if(Principal.toText(caller) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
+  func totalPercentage(wheelPrizes : [Types.LuckyWheelPrize]) : Float {
+    var total : Float = 0;
+    for(V in wheelPrizes.vals()) {
+      total += V.percentage;
     };
-    var total_percent : Float = 0;
-    for(V in wheel.wheel_prizes.vals()) {
-      total_percent += V.percentage;
-    };
-    return total_percent;
+    return total;
   }; 
 
   public shared({caller}) func createWheel(wheel : Types.LuckyWheelUpdate) : async Response<Text> {
@@ -1011,9 +1007,7 @@ shared({caller = owner}) actor class Triip() = this {
           activated_at = 0;
           wheel_prizes = wheel.wheel_prizes;
         };
-        let total_percent = await checkTotalPercent(new_wheel);
-        Debug.print(debug_show(total_percent));
-        if(total_percent <= 1) {
+        if(totalPercentage(wheel.wheel_prizes) == 1) {
           let updated_wheel = state.wheels.put(uuid, new_wheel);
           #ok(("success"));
         } else {
@@ -1056,23 +1050,21 @@ shared({caller = owner}) actor class Triip() = this {
     if(isAdmin(caller) == null) {
       return #err(#AdminRoleRequired);
     };
-    let read_wheel = state.wheels.get(uuid);
-    switch (read_wheel) {
-      case (? V) {
+    switch (state.wheels.get(uuid)) {
+      case (? readWheel) {
         let new_wheel : Types.LuckyWheel = {
           uuid = ?uuid;
           name = wheel.name;
           max_spin_times = wheel.max_spin_times;
           max_buy_spin_times = wheel.max_buy_spin_times;
           price_of_spin = wheel.price_of_spin;
-          created_at = V.created_at;
+          created_at = readWheel.created_at;
           updated_at = ?Time.now();
-          activate = false;
-          activated_at = 0;
+          activate = readWheel.activate;
+          activated_at = readWheel.activated_at;
           wheel_prizes = wheel.wheel_prizes;
         };
-        let total_percent = await checkTotalPercent(new_wheel);
-        if(total_percent <= 1) {
+        if(totalPercentage(wheel.wheel_prizes) == 1) {
           let updated_wheel = state.wheels.replace(uuid, new_wheel);
           #ok(("success"));
         } else {
@@ -1417,6 +1409,37 @@ shared({caller = owner}) actor class Triip() = this {
     };
     
   };
+
+  // Admin Spin Result
+  public shared query({caller}) func listAdminSpinResults() : async Response<[Types.SpinResultSerializer]>{
+    var list : [Types.SpinResultSerializer] = [];
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    if(isAdmin(caller) == null) {
+      return #err(#AdminRoleRequired);
+    };
+    for((id, result) in state.spinresults.entries()) {
+      let prize = state.prizes.get(Option.get(result.prize_id, ""));
+      let icon = switch (prize) {
+        case null { "https://triip.imgix.net/triipme/prize/icon/12/triipmiles.jpg"; };
+        case (? prize) { prize.icon; };
+      };
+      let result_serializer : Types.SpinResultSerializer = {
+        uuid = id;
+        username = ?result.uid;
+        prize_name = result.prize_name;
+        icon = icon;
+        remark = result.remark;
+        state = result.state;
+        created_at = result.created_at;
+        updated_at = result.updated_at;
+      };
+      list := Array.append<Types.SpinResultSerializer>(list, [result_serializer]);
+    };
+    #ok((list));
+  };
+
   /* MemoryCard */
   //Adding a level to the memory card game.
   public shared({caller}) func gameGcAddLevel() : async Response<()>{
