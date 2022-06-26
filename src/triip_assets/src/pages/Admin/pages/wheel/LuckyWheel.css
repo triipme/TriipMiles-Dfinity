@@ -1,0 +1,89 @@
+.prizes_content {
+  padding-bottom: 30px;
+}
+.prizes_container {
+  border: none;
+}
+.luckywheel_wrapper {
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  background-color: #fff;
+  padding: 20px;
+  transition: all 1s;
+  border-radius: 5px;
+}
+
+.luckywheel_header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  color: #626262;
+  position: relative;
+}
+
+.luckywheel_title {
+  font-size: 10.5px;
+  font-weight: 500;
+}
+
+.luckywheel_control {
+}
+.active_wheels {
+  margin-bottom: 22px;
+}
+
+.active_wheels p {
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.luckywheel_control_arrow {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  cursor: pointer;
+}
+
+.footter_edit {
+  margin-top: 20px;
+  display: flex;
+}
+.btn_edit_lkw {
+  color: #fff;
+  background-color: #6d5cae;
+  border-color: #6d5cae;
+  font-size: 16px;
+}
+
+.luckywheel_content_inactive {
+  padding: 20px;
+}
+.luckywheel_infor {
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.btn_activate {
+  color: #fff;
+  background-color: #6d5cae;
+  border-color: #6d5cae;
+  font-size: 16px;
+  line-height: 21px;
+}
+.btn_activate:hover {
+  background-color: #796cab;
+  border-color: #796cab;
+  color: #fff;
+}
+.luckywheel_infor {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.table_containe {
+  line-height: 20px;
+}
+
+.btn_deactivate {
+  margin-left: 5px;
+  color: #fff;
+  background-color: #6d5cae;
+  border-color: #6d5cae;
+}

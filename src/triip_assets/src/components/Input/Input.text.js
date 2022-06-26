@@ -30,15 +30,11 @@ const InputText = ({
             <Autocomplete
               disablePortal
               options={autocompleteOptions ?? []}
-              onInputChange={(evt, newValue) => onChange(newValue)}
-              inputValue={value}
-              value={value}
+              onChange={(_evt, newValue) => onChange(newValue)}
               renderInput={params => (
                 <TextFieldStyled
                   {...params}
                   placeholder={placeHolder}
-                  name={name}
-                  value={value}
                   label={label}
                   type="text"
                   error={!!error}

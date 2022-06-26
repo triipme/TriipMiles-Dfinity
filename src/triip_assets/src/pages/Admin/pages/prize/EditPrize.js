@@ -1,224 +1,157 @@
 import React from "react";
-import { useState } from "react";
-import AddPrizesButton from "./AddPrizesButton";
-import "./AddPrizes.css";
-function EditPrize() {
-  const LocaleForm = (index) => {
-    return (
-      <>
-        <div className="form_add-locale">
-          <div className="form_locale">
-            <label htmlFor="">LOCALE</label>
-            <select
-              className="form-control select required"
-              id="prize_add_locale"
-            >
-              <option value=""></option>
-              <option value="en">en</option>
-              <option value="vi">vi</option>
-            </select>
-          </div>
-          <div className="form_locale">
-            <label htmlFor="">TITLE</label>
-            <input type="text" />
-          </div>
-          <div className="form_locale">
-            <label htmlFor="">DESCRIPTION</label>
-            <input type="text" className="form_locale-decs" />
-          </div>
-          <div className="align_center">
-            <button
-              className="btn btn_remove"
-              onClick={() => handleRemove(index)}
-            >
-              Remove
-            </button>
-          </div>
-        </div>
-      </>
-    );
-  };
-  const [addLocale, setAddLocale] = useState([]);
-  const handleAddLocale = () => {
-    setAddLocale([...addLocale, <LocaleForm />]);
-  };
-  const handleRemove = (e) => {
-    const newLocale = [...addLocale];
-    newLocale.splice(e, 1);
-    setAddLocale(newLocale);
-    console.log(e);
-  };
-  //   Remove element
-  const handleRemoveChild = () => {
-    const alreadyLocale = document.querySelector("#index1");
-    alreadyLocale.remove();
-  };
-  const handleRemoveChild1 = () => {
-    const alreadyLocale = document.querySelector("#index2");
-    alreadyLocale.remove();
-  };
-  return (
-    <>
-      <div className="wrapper">
-        <AddPrizesButton />
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { Loading } from "../../../../components";
+import Page from "../../components/Page";
+import {
+  ButtonPrimary,
+  InputText
+} from "../../../../components";
+import { ERRORS } from "../../../../utils/constants";
+import AddPrizeBtn from "./AddPrizeBtn";
+import "./AddPrize.css";
 
-        <div className="content">
-          <div className="content_edit_prize">
-            <div className="edit_prize_form">
-              <div className="form_group">
-                <label htmlFor="">
-                  <abbr title="required">*</abbr> CLASS NAME
-                </label>
-                <select
-                  className="form-control select required"
-                  name="prize[class_name]"
-                  id="prize_class_name"
-                  value="PrizeService::SaveYourOcean"
-                >
-                  <option value=""></option>
-                  <option value="PrizeService::Wasted">
-                    PrizeService::Wasted
-                  </option>
-                  <option value="PrizeService::ExtraSpin">
-                    PrizeService::ExtraSpin
-                  </option>
-                  <option value="PrizeService::TriipCredit">
-                    PrizeService::TriipCredit
-                  </option>
-                  <option value="PrizeService::DiscountVoucherPercentage">
-                    PrizeService::DiscountVoucherPercentage
-                  </option>
-                  <option value="PrizeService::FreeStaycation">
-                    PrizeService::FreeStaycation
-                  </option>
-                  <option value="PrizeService::SaveYourOcean">
-                    PrizeService::SaveYourOcean
-                  </option>
-                </select>
+function EditPrize() {
+  const prizeTypes = ["Wasted", "ExtraSpin", "TriipCredit"];
+  const { prizeId } = useParams();
+  const [loading, setLoading] = useState(true);
+  const { actor } = useSelector(state => state.user);
+  const [prize, setPrize] = useState({});
+
+  const {
+    control,
+    reset,
+    handleSubmit,
+    getValues,
+    formState: { isSubmitting }
+  } = useForm();
+
+  useEffect(() => {
+    const getPrize = async () => {
+      const result = await actor.readPrize(prizeId);
+      setLoading(false);
+      if ('ok' in result) {
+        setPrize(result.ok);
+      }
+    };
+    getPrize();
+  }, [actor, prizeId]);
+
+  useEffect(() => reset(prize), [reset, prize]);
+
+  const prizeData = () => {
+    const {
+      prize_type,
+      name,
+      quantity,
+      icon,
+      description
+    } = getValues();
+    return {
+      uuid: [prizeId],
+      prize_type: prize_type,
+      name: name,
+      quantity: parseFloat(quantity),
+      icon: icon,
+      description: description,
+      created_at: [0]
+    };
+  };
+
+  const onSubmit = async () => {
+    if (!!actor?.updatePrize) {
+      try {
+        const result = await actor?.updatePrize(prizeId, prizeData());
+        if ("ok" in result) {
+          toast.success("Success !.");
+        } else {
+          console.log(result);
+          throw result?.err;
+        }
+      } catch (error) {
+        toast.error(
+          {
+            "NotAuthorized": "Please sign in!.",
+            "AdminRoleRequired": "Required admin role.",
+            "NotFound": "Prize is not found."
+          }[Object.keys(error)[0]],
+          { duration: 5000 }
+        );
+        console.log(error);
+      }
+    } else {
+      toast.error("Please sign in!.");
+    }
+  };
+
+  return (
+    <Page title="Edit Prize | Triip Admin">
+      {loading ? (<Loading />) :
+        (
+        <div className="wrapper">
+          <AddPrizeBtn />
+          <div className="content">
+            <InputText
+              control={control}
+              placeHolder="Prize Type"
+              label="Prize Type"
+              name="prize_type"
+              helperTextError={ERRORS}
+              autocompleteOptions={prizeTypes}
+            />
+            <InputText
+              control={control}
+              placeHolder="Name"
+              label="Prize Name"
+              name="name"
+              helperTextError={ERRORS}
+            />
+            <InputText
+              control={control}
+              placeHolder="Description"
+              label="Prize Description"
+              name="description"
+              helperTextError={ERRORS}
+            />
+            <InputText
+              control={control}
+              placeHolder="Quantity"
+              label="Quantity"
+              name="quantity"
+              helperTextError={ERRORS}
+            />
+            <InputText
+              control={control}
+              placeHolder="Icon"
+              label="Prize Icon"
+              name="icon"
+              helperTextError={ERRORS}
+            />
+            <img
+              className="prize_edit-img"
+              src={prize.icon}
+              // "https://triip-staging.imgix.net/triipme/staging/prize/icon/38/Asset_1.png"
+              alt={prize.name}
+            />
+            <div className="footer_form">
+              <div>
+                <div>
+                  <ButtonPrimary
+                    loading={isSubmitting}
+                    sx={{ mt: 2 }}
+                    title="Save"
+                    onClick={handleSubmit(onSubmit)}
+                  />
+                </div>
               </div>
-              <div className="form_group">
-                <label
-                  class="control-label integer optional"
-                  htmlFor="prize_quantity"
-                >
-                  QUANTITY
-                </label>
-                <input
-                  className="form-control numeric integer optional"
-                  type="number"
-                  step="1"
-                  name="prize[quantity]"
-                  id="prize_quantity"
-                  value="1"
-                />
-              </div>
-              <div className="form_group">
-                <label>Prize Icon</label>
-              </div>
-              <div className="form_group">
-                <input
-                  className="photo_upload"
-                  type="file"
-                  name="prize[icon]"
-                  id="prize_icon"
-                />
-              </div>
-            </div>
-            <div className="edit_prize_img">
-              <img
-                className="prize_edit-img"
-                src="https://triip-staging.imgix.net/triipme/staging/prize/icon/38/Asset_1.png"
-                alt="T-Shirt"
-              />
-            </div>
-          </div>
-          <div className="form_add-locale" id="index1">
-            <div className="form_locale">
-              <label htmlFor="">LOCALE</label>
-              <select
-                className="form-control select required"
-                id="prize_add_locale"
-                value="en"
-              >
-                <option value=""></option>
-                <option value="en">en</option>
-                <option value="vi">vi</option>
-              </select>
-            </div>
-            <div className="form_locale">
-              <label htmlFor="">TITLE</label>
-              <input type="text" value="Triip T-Shirt" />
-            </div>
-            <div className="form_locale">
-              <label htmlFor="">DESCRIPTION</label>
-              <input
-                type="text"
-                className="form_locale-decs"
-                value="You got a Triip T-Shirt"
-              />
-            </div>
-            <div className="align_center">
-              <button
-                className="btn btn_remove"
-                onClick={() => handleRemoveChild()}
-              >
-                Remove
-              </button>
-            </div>
-          </div>
-          <div className="form_add-locale" id="index2">
-            <div className="form_locale">
-              <label htmlFor="">LOCALE</label>
-              <select
-                className="form-control select required"
-                id="prize_add_locale"
-                value="vi"
-              >
-                <option value=""></option>
-                <option value="en">en</option>
-                <option value="vi">vi</option>
-              </select>
-            </div>
-            <div className="form_locale">
-              <label htmlFor="">TITLE</label>
-              <input type="text" value="Triip T-Shirt" />
-            </div>
-            <div className="form_locale">
-              <label htmlFor="">DESCRIPTION</label>
-              <input
-                type="text"
-                className="form_locale-decs"
-                value="You got a Triip T-Shirt"
-              />
-            </div>
-            <div className="align_center">
-              <button
-                className="btn btn_remove"
-                onClick={() => handleRemoveChild1()}
-              >
-                Remove
-              </button>
-            </div>
-          </div>
-          {addLocale.map((locale, index) => (
-            <div className="form_add-locale-content" key={index}>
-              {locale}
-            </div>
-          ))}
-          <div className="footer_form">
-            <div>
-              <button className="btn btn_add-locale" onClick={handleAddLocale}>
-                Add Locale
-              </button>
-            </div>
-            <div>
-              <button className="btn btn_submit">Submit</button>
-              <button className="btn btn_cancel">Cancel</button>
             </div>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </Page>
   );
 }
 export default EditPrize;

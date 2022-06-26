@@ -128,9 +128,13 @@ module {
 
   public type SpinResultSerializer = {
     uuid : Text;
+    username : ?Text;
     prize_name : Text;
     icon : Text;
     remark : ?Text;
+    state: Text;
+    created_at: Int;
+    updated_at: ?Int;
   };
 
   /* ------------------------- Transaction ---------------------- */

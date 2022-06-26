@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import "./AddPrize.css";
@@ -15,6 +16,7 @@ import { ERRORS } from "../../../../utils/constants";
 
 const PrizeForm = () => {
   const { actor } = useSelector(state => state.user);
+  const navigate = useNavigate();
   const prizeTypes = ["Wasted", "ExtraSpin", "TriipCredit"];
   const {
     control,
@@ -56,6 +58,7 @@ const PrizeForm = () => {
         const result = await actor?.createPrize(prizeData());
         if ("ok" in result) {
           toast.success("Success !.");
+          navigate('/triip-admin/dashboard/prizes')
         } else {
           console.log(result);
           throw result?.err;

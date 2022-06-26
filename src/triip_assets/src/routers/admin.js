@@ -13,6 +13,11 @@ const Login = lazy(() => import("../pages/Admin/pages/Login"));
 const Register = lazy(() => import("../pages/Admin/pages/Register"));
 const PrizeList = lazy(() => import("../pages/Admin/pages/prize/PrizeList"));
 const PrizeForm = lazy(() => import("../pages/Admin/pages/prize/Form"));
+const EditPrize = lazy(() => import("../pages/Admin/pages/prize/EditPrize"));
+const WheelList = lazy(() => import("../pages/Admin/pages/wheel/WheelList"));
+const WheelForm = lazy(() => import("../pages/Admin/pages/wheel/Form"));
+const EditWheel = lazy(() => import("../pages/Admin/pages/wheel/EditWheel"));
+const SpinResultList = lazy(() => import("../pages/Admin/pages/spinResult/SpinResultList"));
 const Transactions = lazy(() => import("../pages/Admin/pages/transactions/List"));
 
 export const admin = [
@@ -104,6 +109,46 @@ export const admin = [
             element: (
               <AdminRequiredAuth>
                 <PrizeForm />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "prizes/edit/:prizeId",
+            element: (
+              <AdminRequiredAuth>
+                <EditPrize />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "wheels",
+            element: (
+              <AdminRequiredAuth>
+                <WheelList />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "wheels/new",
+            element: (
+              <AdminRequiredAuth>
+                <WheelForm />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "wheels/edit/:wheelId",
+            element: (
+              <AdminRequiredAuth>
+                <EditWheel />
+              </AdminRequiredAuth>
+            )
+          },
+          {
+            path: "spinresults",
+            element: (
+              <AdminRequiredAuth>
+                <SpinResultList />
               </AdminRequiredAuth>
             )
           },
