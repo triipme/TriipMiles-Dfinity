@@ -66,7 +66,6 @@ const NavBar = () => {
     // Read Profile
     if (!!actor.read) {
       actor?.read().then(rs => {
-        console.log("profile", rs);
         if ("ok" in rs) {
           // setProfile(rs.ok[0]);
           dispatch(profile({ ...rs?.ok[0], _id: rs?.ok[1] }));

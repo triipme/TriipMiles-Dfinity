@@ -63,13 +63,21 @@ const Account = props => {
   };
   return (
     <div>
-      <Stack flexDirection="row" justifyContent="space-between" marginBottom={5}>
-        <Typography variant="h3">Accounts</Typography>
+      <Stack
+        flexDirection={{ md: "row", xs: "column" }}
+        justifyContent="space-between"
+        marginBottom={{ xs: 2, md: 5 }}>
+        <Box>
+          <Typography variant="h3">Accounts</Typography>
+          <Typography variant="subtitle2" textOverflow="ellipsis" noWrap>
+            ID: {profileData._id}
+          </Typography>
+        </Box>
         <Stack flexDirection="row" alignItems="center">
           {/* <Box>
             <ButtonPrimary onClick={() => setIsOpen(!isOpen)} title="New Transaction" />
           </Box> */}
-          <Box ml={1}>
+          <Box ml={{ xs: 0, md: 1 }} my={{ xs: 2, md: 0 }}>
             <ButtonPrimary
               onClick={() => setIsOpenLink(!isOpenLink)}
               title={profileData?.wallets?.at(0) ? "Change wallet" : "Link a new wallet"}

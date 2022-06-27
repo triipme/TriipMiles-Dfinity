@@ -1475,6 +1475,23 @@ shared({caller = owner}) actor class Triip() = this {
       };
     };
   };
+  public shared({caller}) func gameGCUpdateLevel() : async Response<()>{
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    let is_admin = isAdmin(caller);
+    switch (is_admin) {
+      case (null) #err(#AdminRoleRequired);
+      case (? v) {
+        let levels = await MemoryCardController.initLevels();
+        let keysOldLevel = state.games.memory_card.levels.keys();
+        for ((K, V) in Iter.fromArray(levels)) {
+          let rs = state.games.memory_card.levels.replace(Option.get(keysOldLevel.next(), ""), V)
+        };
+        #ok(());
+      };
+    };
+  };
   public query func gameGcGetLevel(key : Text) : async Response<Types.MemoryCardLevel>{
     let level : ?Types.MemoryCardLevel = state.games.memory_card.levels.get(key);
     switch (level) {
@@ -1766,7 +1783,7 @@ shared({caller = owner}) actor class Triip() = this {
     for((K, V) in state.games.memory_card_engine.players.entries()) {
       if(
         Int.greater(Moment.diff(?V.createdAt), 0)
-        // Nat.lessOrEqual(Iter.size(Iter.fromArray(listTop)),10) and
+        // Nat.lessOrEqual(Iter.size(Iter.fromArray(listTop)),10)
       ) {
         listTop := Array.append(listTop, [?V]);
       }
