@@ -26,7 +26,9 @@ const MCEngineTop = () => {
     initialEffect();
   }, []);
   const handlePlay = () => {
-    navigate("/game/magic-memory-photo/play", { state: { player_id: player?.[0]?.[0] } });
+    navigate("/game/magic-memory-photo/play", {
+      state: { player_id: player?.[0]?.[0], onClick: true }
+    });
   };
   const rows = useMemo(() => {
     return list
@@ -155,7 +157,7 @@ const MCEngineTop = () => {
           />
         </Box>
         <ButtonPrimary
-          disabled={!!player?.[0]?.[0]}
+          disabled={player ? !!player?.[0]?.[0] : true}
           title={`Play`}
           sx={{ width: 100, mt: 3 }}
           onClick={handlePlay}

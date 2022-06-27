@@ -192,7 +192,6 @@ const TopOfYesterday = () => {
       if (!!actor?.gameGcEngineCheckReward) {
         const rs = await actor.gameGcEngineCheckReward(id);
         if ("ok" in rs) {
-          console.log("check", rs.ok);
           setDisableReward(!!rs.ok[0]);
         }
       }

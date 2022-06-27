@@ -57,7 +57,7 @@ const ListAll = () => {
       { field: "col2", headerName: "Total turn" },
       { field: "col3", headerName: "Total time(s)" },
       { field: "col4" },
-      { field: "col5", headerName: "CreatedAt", width: 200 },
+      { field: "col5", headerName: "Level", width: 200 },
       { field: "col6", headerName: "CreatedAt", width: 200 },
       { field: "col7", headerName: "UpdatedAt", width: 200 }
     ],
@@ -103,7 +103,6 @@ const ListOfDay = () => {
       console.log(error);
     }
   }
-  console.log(list);
   useEffect(() => {
     initialEffect();
   }, []);

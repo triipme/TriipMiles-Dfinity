@@ -1541,7 +1541,7 @@ shared({caller = owner}) actor class Triip() = this {
     var listTop : [?(Text,Types.MemoryCardPlayer)] = [];
     for((K, V) in state.games.memory_card.players.entries()) {
       if(
-        Moment.between(V.createdAt) and
+        Moment.yesterday(V.createdAt) and
         Iter.size(Iter.fromArray(V.history)) == 3
       ) {
         listTop := Array.append(listTop, [?(K, V)]);
@@ -1620,21 +1620,24 @@ shared({caller = owner}) actor class Triip() = this {
     };
     state.games.memory_card_engine.players.put(uuid, player);
   };
-  public query({caller}) func gameGcEngineGetPlayer() : async ?(Text, Types.MemoryCardEnginePlayer) {
-    if(Principal.toText(caller) == "2vxsx-fae") {
-      throw Error.reject("NotAuthorized");  //isNotAuthorized
-    };
+  private func gameGcEngineGetPlayer_(uid : Principal) : async ?(Text, Types.MemoryCardEnginePlayer) {
     let players = state.games.memory_card_engine.players.entries();
     var p : ?(Text, Types.MemoryCardEnginePlayer) = null;
     for((K, player) in players) {
       if(
         Int.greater(Moment.diff(?player.createdAt), 0) and
-        Principal.equal(player.uid, caller)
+        Principal.equal(player.uid, uid)
       ) {
         p := ?(K, player);
       }
     };
     return p;
+  };
+  public shared({caller}) func gameGcEngineGetPlayer() : async ?(Text, Types.MemoryCardEnginePlayer) {
+    if(Principal.toText(caller) == "2vxsx-fae") {
+      throw Error.reject("NotAuthorized");  //isNotAuthorized
+    };
+    return await gameGcEngineGetPlayer_(caller);
   };
   public shared({caller = uid}) func gameGcEngineSetPlayer({
     turn : Nat; 
@@ -1643,8 +1646,15 @@ shared({caller = owner}) actor class Triip() = this {
     if(Principal.toText(uid) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
-    await gameGcEnginePutPlayer(uid, turn, timing_play);
-    #ok(());
+    switch(await gameGcEngineGetPlayer_(uid)){
+      case null {
+        await gameGcEnginePutPlayer(uid, turn, timing_play);
+        #ok(());
+      };
+      case (? v) {
+        #err(#AlreadyExisting);
+      }
+    }
   };
   public func gameGcEngineCheckReward(id : Text) : async Response<?Types.MemoryCardEngineReward>{
     #ok(state.games.memory_card_engine.rewards.get(id));
@@ -1690,7 +1700,7 @@ shared({caller = owner}) actor class Triip() = this {
     var listTop : [?(Text, Types.MemoryCardEnginePlayer)] = [];
     for((K, V) in state.games.memory_card_engine.players.entries()) {
       if(
-        Moment.between(V.createdAt)
+        Moment.yesterday(V.createdAt)
       ) {
         listTop := Array.append(listTop, [?(K, V)]);
       }
