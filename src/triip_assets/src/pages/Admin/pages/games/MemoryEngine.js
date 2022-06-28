@@ -269,9 +269,9 @@ function compare(a, b) {
     const sum_time = array.timing_play;
     return sum_turn + sum_time;
   };
-  if (score(a[0][0][1]) < score(b[0][0][1])) {
+  if (score(a[0][1]) < score(b[0][1])) {
     return -1;
-  } else if (score(a[0][0][1]) > score(b[0][0][1])) {
+  } else if (score(a[0][1]) > score(b[0][1])) {
     return 1;
   } else {
     return 0;
