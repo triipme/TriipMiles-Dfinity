@@ -24,7 +24,6 @@ module Moment {
     Time.now()
   };
   public func yesterday(current : Int) : Bool {
-    Debug.print(debug_show(beginningOfYesterday(),current,beginningOfDay()));
     Int.less(beginningOfYesterday(),current) and Int.less(current,beginningOfDay())
   };
   public func diff(day : ?Int) : Int {

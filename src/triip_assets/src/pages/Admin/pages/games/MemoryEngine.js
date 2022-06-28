@@ -105,17 +105,19 @@ const ListOfDay = () => {
     initialEffect();
   }, []);
   const rows = useMemo(() => {
-    return list?.map((l, l_i) => {
-      const col2 = parseInt(l[0].turn);
-      const col3 = l[0].timing_play;
-      return {
-        id: l_i,
-        col1: String(l[0].uid),
-        col2,
-        col3,
-        col4: col2 + col3
-      };
-    });
+    return list
+      ?.map((l, l_i) => {
+        const col2 = parseInt(l[0].turn);
+        const col3 = l[0].timing_play;
+        return {
+          col1: String(l[0].uid),
+          col2,
+          col3,
+          col4: col2 + col3
+        };
+      })
+      .sort((a, b) => a.col4 - b.col4)
+      .map((row, id) => ({ ...row, id }));
   }, [list]);
   const max = useMemo(() => {
     if (rows?.length > 1) {
@@ -155,9 +157,6 @@ const ListOfDay = () => {
               columnVisibilityModel: {
                 col4: false
               }
-            },
-            sorting: {
-              sortModel: [{ field: "col4", sort: "asc" }]
             }
           }}
         />
@@ -231,7 +230,7 @@ const TopOfYesterday = () => {
         {String(top?.[1]?.uid ?? "No one")}
       </Typography>
       <Typography variant="h4" align="center">
-        total turn {top?.[1]?.turn ?? 0}
+        total turn {parseInt(top?.[1]?.turn) ?? 0}
       </Typography>
       <Typography variant="h4" align="center">
         total time {top?.[1]?.timing_play ?? 0}
