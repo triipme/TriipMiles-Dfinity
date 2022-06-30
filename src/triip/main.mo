@@ -1620,7 +1620,7 @@ shared({caller = owner}) actor class Triip() = this {
     };
     state.games.memory_card_engine.players.put(uuid, player);
   };
-  private func gameGcEngineGetPlayer_(uid : Principal) : async ?(Text, Types.MemoryCardEnginePlayer) {
+  private func gameGcEngineGetPlayer_(uid : Principal) : ?(Text, Types.MemoryCardEnginePlayer) {
     let players = state.games.memory_card_engine.players.entries();
     var p : ?(Text, Types.MemoryCardEnginePlayer) = null;
     for((K, player) in players) {
@@ -1633,11 +1633,11 @@ shared({caller = owner}) actor class Triip() = this {
     };
     return p;
   };
-  public shared({caller}) func gameGcEngineGetPlayer() : async ?(Text, Types.MemoryCardEnginePlayer) {
+  public query({caller}) func gameGcEngineGetPlayer() : async ?(Text, Types.MemoryCardEnginePlayer) {
     if(Principal.toText(caller) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
-    return await gameGcEngineGetPlayer_(caller);
+    return gameGcEngineGetPlayer_(caller);
   };
   public shared({caller = uid}) func gameGcEngineSetPlayer({
     turn : Nat; 
@@ -1646,7 +1646,7 @@ shared({caller = owner}) actor class Triip() = this {
     if(Principal.toText(uid) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
-    switch(await gameGcEngineGetPlayer_(uid)){
+    switch(gameGcEngineGetPlayer_(uid)){
       case null {
         await gameGcEnginePutPlayer(uid, turn, timing_play);
         #ok(());
