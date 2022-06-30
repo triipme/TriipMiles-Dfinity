@@ -57,7 +57,7 @@ const ListAll = () => {
       { field: "col2", headerName: "Total turn" },
       { field: "col3", headerName: "Total time(s)" },
       { field: "col4" },
-      { field: "col5", headerName: "CreatedAt", width: 200 },
+      { field: "col5", headerName: "Level", width: 200 },
       { field: "col6", headerName: "CreatedAt", width: 200 },
       { field: "col7", headerName: "UpdatedAt", width: 200 }
     ],
@@ -103,22 +103,23 @@ const ListOfDay = () => {
       console.log(error);
     }
   }
-  console.log(list);
   useEffect(() => {
     initialEffect();
   }, []);
   const rows = useMemo(() => {
-    return list?.map((l, l_i) => {
-      const col2 = totalTurn(l[0].history);
-      const col3 = totalTime(l[0].history);
-      return {
-        id: l_i,
-        col1: String(l[0].uid),
-        col2,
-        col3,
-        col4: col2 + col3
-      };
-    });
+    return list
+      ?.map((l, l_i) => {
+        const col2 = totalTurn(l[0].history);
+        const col3 = totalTime(l[0].history);
+        return {
+          col1: String(l[0].uid),
+          col2,
+          col3,
+          col4: col2 + col3
+        };
+      })
+      .sort((a, b) => a.col4 - b.col4)
+      .map((row, id) => ({ ...row, id }));
   }, [list]);
   const max = useMemo(() => {
     if (rows?.length > 1) {
@@ -158,9 +159,6 @@ const ListOfDay = () => {
               columnVisibilityModel: {
                 col4: false
               }
-            },
-            sorting: {
-              sortModel: [{ field: "col4", sort: "asc" }]
             }
           }}
         />
@@ -273,9 +271,9 @@ function compare(a, b) {
     const sum_time = totalTime(array);
     return sum_turn + sum_time;
   };
-  if (score(a[1][0][0][1].history) < score(b[1][0][0][1].history)) {
+  if (score(a[0][1].history) < score(b[0][1].history)) {
     return -1;
-  } else if (score(a[1][0][0][1].history) > score(b[1][0][0][1].history)) {
+  } else if (score(a[0][1].history) > score(b[0][1].history)) {
     return 1;
   } else {
     return 0;

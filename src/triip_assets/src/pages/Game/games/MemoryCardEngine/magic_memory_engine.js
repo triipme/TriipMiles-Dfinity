@@ -4,7 +4,7 @@ import SingleCard from "@/pages/Game/components/SingleCard";
 import { ButtonPrimary, Loading } from "@/components";
 import { Box, Modal, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 const cardImg = [
   { src: "/img/sticker1.webp", matched: false },
@@ -75,8 +75,8 @@ function MagicMemoryEngine() {
   useEffect(() => {
     shuffleCards();
   }, []);
-  if (!!state?.player_id) {
-    return <Navigate to="/game/magic-memory-language" />;
+  if (!!state?.player_id || !!!state?.onClick) {
+    return <Navigate to="/game/magic-memory-photo" />;
   }
   return (
     <div className="App">
@@ -123,6 +123,7 @@ const TimingPlay = forwardRef(({ turns, cards }, ref) => {
       console.log(error);
     } finally {
       setIsLoading(false);
+      navigate(-1);
     }
   }
   useImperativeHandle(ref, () => ({
