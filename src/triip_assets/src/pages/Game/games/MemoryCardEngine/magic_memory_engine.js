@@ -116,9 +116,6 @@ const TimingPlay = forwardRef(({ turns, cards }, ref) => {
         turn: turns,
         timing_play: parseFloat((time / 100).toFixed(2))
       });
-      if ("ok" in rs) {
-        navigate(-1);
-      }
     } catch (error) {
       console.log(error);
     } finally {

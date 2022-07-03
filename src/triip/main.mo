@@ -1662,7 +1662,6 @@ shared({caller = owner}) actor class Triip() = this {
       reward : Nat64 = rewardAmount;
       createdAt = Moment.now();
     };
-    state.games.memory_card.rewards.put(playerId, recordReward); //put to state rewards
     // let kycOfUser : Bool = await isKYCedUser(uid); //check user is user Kyc-ed
     // switch (kycOfUser) {
     //   case (false) {
@@ -1676,10 +1675,18 @@ shared({caller = owner}) actor class Triip() = this {
       case (? profile) {
         let toAddress = Option.get(profile.wallets, [""])[0];
         let res = await transfer({ e8s = rewardAmount }, toAddress);
-        await recordTransaction(
-          caller, { e8s = rewardAmount }, toAddress, "GameCardReward", playerId, res, null
-        );
-        #ok(());
+        switch (res) {
+          case (#Err(transfer)) {
+            #err(#NotFound);
+          };
+          case (#Ok(transfer)) {
+            state.games.memory_card_engine.rewards.put(playerId, recordReward); //put to state rewards
+            await recordTransaction(
+              caller, { e8s = rewardAmount }, toAddress, "GameCardReward", playerId, res, null
+            );
+            #ok(());
+          };
+        };
       };
     };
     //   };
@@ -1701,7 +1708,7 @@ shared({caller = owner}) actor class Triip() = this {
     };
     state.games.memory_card_engine.players.put(uuid, player);
   };
-  private func gameGcEngineGetPlayer_(uid : Principal) : async ?(Text, Types.MemoryCardEnginePlayer) {
+  private func gameGcEngineGetPlayer_(uid : Principal) : ?(Text, Types.MemoryCardEnginePlayer) {
     let players = state.games.memory_card_engine.players.entries();
     var p : ?(Text, Types.MemoryCardEnginePlayer) = null;
     for((K, player) in players) {
@@ -1714,11 +1721,11 @@ shared({caller = owner}) actor class Triip() = this {
     };
     return p;
   };
-  public shared({caller}) func gameGcEngineGetPlayer() : async ?(Text, Types.MemoryCardEnginePlayer) {
+  public query({caller}) func gameGcEngineGetPlayer() : async ?(Text, Types.MemoryCardEnginePlayer) {
     if(Principal.toText(caller) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
-    return await gameGcEngineGetPlayer_(caller);
+    return gameGcEngineGetPlayer_(caller);
   };
   public shared({caller = uid}) func gameGcEngineSetPlayer({
     turn : Nat; 
@@ -1727,7 +1734,7 @@ shared({caller = owner}) actor class Triip() = this {
     if(Principal.toText(uid) == "2vxsx-fae") {
       throw Error.reject("NotAuthorized");  //isNotAuthorized
     };
-    switch(await gameGcEngineGetPlayer_(uid)){
+    switch(gameGcEngineGetPlayer_(uid)){
       case null {
         await gameGcEnginePutPlayer(uid, turn, timing_play);
         #ok(());
@@ -1741,7 +1748,7 @@ shared({caller = owner}) actor class Triip() = this {
     #ok(state.games.memory_card_engine.rewards.get(id));
   };
   public shared({caller}) func gameGcEngineReward(
-    player_id : Text, 
+    playerId : Text, 
     reward : Float, 
     uid : Principal
   ) : async Response<()>{
@@ -1757,18 +1764,23 @@ shared({caller = owner}) actor class Triip() = this {
           reward : Nat64 = reward_format;
           createdAt = Moment.now();
         };
-        state.games.memory_card_engine.rewards.put(player_id, record_reward); //put to state rewards
         let rsReadUser = state.profiles.get(uid); // get address Wallet of top1
         switch (rsReadUser) {
           case null{
             #err(#NotFound);
           };
           case (? v) {
-            switch (await transfer({ e8s = reward_format }, Option.get(v.wallets, [""])[0])) {
+            let toAddress = Option.get(v.wallets, [""])[0];
+            let res = await transfer({ e8s = reward_format }, Option.get(v.wallets, [""])[0]);
+            switch (res) {
               case (#Err(transfer)) {
                 #err(#NotFound);
               };
               case (#Ok(transfer)) {
+                state.games.memory_card_engine.rewards.put(playerId, record_reward); //put to state rewards
+                await recordTransaction(
+                  caller, { e8s = reward_format }, toAddress, "GameCardEngineReward", playerId, res, null
+                );
                 #ok(());
               };
             };
