@@ -1581,7 +1581,6 @@ shared({caller = owner}) actor class Triip() = this {
       reward : Nat64 = rewardAmount;
       createdAt = Moment.now();
     };
-    state.games.memory_card.rewards.put(playerId, recordReward); //put to state rewards
     // let kycOfUser : Bool = await isKYCedUser(uid); //check user is user Kyc-ed
     // switch (kycOfUser) {
     //   case (false) {
@@ -1595,10 +1594,18 @@ shared({caller = owner}) actor class Triip() = this {
       case (? profile) {
         let toAddress = Option.get(profile.wallets, [""])[0];
         let res = await transfer({ e8s = rewardAmount }, toAddress);
-        await recordTransaction(
-          caller, { e8s = rewardAmount }, toAddress, "GameCardReward", playerId, res, null
-        );
-        #ok(());
+        switch (res) {
+          case (#Err(transfer)) {
+            #err(#NotFound);
+          };
+          case (#Ok(transfer)) {
+            state.games.memory_card_engine.rewards.put(playerId, recordReward); //put to state rewards
+            await recordTransaction(
+              caller, { e8s = rewardAmount }, toAddress, "GameCardReward", playerId, res, null
+            );
+            #ok(());
+          };
+        };
       };
     };
     //   };
@@ -1660,7 +1667,7 @@ shared({caller = owner}) actor class Triip() = this {
     #ok(state.games.memory_card_engine.rewards.get(id));
   };
   public shared({caller}) func gameGcEngineReward(
-    player_id : Text, 
+    playerId : Text, 
     reward : Float, 
     uid : Principal
   ) : async Response<()>{
@@ -1676,18 +1683,23 @@ shared({caller = owner}) actor class Triip() = this {
           reward : Nat64 = reward_format;
           createdAt = Moment.now();
         };
-        state.games.memory_card_engine.rewards.put(player_id, record_reward); //put to state rewards
         let rsReadUser = state.profiles.get(uid); // get address Wallet of top1
         switch (rsReadUser) {
           case null{
             #err(#NotFound);
           };
           case (? v) {
-            switch (await transfer({ e8s = reward_format }, Option.get(v.wallets, [""])[0])) {
+            let toAddress = Option.get(v.wallets, [""])[0];
+            let res = await transfer({ e8s = reward_format }, Option.get(v.wallets, [""])[0]);
+            switch (res) {
               case (#Err(transfer)) {
                 #err(#NotFound);
               };
               case (#Ok(transfer)) {
+                state.games.memory_card_engine.rewards.put(playerId, record_reward); //put to state rewards
+                await recordTransaction(
+                  caller, { e8s = reward_format }, toAddress, "GameCardEngineReward", playerId, res, null
+                );
                 #ok(());
               };
             };
